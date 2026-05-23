@@ -151,14 +151,29 @@ function boom(e: React.MouseEvent, type: string) {
 }
 
 /* ════════════════════════════
-   SCROLL REVEAL + PARALLAX HOOK
+   SCROLL EFFECTS — ENHANCED
 ════════════════════════════ */
 function useScrollEffects(mainVisible: boolean) {
   useEffect(() => {
     if (!mainVisible) return
 
-    // Text reveal observer
-    const obs = new IntersectionObserver(
+    // 1) Add "in-view" class to sections for CSS-driven entrance
+    const sectionObs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in-view')
+          } else {
+            e.target.classList.remove('in-view')
+          }
+        })
+      },
+      { threshold: 0.15, rootMargin: '-5% 0px -5% 0px' }
+    )
+    document.querySelectorAll('.sec').forEach((el) => sectionObs.observe(el))
+
+    // 2) Text line reveal (staggered per line)
+    const textObs = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) {
@@ -170,45 +185,39 @@ function useScrollEffects(mainVisible: boolean) {
       },
       { threshold: 0.12 }
     )
-    document.querySelectorAll('.sec-inner').forEach((el) => obs.observe(el))
+    document.querySelectorAll('.sec-inner').forEach((el) => textObs.observe(el))
 
-    // Parallax on scroll for background roses and content
+    // 3) Parallax + zoom on scroll
+    let ticking = false
     const handleScroll = () => {
-      const scrollY = window.scrollY
-      document.querySelectorAll('.sec').forEach((sec) => {
-        const rect = sec.getBoundingClientRect()
-        const inView = rect.top < window.innerHeight && rect.bottom > 0
-        if (!inView) return
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        ticking = false
+        document.querySelectorAll('.sec').forEach((sec) => {
+          const rect = sec.getBoundingClientRect()
+          const inView = rect.top < window.innerHeight && rect.bottom > 0
+          if (!inView) return
 
-        const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height)
+          const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height)
 
-        // Subtle parallax on bg-roses
-        const bgRoses = sec.querySelector('.bg-roses') as HTMLElement
-        if (bgRoses) {
-          bgRoses.style.transform = `translateY(${(progress - 0.5) * -20}px)`
-        }
-
-        // Content entrance effect
-        const inner = sec.querySelector('.sec-inner') as HTMLElement
-        if (inner) {
-          const innerProgress = Math.max(0, Math.min(1, progress))
-          // Subtle scale + opacity as content enters viewport
-          if (innerProgress < 0.3) {
-            inner.style.opacity = `${0.3 + innerProgress * 2.3}`
-            inner.style.transform = `translateY(${(1 - innerProgress) * 15}px)`
-          } else {
-            inner.style.opacity = '1'
-            inner.style.transform = 'translateY(0)'
+          // Background roses: slow parallax + subtle zoom
+          const bgRoses = sec.querySelector('.bg-roses') as HTMLElement
+          if (bgRoses) {
+            const parallaxY = (progress - 0.5) * -30
+            const scaleVal = 1 + Math.max(0, 1 - Math.abs(progress - 0.5) * 2.5) * 0.06
+            bgRoses.style.transform = `translateY(${parallaxY}px) scale(${scaleVal})`
           }
-        }
+        })
       })
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // initial call
+    handleScroll()
 
     return () => {
-      obs.disconnect()
+      sectionObs.disconnect()
+      textObs.disconnect()
       window.removeEventListener('scroll', handleScroll)
     }
   }, [mainVisible])
@@ -424,7 +433,7 @@ export default function Home() {
 
       {/* ══ STAGE 0: GIFT ══ */}
       <div
-        className={`stage ${stage !== 'gift' ? 'gone' : ''}`}
+        className={`stage ${stage !== 'gift' ? 'gone' : 'entering'}`}
         id="stGift"
       >
         <div
@@ -438,7 +447,7 @@ export default function Home() {
 
       {/* ══ STAGE 1: ROSES ══ */}
       <div
-        className={`stage ${stage !== 'roses' ? (stage === 'gift' ? 'hidden' : 'gone') : ''}`}
+        className={`stage ${stage === 'gift' ? 'hidden' : stage === 'roses' ? 'entering' : 'gone'}`}
         id="stRoses"
       >
         <svg
@@ -450,7 +459,7 @@ export default function Home() {
 
       {/* ══ STAGE 2: TEXT ══ */}
       <div
-        className={`stage ${stage !== 'text' ? (['gift', 'roses'].includes(stage) ? 'hidden' : 'gone') : ''}`}
+        className={`stage ${['gift', 'roses'].includes(stage) ? 'hidden' : stage === 'text' ? 'entering' : 'gone'}`}
         id="stText"
       >
         <div className={`wrd ${wordVisible.w1 ? 'in' : ''}`}>Happy</div>
@@ -468,7 +477,7 @@ export default function Home() {
 
       {/* ══ STAGE 3: DATE ══ */}
       <div
-        className={`stage ${stage !== 'date' ? (['gift', 'roses', 'text'].includes(stage) ? 'hidden' : 'gone') : ''}`}
+        className={`stage ${['gift', 'roses', 'text'].includes(stage) ? 'hidden' : stage === 'date' ? 'entering' : 'gone'}`}
         id="stDate"
       >
         <div className={`date-num ${dateVisible ? 'in' : ''}`}>June 19</div>

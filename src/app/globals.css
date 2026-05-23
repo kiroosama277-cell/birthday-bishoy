@@ -44,7 +44,7 @@ body {
 #cursor svg { width: 100%; height: 100%; }
 
 /* ════════════════════════════
-   OVERLAY STAGES
+   OVERLAY STAGES — ENHANCED TRANSITIONS
 ════════════════════════════ */
 .stage {
   position: fixed;
@@ -53,21 +53,40 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Multi-property transition for silky smooth stage changes */
+  transform: translateY(0);
+  filter: blur(0);
   transition:
-    opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 1.4s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Outgoing stage slides UP + blurs + fades */
 .stage.gone {
   opacity: 0;
   pointer-events: none;
-  transform: scale(1.04);
-  filter: blur(8px);
+  transform: translateY(-60px) scale(1.03);
+  filter: blur(12px);
 }
 
 .stage.hidden { display: none !important; }
+
+/* Incoming stage starts from below and rises in */
+.stage.entering {
+  animation: stageEnter 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes stageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(80px) scale(0.97);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
 
 /* ── STAGE 0: GIFT ── */
 #stGift { background: radial-gradient(ellipse 80% 80% at 50% 60%, #2e0a0a, #0e0404); }
@@ -228,12 +247,12 @@ body {
    SILKY SMOOTH SECTION TRANSITIONS
 ════════════════════════════ */
 
-/* Top fade — blends section top into previous section's bottom */
+/* Top fade — blends into previous section */
 .sec::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 35vh;
+  height: 40vh;
   z-index: 2;
   pointer-events: none;
   background: linear-gradient(to bottom, var(--dark), transparent);
@@ -242,12 +261,12 @@ body {
   background: linear-gradient(to bottom, #d4b8b0, transparent);
 }
 
-/* Bottom fade — blends section bottom into next section's top */
+/* Bottom fade — blends into next section */
 .sec::after {
   content: '';
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 35vh;
+  height: 40vh;
   z-index: 2;
   pointer-events: none;
   background: linear-gradient(to top, var(--dark), transparent);
@@ -256,16 +275,21 @@ body {
   background: linear-gradient(to top, #d4b8b0, transparent);
 }
 
-/* ── SVG rose clusters per section ── */
+/* ── Background zoom on scroll ── */
 .bg-roses {
   position: absolute;
-  inset: 0;
+  inset: -5%;
   pointer-events: none;
   overflow: hidden;
   opacity: 0.18;
+  will-change: transform, opacity;
+  transition: transform 0.1s linear, opacity 0.4s ease;
+}
+.sec.in-view .bg-roses {
+  opacity: 0.22;
 }
 
-/* ── content ── */
+/* ── Content entrance animation ── */
 .sec-inner {
   position: relative;
   z-index: 3;
@@ -273,9 +297,41 @@ body {
   width: 100%;
   text-align: center;
   padding: 3rem 2rem;
+  will-change: transform, opacity;
+  /* Start state — content is below and transparent */
+  opacity: 0;
+  transform: translateY(50px) scale(0.97);
+  filter: blur(3px);
+  transition:
+    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* When section is in view — content floats in */
+.sec.in-view .sec-inner {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
 }
 
-/* lines */
+/* ── Decorative transition wave between sections ── */
+.sec-divider {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+  line-height: 0;
+}
+.sec-divider svg {
+  width: 100%;
+  height: 80px;
+  display: block;
+}
+
+/* ── Lines (text) ── */
 .ln {
   display: block;
   opacity: 0;
@@ -385,18 +441,6 @@ body {
 @keyframes hintB {
   0%, 100% { transform: translateX(-50%) translateY(0); }
   50%      { transform: translateX(-50%) translateY(8px); }
-}
-
-/* ════════════════════════════
-   SECTION PARALLAX EFFECT
-════════════════════════════ */
-.sec-inner {
-  will-change: transform, opacity;
-}
-
-/* Background roses slow parallax */
-.bg-roses {
-  will-change: transform;
 }
 
 /* ════════════════════════════
