@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Amiri } from "next/font/google";
+import { Cormorant_Garamond, Amiri } from "next/font/google";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -17,8 +18,8 @@ const amiri = Amiri({
 });
 
 export const metadata: Metadata = {
-  title: "Happy Birthday Bishoy",
-  description: "A romantic birthday celebration",
+  title: "Happy Birthday, My B",
+  description: "A romantic birthday celebration for Bishoy",
   icons: {
     icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌹</text></svg>",
   },
@@ -31,9 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${playfair.variable} ${amiri.variable} antialiased`}
-      >
+      <body className={`${cormorant.variable} ${amiri.variable} antialiased`}>
         {children}
       </body>
     </html>
