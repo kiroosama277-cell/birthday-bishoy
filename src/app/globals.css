@@ -542,8 +542,68 @@ body {
 .div::before, .div::after { content: ''; flex: 1; max-width: 70px; height: 1px; background: currentColor; }
 .sec-2 .div { color: var(--rose-mid); }
 
-/* click zone */
+/* click zone — only active after reveal */
 .czone { position: absolute; inset: 0; z-index: 4; cursor: none; }
+
+/* ════════════════════════════
+   SURPRISE REVEAL BUTTON
+════════════════════════════ */
+.surprise-reveal {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  gap: 1.5rem;
+}
+
+.surprise-icon {
+  font-size: clamp(4rem, 12vw, 8rem);
+  line-height: 1;
+  filter: drop-shadow(0 0 30px currentColor);
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.surprise-reveal:hover .surprise-icon {
+  transform: scale(1.15) !important;
+}
+
+.surprise-reveal:active .surprise-icon {
+  transform: scale(0.9) !important;
+}
+
+.surprise-label {
+  font-family: var(--font-cormorant);
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--petal-pink);
+  user-select: none;
+}
+
+.sec-2 .surprise-label { color: var(--rose-deep); }
+.sec-4 .surprise-label { color: var(--gold); }
+.sec-5 .surprise-label { color: #a090b8; }
+
+.surprise-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(120px, 30vw, 200px);
+  height: clamp(120px, 30vw, 200px);
+  border-radius: 50%;
+  border: 1.5px solid;
+  pointer-events: none;
+}
+
+.sec-2 .surprise-icon { color: var(--rose-deep); }
+.sec-4 .surprise-icon { color: var(--gold); }
+.sec-5 .surprise-icon { color: #a090b8; }
 
 /* ════════════════════════════
    WAVE DIVIDERS
