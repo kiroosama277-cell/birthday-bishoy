@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Lenis from 'lenis'
 
 /* ════════════════════════════
@@ -82,7 +82,7 @@ function CursorSVG() {
 }
 
 /* ════════════════════════════
-   POPUP SPAWNER
+   DOM EFFECT HELPERS
 ════════════════════════════ */
 function spawnEl(html: string, x: number, y: number, cls: string) {
   const el = document.createElement('div')
@@ -153,6 +153,61 @@ function boom(e: React.MouseEvent, type: string) {
 }
 
 /* ════════════════════════════
+   CONFETTI EXPLOSION
+════════════════════════════ */
+function createExplosion(x: number, y: number, colors: string[], count = 55) {
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div')
+    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.8
+    const velocity = 120 + Math.random() * 320
+    const dx = Math.cos(angle) * velocity
+    const dy = Math.sin(angle) * velocity - Math.random() * 80
+    const color = colors[Math.floor(Math.random() * colors.length)]
+    const size = 3 + Math.random() * 9
+    const isRect = Math.random() > 0.4
+    el.className = 'confetti-p'
+    el.style.cssText = `
+      left:${x}px;top:${y}px;
+      width:${size}px;height:${isRect ? size * 2.5 : size}px;
+      background:${color};
+      border-radius:${isRect ? '2px' : '50%'};
+      --dx:${dx}px;--dy:${dy}px;--rot:${(Math.random() - .5) * 1080}deg;
+      animation-delay:${Math.random() * .12}s;
+    `
+    document.body.appendChild(el)
+    setTimeout(() => el.remove(), 2200)
+  }
+}
+
+/* ════════════════════════════
+   SCREEN FLASH
+════════════════════════════ */
+function createFlash(color: string) {
+  const el = document.createElement('div')
+  el.className = 'reveal-flash'
+  el.style.background = color
+  document.body.appendChild(el)
+  requestAnimationFrame(() => {
+    el.classList.add('active')
+    setTimeout(() => {
+      el.classList.remove('active')
+      setTimeout(() => el.remove(), 600)
+    }, 250)
+  })
+}
+
+/* ════════════════════════════
+   SCREEN SHAKE
+════════════════════════════ */
+function triggerShake() {
+  const main = document.getElementById('main')
+  if (main) {
+    main.classList.add('screen-shake')
+    setTimeout(() => main.classList.remove('screen-shake'), 600)
+  }
+}
+
+/* ════════════════════════════
    BACKGROUND ROSES BUILDER
 ════════════════════════════ */
 function buildBgRosesHTML(id: string, n: number, colors: string[][]) {
@@ -216,18 +271,91 @@ function FloatingParticles({ count = 15, colors = ['#e8897a', '#f2c4b8', '#c9995
 }
 
 /* ════════════════════════════
-   SURPRISE REVEAL BUTTON
+   SEALED REVEAL CONFIG
 ════════════════════════════ */
-const SURPRISE_CONFIG: Record<string, { icon: string; label: string; boomType: string; color: string }> = {
-  gift:  { icon: '🎁', label: 'tap to reveal', boomType: 'teddy', color: '#e8897a' },
-  heart: { icon: '♥',  label: 'tap to reveal', boomType: 'heart', color: '#c0463c' },
-  rose:  { icon: '🌹', label: 'tap to reveal', boomType: 'rose',  color: '#e8897a' },
-  star:  { icon: '✦',  label: 'tap to reveal', boomType: 'stars', color: '#c9995a' },
-  moon:  { icon: '🌙', label: 'tap to reveal', boomType: 'moon',  color: '#a090b8' },
-  cake:  { icon: '🎂', label: 'tap to reveal', boomType: 'cake',  color: '#e8897a' },
+const SEAL_CONFIG: Record<string, {
+  icon: string
+  color: string
+  boomType: string
+  ringColor1: string
+  ringColor2: string
+  glowGradient: string
+  flashColor: string
+  confettiColors: string[]
+  particles: string[]
+}> = {
+  gift: {
+    icon: '🎁',
+    color: '#e8897a',
+    boomType: 'teddy',
+    ringColor1: 'rgba(232,137,122,0.25)',
+    ringColor2: 'rgba(201,153,90,0.15)',
+    glowGradient: 'radial-gradient(circle, rgba(232,137,122,0.18) 0%, rgba(192,70,60,0.06) 40%, transparent 65%)',
+    flashColor: 'rgba(232,137,122,0.35)',
+    confettiColors: ['#e8897a', '#f2c4b8', '#c0463c', '#fff9f6', '#c9995a'],
+    particles: ['🎀', '✨', '💝', '🤍', '✦'],
+  },
+  heart: {
+    icon: '♥',
+    color: '#c0463c',
+    boomType: 'heart',
+    ringColor1: 'rgba(192,70,60,0.3)',
+    ringColor2: 'rgba(232,137,122,0.18)',
+    glowGradient: 'radial-gradient(circle, rgba(192,70,60,0.2) 0%, rgba(139,42,42,0.06) 40%, transparent 65%)',
+    flashColor: 'rgba(192,70,60,0.3)',
+    confettiColors: ['#c0463c', '#e8897a', '#f2c4b8', '#8b2a2a', '#fff9f6'],
+    particles: ['💗', '💕', '❤️', '🤍', '♥'],
+  },
+  rose: {
+    icon: '🌹',
+    color: '#e8897a',
+    boomType: 'rose',
+    ringColor1: 'rgba(232,137,122,0.25)',
+    ringColor2: 'rgba(139,42,42,0.15)',
+    glowGradient: 'radial-gradient(circle, rgba(139,42,42,0.2) 0%, rgba(107,26,26,0.06) 40%, transparent 65%)',
+    flashColor: 'rgba(232,137,122,0.3)',
+    confettiColors: ['#8b2a2a', '#c0463c', '#e8897a', '#f2c4b8'],
+    particles: ['🌸', '🌺', '🌷', '✿', '❀'],
+  },
+  star: {
+    icon: '✦',
+    color: '#c9995a',
+    boomType: 'stars',
+    ringColor1: 'rgba(201,153,90,0.3)',
+    ringColor2: 'rgba(232,201,138,0.18)',
+    glowGradient: 'radial-gradient(circle, rgba(201,153,90,0.22) 0%, rgba(201,153,90,0.06) 40%, transparent 65%)',
+    flashColor: 'rgba(201,153,90,0.35)',
+    confettiColors: ['#c9995a', '#e8c98a', '#f2c4b8', '#fff9f6', '#e8897a'],
+    particles: ['⭐', '🌟', '✨', '💫', '✦'],
+  },
+  moon: {
+    icon: '🌙',
+    color: '#a090b8',
+    boomType: 'moon',
+    ringColor1: 'rgba(160,144,184,0.25)',
+    ringColor2: 'rgba(201,153,90,0.12)',
+    glowGradient: 'radial-gradient(circle, rgba(160,144,184,0.18) 0%, rgba(112,112,160,0.06) 40%, transparent 65%)',
+    flashColor: 'rgba(160,144,184,0.3)',
+    confettiColors: ['#7070a0', '#a090b8', '#c9995a', '#e8c98a', '#fff9f6'],
+    particles: ['⭐', '🌟', '✨', '💫', '🌙'],
+  },
+  cake: {
+    icon: '🎂',
+    color: '#e8897a',
+    boomType: 'cake',
+    ringColor1: 'rgba(232,137,122,0.25)',
+    ringColor2: 'rgba(201,153,90,0.18)',
+    glowGradient: 'radial-gradient(circle, rgba(192,70,60,0.2) 0%, rgba(201,153,90,0.06) 40%, transparent 65%)',
+    flashColor: 'rgba(232,137,122,0.35)',
+    confettiColors: ['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a'],
+    particles: ['🎉', '🎊', '🎈', '✨', '🥂'],
+  },
 }
 
-function SurpriseReveal({
+/* ════════════════════════════
+   SEALED REVEAL COMPONENT
+════════════════════════════ */
+function SealedReveal({
   type,
   revealed,
   onReveal,
@@ -236,49 +364,252 @@ function SurpriseReveal({
   revealed: boolean
   onReveal: (e: React.MouseEvent) => void
 }) {
-  const config = SURPRISE_CONFIG[type]
+  const config = SEAL_CONFIG[type]
+  const ref = useRef<HTMLDivElement>(null)
 
   return (
-    <motion.div
-      className="surprise-reveal"
-      onClick={onReveal}
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{
-        scale: revealed ? 0 : 1,
-        opacity: revealed ? 0 : 1,
-      }}
-      transition={{ duration: revealed ? 0.5 : 0.8, ease: [0.16, 1, 0.3, 1] }}
-      style={{ pointerEvents: revealed ? 'none' : 'auto' }}
+    <AnimatePresence>
+      {!revealed && (
+        <motion.div
+          ref={ref}
+          className="sealed-reveal"
+          onClick={onReveal}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: [1, 1.4, 0], opacity: [1, 1, 0], filter: ['blur(0px)', 'blur(0px)', 'blur(25px)'] }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Outer rotating ring */}
+          <motion.div
+            className="sealed-ring-container ring-outer"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          >
+            <svg viewBox="0 0 320 320" className="sealed-ring-svg">
+              <circle cx="160" cy="160" r="150" fill="none" stroke={config.ringColor1} strokeWidth="1" strokeDasharray="12 8" />
+              <circle cx="160" cy="160" r="140" fill="none" stroke={config.ringColor2} strokeWidth="0.5" strokeDasharray="3 10" />
+              {/* Decorative dots on the ring */}
+              {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => {
+                const rad = (angle * Math.PI) / 180
+                const cx = 160 + Math.cos(rad) * 150
+                const cy = 160 + Math.sin(rad) * 150
+                return <circle key={i} cx={cx} cy={cy} r="2" fill={config.ringColor1} />
+              })}
+            </svg>
+          </motion.div>
+
+          {/* Inner rotating ring (opposite direction) */}
+          <motion.div
+            className="sealed-ring-container ring-inner"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+          >
+            <svg viewBox="0 0 320 320" className="sealed-ring-svg">
+              <circle cx="160" cy="160" r="110" fill="none" stroke={config.ringColor2} strokeWidth="0.8" strokeDasharray="6 12" />
+              <circle cx="160" cy="160" r="100" fill="none" stroke={config.ringColor1} strokeWidth="0.4" strokeDasharray="2 8" />
+              {[0, 60, 120, 180, 240, 300].map((angle, i) => {
+                const rad = (angle * Math.PI) / 180
+                const cx = 160 + Math.cos(rad) * 110
+                const cy = 160 + Math.sin(rad) * 110
+                return <circle key={i} cx={cx} cy={cy} r="1.5" fill={config.ringColor2} />
+              })}
+            </svg>
+          </motion.div>
+
+          {/* Central icon */}
+          <motion.div
+            className="sealed-icon"
+            style={{ color: config.color }}
+            animate={{
+              y: [0, -12, 0],
+              scale: [1, 1.08, 1],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            {config.icon}
+          </motion.div>
+
+          {/* Floating mini particles around icon */}
+          <div className="sealed-mini-particles">
+            {config.particles.map((p, i) => (
+              <motion.span
+                key={i}
+                className="sealed-mini-p"
+                style={{
+                  '--angle': `${(i / config.particles.length) * 360}deg`,
+                  '--distance': `${80 + Math.random() * 40}px`,
+                  color: config.color,
+                } as React.CSSProperties}
+                animate={{
+                  opacity: [0, 0.7, 0],
+                  scale: [0.5, 1, 0.5],
+                  rotate: [0, 180],
+                }}
+                transition={{
+                  duration: 3 + Math.random() * 2,
+                  repeat: Infinity,
+                  delay: i * 0.6,
+                  ease: "easeInOut",
+                }}
+              >
+                {p}
+              </motion.span>
+            ))}
+          </div>
+
+          {/* Label */}
+          <motion.div
+            className="sealed-label"
+            animate={{ opacity: [0.3, 0.8, 0.3] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <span className="sealed-label-line" />
+            <span className="sealed-label-text">tap to reveal</span>
+            <span className="sealed-label-line" />
+          </motion.div>
+
+          {/* Background glow */}
+          <div className="sealed-glow" style={{ background: config.glowGradient }} />
+
+          {/* Pulsing aura */}
+          <motion.div
+            className="sealed-aura"
+            style={{ borderColor: config.color }}
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.15, 0, 0.15],
+            }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+          <motion.div
+            className="sealed-aura sealed-aura-2"
+            style={{ borderColor: config.color }}
+            animate={{
+              scale: [1, 1.35, 1],
+              opacity: [0.08, 0, 0.08],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 0.5,
+            }}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+/* ════════════════════════════
+   ANIMATED TEXT — controlled by reveal
+════════════════════════════ */
+function AnimatedText({
+  children,
+  className = '',
+  delay = 0,
+  extraStyle,
+  revealed = true,
+  variant = 'slideUp',
+}: {
+  children: React.ReactNode
+  className?: string
+  delay?: number
+  extraStyle?: React.CSSProperties
+  revealed?: boolean
+  variant?: 'slideUp' | 'scaleIn' | 'blurIn' | 'slideLeft' | 'slideRight' | 'zoomIn'
+}) {
+  const variants = {
+    slideUp: {
+      hidden: { opacity: 0, y: 50, filter: 'blur(6px)' },
+      visible: { opacity: extraStyle?.opacity ?? 1, y: 0, filter: 'blur(0px)' },
+    },
+    scaleIn: {
+      hidden: { opacity: 0, scale: 0.5, filter: 'blur(4px)' },
+      visible: { opacity: extraStyle?.opacity ?? 1, scale: 1, filter: 'blur(0px)' },
+    },
+    blurIn: {
+      hidden: { opacity: 0, filter: 'blur(16px)' },
+      visible: { opacity: extraStyle?.opacity ?? 1, filter: 'blur(0px)' },
+    },
+    slideLeft: {
+      hidden: { opacity: 0, x: 60, filter: 'blur(4px)' },
+      visible: { opacity: extraStyle?.opacity ?? 1, x: 0, filter: 'blur(0px)' },
+    },
+    slideRight: {
+      hidden: { opacity: 0, x: -60, filter: 'blur(4px)' },
+      visible: { opacity: extraStyle?.opacity ?? 1, x: 0, filter: 'blur(0px)' },
+    },
+    zoomIn: {
+      hidden: { opacity: 0, scale: 2, filter: 'blur(10px)' },
+      visible: { opacity: extraStyle?.opacity ?? 1, scale: 1, filter: 'blur(0px)' },
+    },
+  }
+
+  const v = variants[variant]
+
+  return (
+    <motion.span
+      className={`ln ${className}`}
+      style={extraStyle}
+      initial={v.hidden}
+      animate={revealed ? v.visible : v.hidden}
+      transition={{ duration: 1, delay, ease: [0.16, 1, 0.3, 1] }}
     >
-      <motion.div
-        className="surprise-icon"
-        animate={{ 
-          y: [0, -12, 0],
-          rotate: [0, 3, -3, 0],
-        }}
-        transition={{ 
-          duration: 2.5, 
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
-        style={{ color: config.color, cursor: 'none' }}
-      >
-        {config.icon}
-      </motion.div>
-      <motion.p
-        className="surprise-label"
-        animate={{ opacity: [0.4, 0.8, 0.4] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        {config.label}
-      </motion.p>
-      {/* Pulsing ring around icon */}
-      <motion.div
-        className="surprise-ring"
-        animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0, 0.3] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        style={{ borderColor: config.color }}
-      />
+      {children}
+    </motion.span>
+  )
+}
+
+/* ════════════════════════════
+   SHIMMER TEXT — controlled by reveal
+════════════════════════════ */
+function ShimmerText({
+  children,
+  className = '',
+  extraStyle,
+  revealed = true,
+  delay = 0,
+}: {
+  children: React.ReactNode
+  className?: string
+  extraStyle?: React.CSSProperties
+  revealed?: boolean
+  delay?: number
+}) {
+  return (
+    <motion.span
+      className={`ln shimmer-text ${className}`}
+      style={extraStyle}
+      initial={{ opacity: 0, y: 50, scale: 0.85 }}
+      animate={revealed ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.85 }}
+      transition={{ duration: 1.4, delay, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.span>
+  )
+}
+
+/* ════════════════════════════
+   REVEAL DIVIDER
+════════════════════════════ */
+function RevealDivider({ revealed = true, delay = 0, className = '' }: { revealed?: boolean; delay?: number; className?: string }) {
+  return (
+    <motion.div
+      className={`div ${className}`}
+      initial={{ opacity: 0, scale: 0.3 }}
+      animate={revealed ? { opacity: 0.4, scale: 1 } : { opacity: 0, scale: 0.3 }}
+      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+    >
+      ✦
     </motion.div>
   )
 }
@@ -295,7 +626,7 @@ function AnimatedSection({
   particleType = 'petal',
   particleCount = 12,
   particleColors,
-  surpriseType,
+  sealType,
   revealed,
   onReveal,
 }: {
@@ -307,109 +638,52 @@ function AnimatedSection({
   particleType?: 'petal' | 'star' | 'heart' | 'sparkle'
   particleCount?: number
   particleColors?: string[]
-  surpriseType: string
+  sealType: string
   revealed: boolean
   onReveal: (e: React.MouseEvent) => void
 }) {
-  const ref = useRef<HTMLElement>(null)
+  const config = SEAL_CONFIG[sealType]
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  })
-
-  const bgY = useTransform(scrollYProgress, [0, 1], [100, -100])
-  const bgScale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [1.15, 1, 1, 1.15])
-  const bgOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.1, 0.28, 0.28, 0.1])
-
-  const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 60])
-  const rotate2 = useTransform(scrollYProgress, [0, 1], [0, -45])
+  const handleReveal = useCallback((e: React.MouseEvent) => {
+    const x = e.clientX
+    const y = e.clientY
+    // Trigger all the dramatic effects
+    createExplosion(x, y, config.confettiColors, 60)
+    createFlash(config.flashColor)
+    boom(e, config.boomType)
+    triggerShake()
+    onReveal(e)
+  }, [config, onReveal])
 
   return (
     <motion.section
-      ref={ref}
       className={`sec ${className}`}
       id={id}
     >
-      <motion.div
-        className="bg-roses"
-        id={bgId}
-        style={{ y: bgY, scale: bgScale, opacity: bgOpacity }}
-      />
+      <div className="bg-roses" id={bgId} />
 
       <FloatingParticles count={particleCount} type={particleType} colors={particleColors} />
 
-      <motion.div className="deco deco-1" style={{ rotate: rotate1 }} />
-      <motion.div className="deco deco-2" style={{ rotate: rotate2 }} />
+      <div className="deco deco-1" />
+      <div className="deco deco-2" />
 
       <div className="sec-glow" />
 
-      {onClick && <div className="czone" onClick={onClick} />}
+      {/* Click zone — only active after reveal */}
+      {onClick && revealed && <div className="czone" onClick={onClick} />}
 
-      {/* Surprise reveal button */}
-      <SurpriseReveal
-        type={surpriseType}
+      {/* Sealed reveal element */}
+      <SealedReveal
+        type={sealType}
         revealed={revealed}
-        onReveal={onReveal}
+        onReveal={handleReveal}
       />
 
-      {/* Content — only visible after reveal */}
-      <motion.div
-        className="sec-inner"
-        initial={false}
-        animate={{
-          opacity: revealed ? 1 : 0,
-          y: revealed ? 0 : 60,
-          scale: revealed ? 1 : 0.92,
-          filter: revealed ? 'blur(0px)' : 'blur(8px)',
-        }}
-        transition={{ duration: 1.2, delay: revealed ? 0.3 : 0, ease: [0.16, 1, 0.3, 1] }}
-      >
+      {/* Content — each child handles its own reveal animation */}
+      <div className="sec-inner">
         {children}
-      </motion.div>
+      </div>
     </motion.section>
-  )
-}
-
-/* ════════════════════════════
-   ANIMATED TEXT LINE
-════════════════════════════ */
-function AnimatedText({ children, className = '', delay = 0, extraStyle }: { children: React.ReactNode; className?: string; delay?: number; extraStyle?: React.CSSProperties }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const isInView = useInView(ref, { amount: 0.3, once: true })
-
-  return (
-    <motion.span
-      ref={ref}
-      className={`ln ${className}`}
-      style={extraStyle}
-      initial={{ opacity: 0, y: 40, filter: 'blur(6px)' }}
-      animate={isInView ? { opacity: extraStyle?.opacity ?? 1, y: 0, filter: 'blur(0px)' } : {}}
-      transition={{ duration: 1, delay, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {children}
-    </motion.span>
-  )
-}
-
-/* ════════════════════════════
-   SHIMMER TEXT
-════════════════════════════ */
-function ShimmerText({ children, className = '', extraStyle }: { children: React.ReactNode; className?: string; extraStyle?: React.CSSProperties }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const isInView = useInView(ref, { amount: 0.3, once: true })
-
-  return (
-    <motion.span
-      ref={ref}
-      className={`ln shimmer-text ${className}`}
-      style={extraStyle}
-      initial={{ opacity: 0, y: 50, scale: 0.85 }}
-      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {children}
-    </motion.span>
   )
 }
 
@@ -499,10 +773,9 @@ export default function Home() {
   const [musicPlaying, setMusicPlaying] = useState(false)
   const lenisRef = useRef<Lenis | null>(null)
 
-  // Section reveal handler — triggers boom + sets revealed
-  const handleReveal = useCallback((sectionKey: string, boomType: string, e: React.MouseEvent) => {
+  // Section reveal handler
+  const handleReveal = useCallback((sectionKey: string, e: React.MouseEvent) => {
     setRevealed(prev => ({ ...prev, [sectionKey]: true }))
-    boom(e, boomType)
   }, [])
 
   // ═══ LENIS SMOOTH SCROLL ═══
@@ -735,114 +1008,119 @@ export default function Home() {
       {/* ══ MAIN CONTENT ══ */}
       <div id="main" className={mainVisible ? 'in' : ''}>
 
-        {/* S1 */}
+        {/* S1 — Gift reveal */}
         <AnimatedSection
           className="sec-1" id="s1" bgId="bgr1"
           onClick={(e) => boom(e, 'teddy')}
           particleType="petal" particleCount={18}
           particleColors={['#e8897a', '#f2c4b8', '#c0463c', '#fff9f6']}
-          surpriseType="gift" revealed={revealed.s1}
-          onReveal={(e) => handleReveal('s1', 'teddy', e)}
+          sealType="gift" revealed={revealed.s1}
+          onReveal={(e) => handleReveal('s1', e)}
         >
-          <AnimatedText className="hero" delay={0}>&ldquo;Happy Birthday, Bishoy&rdquo;</AnimatedText>
-          <AnimatedText delay={0.3}>&ldquo;Today the world celebrates you — and so do I&rdquo;</AnimatedText>
-          <AnimatedText delay={0.5}>&ldquo;But honestly? Every single day feels like your birthday to me&rdquo;</AnimatedText>
-          <AnimatedText delay={0.7}>&ldquo;Because every day with you is a gift I never want to return&rdquo;</AnimatedText>
-          <div className="div">✦</div>
-          <AnimatedText delay={1} extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <AnimatedText className="hero" delay={0} revealed={revealed.s1} variant="slideUp">&ldquo;Happy Birthday, Bishoy&rdquo;</AnimatedText>
+          <AnimatedText delay={0.2} revealed={revealed.s1} variant="slideUp">&ldquo;Today the world celebrates you — and so do I&rdquo;</AnimatedText>
+          <AnimatedText delay={0.35} revealed={revealed.s1} variant="slideUp">&ldquo;But honestly? Every single day feels like your birthday to me&rdquo;</AnimatedText>
+          <AnimatedText delay={0.5} revealed={revealed.s1} variant="slideUp">&ldquo;Because every day with you is a gift I never want to return&rdquo;</AnimatedText>
+          <RevealDivider revealed={revealed.s1} delay={0.65} />
+          <AnimatedText delay={0.8} revealed={revealed.s1} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
         </AnimatedSection>
 
         <WaveDivider color="#f5ebe4" />
 
-        {/* S2 */}
+        {/* S2 — Heart reveal */}
         <AnimatedSection
           className="sec-2" id="s2" bgId="bgr2"
           onClick={(e) => boom(e, 'heart')}
           particleType="heart" particleCount={14}
           particleColors={['#c0463c', '#e8897a', '#f2c4b8', '#8b2a2a']}
-          surpriseType="heart" revealed={revealed.s2}
-          onReveal={(e) => handleReveal('s2', 'heart', e)}
+          sealType="heart" revealed={revealed.s2}
+          onReveal={(e) => handleReveal('s2', e)}
         >
-          <AnimatedText className="hero sec2-text" delay={0}>&ldquo;You didn&rsquo;t just walk into my life… you became it&rdquo;</AnimatedText>
-          <AnimatedText delay={0.3} className="sec2-text">&ldquo;Before you, I didn&rsquo;t know that someone could feel like home&rdquo;</AnimatedText>
-          <AnimatedText delay={0.5} className="sec2-text">&ldquo;Now I can&rsquo;t imagine a single day without your voice, your laugh, your presence&rdquo;</AnimatedText>
-          <AnimatedText delay={0.7} className="sec2-text">&ldquo;You changed everything — quietly, deeply, forever&rdquo;</AnimatedText>
-          <div className="div sec2-div">✦</div>
-          <AnimatedText delay={1} className="sec2-text" extraStyle={{ fontSize: '.78rem', opacity: .35, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <AnimatedText className="hero sec2-text" delay={0} revealed={revealed.s2} variant="scaleIn">&ldquo;You didn&rsquo;t just walk into my life… you became it&rdquo;</AnimatedText>
+          <AnimatedText delay={0.2} revealed={revealed.s2} variant="scaleIn" className="sec2-text">&ldquo;Before you, I didn&rsquo;t know that someone could feel like home&rdquo;</AnimatedText>
+          <AnimatedText delay={0.35} revealed={revealed.s2} variant="scaleIn" className="sec2-text">&ldquo;Now I can&rsquo;t imagine a single day without your voice, your laugh, your presence&rdquo;</AnimatedText>
+          <AnimatedText delay={0.5} revealed={revealed.s2} variant="scaleIn" className="sec2-text">&ldquo;You changed everything — quietly, deeply, forever&rdquo;</AnimatedText>
+          <RevealDivider revealed={revealed.s2} delay={0.65} className="sec2-div" />
+          <AnimatedText delay={0.8} revealed={revealed.s2} variant="blurIn" className="sec2-text" extraStyle={{ fontSize: '.78rem', opacity: .35, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
         </AnimatedSection>
 
         <WaveDivider flip color="#0e0404" />
 
-        {/* S3 */}
+        {/* S3 — Rose reveal */}
         <AnimatedSection
           className="sec-3" id="s3" bgId="bgr3"
           onClick={(e) => boom(e, 'rose')}
           particleType="petal" particleCount={16}
           particleColors={['#8b2a2a', '#c0463c', '#e8897a', '#f2c4b8']}
-          surpriseType="rose" revealed={revealed.s3}
-          onReveal={(e) => handleReveal('s3', 'rose', e)}
+          sealType="rose" revealed={revealed.s3}
+          onReveal={(e) => handleReveal('s3', e)}
         >
-          <AnimatedText className="hero" delay={0}>&ldquo;Every moment with you feels like home&rdquo;</AnimatedText>
-          <AnimatedText delay={0.3}>&ldquo;The small moments, the silly ones, the ones no one else would understand&rdquo;</AnimatedText>
-          <AnimatedText delay={0.5}>&ldquo;Those are my favorite chapters of my life&rdquo;</AnimatedText>
-          <AnimatedText delay={0.7}>&ldquo;And you&rsquo;re the reason I love the story&rdquo;</AnimatedText>
-          <div className="div">✦</div>
-          <AnimatedText delay={1} extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <AnimatedText className="hero" delay={0} revealed={revealed.s3} variant="blurIn">&ldquo;Every moment with you feels like home&rdquo;</AnimatedText>
+          <AnimatedText delay={0.2} revealed={revealed.s3} variant="blurIn">&ldquo;The small moments, the silly ones, the ones no one else would understand&rdquo;</AnimatedText>
+          <AnimatedText delay={0.35} revealed={revealed.s3} variant="blurIn">&ldquo;Those are my favorite chapters of my life&rdquo;</AnimatedText>
+          <AnimatedText delay={0.5} revealed={revealed.s3} variant="blurIn">&ldquo;And you&rsquo;re the reason I love the story&rdquo;</AnimatedText>
+          <RevealDivider revealed={revealed.s3} delay={0.65} />
+          <AnimatedText delay={0.8} revealed={revealed.s3} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
         </AnimatedSection>
 
-        {/* S4 */}
+        {/* S4 — Star reveal */}
         <AnimatedSection
           className="sec-4" id="s4" bgId="bgr4"
           onClick={(e) => boom(e, 'stars')}
           particleType="sparkle" particleCount={20}
           particleColors={['#c9995a', '#e8c98a', '#f2c4b8', '#fff9f6', '#e8897a']}
-          surpriseType="star" revealed={revealed.s4}
-          onReveal={(e) => handleReveal('s4', 'stars', e)}
+          sealType="star" revealed={revealed.s4}
+          onReveal={(e) => handleReveal('s4', e)}
         >
-          <AnimatedText className="hero" delay={0}>&ldquo;You are my favorite person in every version of every story&rdquo;</AnimatedText>
-          <AnimatedText delay={0.3}>&ldquo;In every timeline, every lifetime, every universe —&rdquo;</AnimatedText>
-          <AnimatedText delay={0.5}>&ldquo;I&rsquo;d find you. I&rsquo;d choose you.&rdquo;</AnimatedText>
-          <ShimmerText extraStyle={{ fontSize: 'clamp(1.6rem, 4.2vw, 2.6rem)' }}>&ldquo;Again and again and again.&rdquo;</ShimmerText>
-          <div className="div">✦</div>
-          <AnimatedText delay={1} extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <AnimatedText className="hero" delay={0} revealed={revealed.s4} variant="slideLeft">&ldquo;You are my favorite person in every version of every story&rdquo;</AnimatedText>
+          <AnimatedText delay={0.2} revealed={revealed.s4} variant="slideLeft">&ldquo;In every timeline, every lifetime, every universe —&rdquo;</AnimatedText>
+          <AnimatedText delay={0.35} revealed={revealed.s4} variant="slideLeft">&ldquo;I&rsquo;d find you. I&rsquo;d choose you.&rdquo;</AnimatedText>
+          <ShimmerText delay={0.5} revealed={revealed.s4} extraStyle={{ fontSize: 'clamp(1.6rem, 4.2vw, 2.6rem)' }}>&ldquo;Again and again and again.&rdquo;</ShimmerText>
+          <RevealDivider revealed={revealed.s4} delay={0.65} />
+          <AnimatedText delay={0.8} revealed={revealed.s4} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
         </AnimatedSection>
 
-        {/* S5 */}
+        {/* S5 — Moon reveal */}
         <AnimatedSection
           className="sec-5" id="s5" bgId="bgr5"
           onClick={(e) => boom(e, 'moon')}
           particleType="star" particleCount={25}
           particleColors={['#7070a0', '#a090b8', '#c9995a', '#e8c98a', '#fff9f6']}
-          surpriseType="moon" revealed={revealed.s5}
-          onReveal={(e) => handleReveal('s5', 'moon', e)}
+          sealType="moon" revealed={revealed.s5}
+          onReveal={(e) => handleReveal('s5', e)}
         >
-          <div className="moon-deco">🌙</div>
-          <AnimatedText className="hero arabic" delay={0}>الماضى اية الماضى مين نسيت ف حضنك إلى شوفتة من السنين ♥</AnimatedText>
-          <div className="div">✦</div>
-          <AnimatedText className="arabic" delay={0.4}>انت قمري والقاف عين وإذا غابت العين ابدلنا الميم بالدال ♥</AnimatedText>
-          <div className="div">✦</div>
-          <AnimatedText className="arabic" delay={0.7}>ويكفينى من هذا العمر انى حظيت بك ♥</AnimatedText>
-          <div className="div">✦</div>
-          <AnimatedText delay={1} extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <motion.div
+            className="moon-deco"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={revealed.s5 ? { opacity: 0.15, scale: 1 } : { opacity: 0, scale: 0 }}
+            transition={{ duration: 1.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >🌙</motion.div>
+          <AnimatedText className="hero arabic" delay={0} revealed={revealed.s5} variant="slideRight">الماضى اية الماضى مين نسيت ف حضنك إلى شوفتة من السنين ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={0.3} />
+          <AnimatedText className="arabic" delay={0.45} revealed={revealed.s5} variant="slideRight">انت قمري والقاف عين وإذا غابت العين ابدلنا الميم بالدال ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={0.55} />
+          <AnimatedText className="arabic" delay={0.65} revealed={revealed.s5} variant="slideRight">ويكفينى من هذا العمر انى حظيت بك ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={0.75} />
+          <AnimatedText delay={0.9} revealed={revealed.s5} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
         </AnimatedSection>
 
-        {/* S6 */}
+        {/* S6 — Cake reveal */}
         <AnimatedSection
           className="sec-6" id="s6" bgId="bgr6"
           onClick={(e) => boom(e, 'cake')}
           particleType="heart" particleCount={22}
           particleColors={['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a']}
-          surpriseType="cake" revealed={revealed.s6}
-          onReveal={(e) => handleReveal('s6', 'cake', e)}
+          sealType="cake" revealed={revealed.s6}
+          onReveal={(e) => handleReveal('s6', e)}
         >
-          <ShimmerText extraStyle={{ fontSize: 'clamp(2.2rem, 5.5vw, 4rem)', fontStyle: 'italic' }}>&ldquo;Here&rsquo;s to you, here&rsquo;s to us&rdquo;</ShimmerText>
-          <div className="div">✦</div>
-          <AnimatedText delay={0.3}>&ldquo;To every laugh we shared, every moment we lived&rdquo;</AnimatedText>
-          <AnimatedText delay={0.5}>&ldquo;To all the birthdays yet to come —&rdquo;</AnimatedText>
-          <AnimatedText delay={0.7}>&ldquo;may I spend every single one by your side&rdquo;</AnimatedText>
-          <div className="div">✦</div>
-          <ShimmerText extraStyle={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)', fontStyle: 'italic' }}>&ldquo;Happy Birthday, my love&rdquo;</ShimmerText>
-          <AnimatedText delay={1} extraStyle={{ fontSize: '.78rem', opacity: '.4', letterSpacing: '.2em', marginTop: '.8rem' }}>tap anywhere</AnimatedText>
+          <ShimmerText delay={0} revealed={revealed.s6} extraStyle={{ fontSize: 'clamp(2.2rem, 5.5vw, 4rem)', fontStyle: 'italic' }}>&ldquo;Here&rsquo;s to you, here&rsquo;s to us&rdquo;</ShimmerText>
+          <RevealDivider revealed={revealed.s6} delay={0.2} />
+          <AnimatedText delay={0.35} revealed={revealed.s6} variant="zoomIn">&ldquo;To every laugh we shared, every moment we lived&rdquo;</AnimatedText>
+          <AnimatedText delay={0.5} revealed={revealed.s6} variant="zoomIn">&ldquo;To all the birthdays yet to come —&rdquo;</AnimatedText>
+          <AnimatedText delay={0.65} revealed={revealed.s6} variant="zoomIn">&ldquo;may I spend every single one by your side&rdquo;</AnimatedText>
+          <RevealDivider revealed={revealed.s6} delay={0.75} />
+          <ShimmerText delay={0.85} revealed={revealed.s6} extraStyle={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)', fontStyle: 'italic' }}>&ldquo;Happy Birthday, my love&rdquo;</ShimmerText>
+          <AnimatedText delay={1.1} revealed={revealed.s6} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: '.4', letterSpacing: '.2em', marginTop: '.8rem' }}>tap anywhere</AnimatedText>
         </AnimatedSection>
 
         <footer className="site-footer">

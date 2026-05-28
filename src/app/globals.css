@@ -348,24 +348,12 @@ body {
     opacity: 0.7;
     transform: scale(1);
   }
-  15% {
-    opacity: 0.2;
-  }
-  25% {
-    opacity: 0.8;
-  }
-  40% {
-    opacity: 0.15;
-  }
-  55% {
-    opacity: 0.65;
-  }
-  70% {
-    opacity: 0.1;
-  }
-  85% {
-    opacity: 0.55;
-  }
+  15% { opacity: 0.2; }
+  25% { opacity: 0.8; }
+  40% { opacity: 0.15; }
+  55% { opacity: 0.65; }
+  70% { opacity: 0.1; }
+  85% { opacity: 0.55; }
   100% {
     opacity: 0;
     transform: translateY(-110vh) scale(0.6);
@@ -470,7 +458,6 @@ body {
   width: 100%;
   text-align: center;
   padding: 3rem 2rem;
-  will-change: transform, opacity;
 }
 
 /* ── Lines (text) ── */
@@ -546,9 +533,9 @@ body {
 .czone { position: absolute; inset: 0; z-index: 4; cursor: none; }
 
 /* ════════════════════════════
-   SURPRISE REVEAL BUTTON
+   SEALED REVEAL — DRAMATIC
 ════════════════════════════ */
-.surprise-reveal {
+.sealed-reveal {
   position: absolute;
   inset: 0;
   z-index: 10;
@@ -557,53 +544,205 @@ body {
   align-items: center;
   justify-content: center;
   cursor: none;
-  gap: 1.5rem;
+  gap: 0;
 }
 
-.surprise-icon {
-  font-size: clamp(4rem, 12vw, 8rem);
+.sealed-ring-container {
+  position: absolute;
+  width: clamp(260px, 45vw, 380px);
+  height: clamp(260px, 45vw, 380px);
+  pointer-events: none;
+}
+
+.sealed-ring-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ring-outer {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: -8px;
+}
+
+.ring-inner {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(200px, 35vw, 300px);
+  height: clamp(200px, 35vw, 300px);
+  margin-top: -8px;
+}
+
+.sealed-icon {
+  font-size: clamp(5rem, 14vw, 9rem);
   line-height: 1;
-  filter: drop-shadow(0 0 30px currentColor);
+  filter: drop-shadow(0 0 40px currentColor);
   user-select: none;
   transition: transform 0.2s ease;
+  position: relative;
+  z-index: 2;
 }
 
-.surprise-reveal:hover .surprise-icon {
-  transform: scale(1.15) !important;
+.sealed-reveal:hover .sealed-icon {
+  transform: scale(1.18) !important;
 }
 
-.surprise-reveal:active .surprise-icon {
-  transform: scale(0.9) !important;
+.sealed-reveal:active .sealed-icon {
+  transform: scale(0.88) !important;
 }
 
-.surprise-label {
-  font-family: var(--font-cormorant);
-  font-size: 0.8rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--petal-pink);
+/* Mini floating particles around icon */
+.sealed-mini-particles {
+  position: absolute;
+  width: clamp(260px, 50vw, 400px);
+  height: clamp(260px, 50vw, 400px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: -20px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sealed-mini-p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 1.2rem;
+  transform: translate(-50%, -50%) rotate(var(--angle)) translateY(calc(-1 * var(--distance)));
+  opacity: 0;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* Label with decorative lines */
+.sealed-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 2;
   user-select: none;
 }
 
-.sec-2 .surprise-label { color: var(--rose-deep); }
-.sec-4 .surprise-label { color: var(--gold); }
-.sec-5 .surprise-label { color: #a090b8; }
+.sealed-label-text {
+  font-family: var(--font-cormorant);
+  font-size: 0.8rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--petal-pink);
+  white-space: nowrap;
+}
 
-.surprise-ring {
+.sealed-label-line {
+  width: 40px;
+  height: 1px;
+  background: var(--petal-pink);
+  opacity: 0.3;
+}
+
+.sec-2 .sealed-label-text { color: var(--rose-deep); }
+.sec-2 .sealed-label-line { background: var(--rose-deep); }
+.sec-4 .sealed-label-text { color: var(--gold); }
+.sec-4 .sealed-label-line { background: var(--gold); }
+.sec-5 .sealed-label-text { color: #a090b8; }
+.sec-5 .sealed-label-line { background: #a090b8; }
+
+/* Background glow */
+.sealed-glow {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: clamp(120px, 30vw, 200px);
-  height: clamp(120px, 30vw, 200px);
+  width: clamp(300px, 60vw, 500px);
+  height: clamp(300px, 60vw, 500px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  margin-top: -15px;
+}
+
+/* Pulsing auras */
+.sealed-aura {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(140px, 30vw, 220px);
+  height: clamp(140px, 30vw, 220px);
   border-radius: 50%;
   border: 1.5px solid;
   pointer-events: none;
+  z-index: 0;
+  margin-top: -15px;
 }
 
-.sec-2 .surprise-icon { color: var(--rose-deep); }
-.sec-4 .surprise-icon { color: var(--gold); }
-.sec-5 .surprise-icon { color: #a090b8; }
+.sealed-aura-2 {
+  width: clamp(170px, 36vw, 270px);
+  height: clamp(170px, 36vw, 270px);
+}
+
+/* Section-specific sealed icon colors */
+.sec-2 .sealed-icon { color: var(--rose-deep); }
+.sec-4 .sealed-icon { color: var(--gold); }
+.sec-5 .sealed-icon { color: #a090b8; }
+
+/* ════════════════════════════
+   CONFETTI PARTICLES
+════════════════════════════ */
+.confetti-p {
+  position: fixed;
+  pointer-events: none;
+  z-index: 900;
+  opacity: 0;
+  animation: confettiFly 1.8s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+@keyframes confettiFly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.15);
+  }
+}
+
+/* ════════════════════════════
+   REVEAL FLASH
+════════════════════════════ */
+.reveal-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 850;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.reveal-flash.active {
+  opacity: 0.4;
+}
+
+/* ════════════════════════════
+   SCREEN SHAKE
+════════════════════════════ */
+.screen-shake {
+  animation: screenShake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes screenShake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(3px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
 
 /* ════════════════════════════
    WAVE DIVIDERS
@@ -633,7 +772,6 @@ body {
   top: 8%;
   right: 10%;
   font-size: 4rem;
-  opacity: 0.15;
   filter: drop-shadow(0 0 30px rgba(201, 153, 90, 0.5));
   animation: moonFloat 8s ease-in-out infinite;
   pointer-events: none;
@@ -798,4 +936,11 @@ body {
   .deco-2 { width: 100px; height: 100px; bottom: -30px; left: -30px; }
   .moon-deco { font-size: 2.5rem; top: 5%; right: 5%; }
   .wave-divider svg { height: 40px; }
+  .sealed-ring-container { width: 220px; height: 220px; }
+  .ring-inner { width: 170px; height: 170px; }
+  .sealed-icon { font-size: 4rem; }
+  .sealed-glow { width: 250px; height: 250px; }
+  .sealed-aura { width: 120px; height: 120px; }
+  .sealed-aura-2 { width: 150px; height: 150px; }
+  .sealed-mini-particles { width: 220px; height: 220px; }
 }
