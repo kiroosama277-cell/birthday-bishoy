@@ -44,7 +44,7 @@ body {
 #cursor svg { width: 100%; height: 100%; }
 
 /* ════════════════════════════
-   OVERLAY STAGES — ENHANCED TRANSITIONS
+   OVERLAY STAGES
 ════════════════════════════ */
 .stage {
   position: fixed;
@@ -61,7 +61,6 @@ body {
     filter 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Outgoing stage slides UP + blurs + fades */
 .stage.gone {
   opacity: 0;
   pointer-events: none;
@@ -71,7 +70,6 @@ body {
 
 .stage.hidden { display: none !important; }
 
-/* Incoming stage starts from below and rises in */
 .stage.entering {
   animation: stageEnter 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -235,7 +233,7 @@ body {
   padding: 8rem 2rem;
 }
 
-/* backgrounds */
+/* backgrounds — each section has its own atmosphere */
 .sec-1 { background: radial-gradient(ellipse 120% 100% at 25% 60%, #3d1010 0%, #0e0404 70%); }
 .sec-2 { background: linear-gradient(160deg, #f5ebe4 0%, #e8d0c5 50%, #d4b8b0 100%); }
 .sec-3 { background: radial-gradient(ellipse 100% 120% at 75% 40%, #4a1212 0%, #0e0404 65%); }
@@ -244,52 +242,227 @@ body {
 .sec-6 { background: radial-gradient(ellipse 130% 100% at 50% 55%, #4a1010 0%, #0e0404 65%); }
 
 /* ════════════════════════════
-   SILKY SMOOTH SECTION TRANSITIONS
+   BACKGROUND ROSES — PARALLAX
 ════════════════════════════ */
-
-/* Top fade — blends into previous section */
-.sec::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 40vh;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(to bottom, var(--dark), transparent);
-}
-.sec-2::before {
-  background: linear-gradient(to bottom, #d4b8b0, transparent);
-}
-
-/* Bottom fade — blends into next section */
-.sec::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 40vh;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(to top, var(--dark), transparent);
-}
-.sec-2::after {
-  background: linear-gradient(to top, #d4b8b0, transparent);
-}
-
-/* ── Background zoom on scroll ── */
 .bg-roses {
   position: absolute;
-  inset: -5%;
+  inset: -10%;
   pointer-events: none;
   overflow: hidden;
-  opacity: 0.18;
   will-change: transform, opacity;
-  transition: transform 0.1s linear, opacity 0.4s ease;
-}
-.sec.in-view .bg-roses {
-  opacity: 0.22;
 }
 
-/* ── Content entrance animation ── */
+/* ════════════════════════════
+   FLOATING PARTICLES
+════════════════════════════ */
+.floating-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.fp {
+  position: absolute;
+  opacity: 0;
+  animation: floatUp linear infinite;
+  will-change: transform, opacity;
+}
+
+/* Petal — soft rounded shape */
+.fp-petal {
+  border-radius: 50% 0 50% 0;
+  opacity: 0;
+  animation: floatUpPetal linear infinite;
+}
+
+/* Heart — text-based */
+.fp-heart {
+  font-size: 1em;
+  line-height: 1;
+  animation: floatUpHeart linear infinite;
+}
+
+/* Star — small text */
+.fp-star {
+  font-size: 1em;
+  line-height: 1;
+  animation: floatUpStar linear infinite;
+  text-shadow: 0 0 6px currentColor;
+}
+
+/* Sparkle — diamond shape */
+.fp-sparkle {
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: floatUpSparkle linear infinite;
+}
+
+@keyframes floatUpPetal {
+  0% {
+    opacity: 0;
+    transform: translateY(0) translateX(0) rotate(0deg) scale(0.3);
+  }
+  10% {
+    opacity: 0.5;
+    transform: translateY(-8vh) translateX(calc(var(--drift) * 0.2)) rotate(45deg) scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: translateY(-50vh) translateX(var(--drift)) rotate(180deg) scale(0.9);
+  }
+  90% {
+    opacity: 0.15;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100vh) translateX(calc(var(--drift) * 0.5)) rotate(360deg) scale(0.5);
+  }
+}
+
+@keyframes floatUpHeart {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.2);
+  }
+  8% {
+    opacity: 0.6;
+    transform: translateY(-5vh) scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: translateY(-50vh) translateX(var(--drift)) scale(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-105vh) translateX(calc(var(--drift) * 0.3)) scale(0.4);
+  }
+}
+
+@keyframes floatUpStar {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  5% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  15% {
+    opacity: 0.2;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  40% {
+    opacity: 0.15;
+  }
+  55% {
+    opacity: 0.65;
+  }
+  70% {
+    opacity: 0.1;
+  }
+  85% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-110vh) scale(0.6);
+  }
+}
+
+@keyframes floatUpSparkle {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0) rotate(0deg);
+  }
+  8% {
+    opacity: 0.65;
+    transform: translateY(-6vh) scale(1) rotate(30deg);
+  }
+  30% {
+    opacity: 0.15;
+    transform: translateY(-30vh) rotate(120deg) scale(0.8);
+  }
+  50% {
+    opacity: 0.55;
+    transform: translateY(-55vh) rotate(200deg) scale(1.1);
+  }
+  75% {
+    opacity: 0.1;
+    transform: translateY(-80vh) rotate(300deg) scale(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-108vh) rotate(400deg) scale(0.3);
+  }
+}
+
+/* ════════════════════════════
+   DECORATIVE ROTATING ELEMENTS
+════════════════════════════ */
+.deco {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  will-change: transform;
+}
+
+.deco-1 {
+  width: 300px;
+  height: 300px;
+  top: -80px;
+  right: -80px;
+  border: 1px solid rgba(232, 137, 122, 0.08);
+  border-radius: 50%;
+}
+
+.deco-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -60px;
+  left: -60px;
+  border: 1px solid rgba(201, 153, 90, 0.06);
+  border-radius: 50%;
+}
+
+.sec-2 .deco-1 { border-color: rgba(192, 70, 60, 0.08); }
+.sec-2 .deco-2 { border-color: rgba(107, 26, 26, 0.06); }
+.sec-5 .deco-1 { border-color: rgba(112, 112, 160, 0.1); }
+.sec-5 .deco-2 { border-color: rgba(160, 144, 184, 0.08); }
+
+/* ════════════════════════════
+   SECTION GLOW
+════════════════════════════ */
+.sec-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: glowPulse 6s ease-in-out infinite;
+}
+
+.sec-1 .sec-glow { background: radial-gradient(circle, rgba(192, 70, 60, 0.06) 0%, transparent 70%); }
+.sec-2 .sec-glow { background: radial-gradient(circle, rgba(232, 137, 122, 0.08) 0%, transparent 70%); }
+.sec-3 .sec-glow { background: radial-gradient(circle, rgba(139, 42, 42, 0.06) 0%, transparent 70%); }
+.sec-4 .sec-glow { background: radial-gradient(circle, rgba(201, 153, 90, 0.06) 0%, transparent 70%); }
+.sec-5 .sec-glow { background: radial-gradient(circle, rgba(112, 112, 160, 0.08) 0%, transparent 70%); }
+.sec-6 .sec-glow { background: radial-gradient(circle, rgba(192, 70, 60, 0.08) 0%, transparent 70%); }
+
+@keyframes glowPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.6; }
+}
+
+/* ════════════════════════════
+   SECTION INNER CONTENT
+════════════════════════════ */
 .sec-inner {
   position: relative;
   z-index: 3;
@@ -298,45 +471,11 @@ body {
   text-align: center;
   padding: 3rem 2rem;
   will-change: transform, opacity;
-  /* Start state — content is below and transparent */
-  opacity: 0;
-  transform: translateY(50px) scale(0.97);
-  filter: blur(3px);
-  transition:
-    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 1s cubic-bezier(0.16, 1, 0.3, 1);
-}
-/* When section is in view — content floats in */
-.sec.in-view .sec-inner {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-}
-
-/* ── Decorative transition wave between sections ── */
-.sec-divider {
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  z-index: 3;
-  pointer-events: none;
-  overflow: hidden;
-  line-height: 0;
-}
-.sec-divider svg {
-  width: 100%;
-  height: 80px;
-  display: block;
 }
 
 /* ── Lines (text) ── */
 .ln {
   display: block;
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.95s ease, transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
   margin-bottom: 1.5rem;
   font-size: clamp(1.1rem, 2.6vw, 1.55rem);
   font-weight: 300;
@@ -359,11 +498,36 @@ body {
   line-height: 2.4;
   color: var(--cream);
 }
-.ln.visible { opacity: 1; transform: translateY(0); }
 
 /* dark section text overrides */
 .sec-2 .ln { color: #3a1010; }
 .sec-2 .ln.hero { color: var(--rose-deep); }
+
+/* ════════════════════════════
+   SHIMMER TEXT (gold animation)
+════════════════════════════ */
+.shimmer-text {
+  background: linear-gradient(
+    120deg,
+    var(--gold) 0%,
+    var(--gold-light) 25%,
+    #fff9f6 50%,
+    var(--gold-light) 75%,
+    var(--gold) 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(201, 153, 90, 0.35));
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 50%; }
+  50% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
 
 /* dividers */
 .div {
@@ -381,7 +545,86 @@ body {
 /* click zone */
 .czone { position: absolute; inset: 0; z-index: 4; cursor: none; }
 
-/* ── POPUP ANIMATIONS ── */
+/* ════════════════════════════
+   WAVE DIVIDERS
+════════════════════════════ */
+.wave-divider {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  line-height: 0;
+  margin-top: -1px;
+  margin-bottom: -1px;
+}
+.wave-divider svg {
+  width: 100%;
+  height: 80px;
+  display: block;
+}
+.wave-divider.flip {
+  transform: scaleY(-1);
+}
+
+/* ════════════════════════════
+   MOON DECORATION (S5)
+════════════════════════════ */
+.moon-deco {
+  position: absolute;
+  top: 8%;
+  right: 10%;
+  font-size: 4rem;
+  opacity: 0.15;
+  filter: drop-shadow(0 0 30px rgba(201, 153, 90, 0.5));
+  animation: moonFloat 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes moonFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+/* ════════════════════════════
+   NAVIGATION DOTS
+════════════════════════════ */
+.nav-dots {
+  position: fixed;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(232, 137, 122, 0.35);
+  background: transparent;
+  cursor: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+}
+
+.nav-dot:hover {
+  border-color: rgba(232, 137, 122, 0.7);
+  transform: scale(1.3);
+}
+
+.nav-dot.active {
+  background: var(--rose-light);
+  border-color: var(--rose-light);
+  box-shadow: 0 0 12px rgba(232, 137, 122, 0.5);
+  transform: scale(1.2);
+}
+
+/* ════════════════════════════
+   POPUP ANIMATIONS
+════════════════════════════ */
 .pop {
   position: fixed;
   pointer-events: none;
@@ -412,9 +655,9 @@ body {
   font-size: 5rem;
   opacity: 0;
   filter: drop-shadow(0 0 30px rgba(201, 153, 90, 0.9));
-  animation: moonFloat 3s ease forwards;
+  animation: moonFloatPop 3s ease forwards;
 }
-@keyframes moonFloat {
+@keyframes moonFloatPop {
   0%   { opacity: 0; transform: scale(0.15) translateY(25px); }
   28%  { opacity: 1; transform: scale(1.1) translateY(-12px); }
   75%  { opacity: 0.85; }
@@ -484,14 +727,15 @@ body {
 .site-footer p { font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(232, 137, 122, 0.3); font-family: var(--font-cormorant); }
 
 /* ════════════════════════════
-   AMBIENT PARTICLES
-════════════════════════════ */
-@keyframes softGlow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
-
-/* ════════════════════════════
    RESPONSIVE
 ════════════════════════════ */
 @media (max-width: 600px) {
   .sec-inner { padding: 2rem 1rem; }
   .myb-row { padding: 0.6rem 2rem; }
+  .nav-dots { right: 0.5rem; gap: 8px; }
+  .nav-dot { width: 8px; height: 8px; }
+  .deco-1 { width: 150px; height: 150px; top: -40px; right: -40px; }
+  .deco-2 { width: 100px; height: 100px; bottom: -30px; left: -30px; }
+  .moon-deco { font-size: 2.5rem; top: 5%; right: 5%; }
+  .wave-divider svg { height: 40px; }
 }

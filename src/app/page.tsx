@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { motion, useScroll, useTransform, useInView } from 'framer-motion'
+import Lenis from 'lenis'
 
 /* ════════════════════════════
    SVG ROSE BUILDER
@@ -151,79 +153,6 @@ function boom(e: React.MouseEvent, type: string) {
 }
 
 /* ════════════════════════════
-   SCROLL EFFECTS — ENHANCED
-════════════════════════════ */
-function useScrollEffects(mainVisible: boolean) {
-  useEffect(() => {
-    if (!mainVisible) return
-
-    // 1) Add "in-view" class to sections for CSS-driven entrance
-    const sectionObs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add('in-view')
-          } else {
-            e.target.classList.remove('in-view')
-          }
-        })
-      },
-      { threshold: 0.15, rootMargin: '-5% 0px -5% 0px' }
-    )
-    document.querySelectorAll('.sec').forEach((el) => sectionObs.observe(el))
-
-    // 2) Text line reveal (staggered per line)
-    const textObs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.querySelectorAll('.ln').forEach((el, i) => {
-              setTimeout(() => el.classList.add('visible'), i * 200)
-            })
-          }
-        })
-      },
-      { threshold: 0.12 }
-    )
-    document.querySelectorAll('.sec-inner').forEach((el) => textObs.observe(el))
-
-    // 3) Parallax + zoom on scroll
-    let ticking = false
-    const handleScroll = () => {
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(() => {
-        ticking = false
-        document.querySelectorAll('.sec').forEach((sec) => {
-          const rect = sec.getBoundingClientRect()
-          const inView = rect.top < window.innerHeight && rect.bottom > 0
-          if (!inView) return
-
-          const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height)
-
-          // Background roses: slow parallax + subtle zoom
-          const bgRoses = sec.querySelector('.bg-roses') as HTMLElement
-          if (bgRoses) {
-            const parallaxY = (progress - 0.5) * -30
-            const scaleVal = 1 + Math.max(0, 1 - Math.abs(progress - 0.5) * 2.5) * 0.06
-            bgRoses.style.transform = `translateY(${parallaxY}px) scale(${scaleVal})`
-          }
-        })
-      })
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
-
-    return () => {
-      sectionObs.disconnect()
-      textObs.disconnect()
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [mainVisible])
-}
-
-/* ════════════════════════════
    BACKGROUND ROSES BUILDER
 ════════════════════════════ */
 function buildBgRosesHTML(id: string, n: number, colors: string[][]) {
@@ -244,10 +173,232 @@ function buildBgRosesHTML(id: string, n: number, colors: string[][]) {
 }
 
 /* ════════════════════════════
+   FLOATING PARTICLES COMPONENT
+════════════════════════════ */
+function FloatingParticles({ count = 15, colors = ['#e8897a', '#f2c4b8', '#c9995a'], type = 'petal' }: { count?: number; colors?: string[]; type?: 'petal' | 'star' | 'heart' | 'sparkle' }) {
+  const particles = useRef(
+    Array.from({ length: count }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      delay: Math.random() * 8,
+      duration: 6 + Math.random() * 10,
+      size: type === 'heart' ? 10 + Math.random() * 14 : type === 'sparkle' ? 6 + Math.random() * 10 : 4 + Math.random() * 8,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      drift: -30 + Math.random() * 60,
+      startY: Math.random() * 100,
+    }))
+  )
+
+  return (
+    <div className="floating-particles">
+      {particles.current.map((p) => (
+        <div
+          key={p.id}
+          className={`fp fp-${type}`}
+          style={{
+            left: `${p.x}%`,
+            top: `${p.startY}%`,
+            animationDelay: `${p.delay}s`,
+            animationDuration: `${p.duration}s`,
+            width: p.size,
+            height: p.size,
+            color: p.color,
+            '--drift': `${p.drift}px`,
+          } as React.CSSProperties}
+        >
+          {type === 'heart' && '♥'}
+          {type === 'sparkle' && '✦'}
+          {type === 'star' && '⋆'}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/* ════════════════════════════
+   ANIMATED SECTION WRAPPER
+════════════════════════════ */
+function AnimatedSection({
+  children,
+  className,
+  id,
+  bgId,
+  onClick,
+  particleType = 'petal',
+  particleCount = 12,
+  particleColors,
+}: {
+  children: React.ReactNode
+  className: string
+  id: string
+  bgId: string
+  onClick?: (e: React.MouseEvent) => void
+  particleType?: 'petal' | 'star' | 'heart' | 'sparkle'
+  particleCount?: number
+  particleColors?: string[]
+}) {
+  const ref = useRef<HTMLElement>(null)
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start end', 'end start'],
+  })
+
+  // Parallax for background
+  const bgY = useTransform(scrollYProgress, [0, 1], [100, -100])
+  const bgScale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [1.15, 1, 1, 1.15])
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.1, 0.28, 0.28, 0.1])
+
+  // Content entrance
+  const contentY = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [100, 0, 0, -80])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.12, 0.85, 1], [0, 1, 1, 0])
+  const contentScale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.9, 1, 1, 0.93])
+
+  // Decorative elements rotation
+  const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 60])
+  const rotate2 = useTransform(scrollYProgress, [0, 1], [0, -45])
+
+  return (
+    <motion.section
+      ref={ref}
+      className={`sec ${className}`}
+      id={id}
+    >
+      {/* Parallax background roses */}
+      <motion.div
+        className="bg-roses"
+        id={bgId}
+        style={{ y: bgY, scale: bgScale, opacity: bgOpacity }}
+      />
+
+      {/* Floating particles */}
+      <FloatingParticles count={particleCount} type={particleType} colors={particleColors} />
+
+      {/* Decorative rotating elements */}
+      <motion.div className="deco deco-1" style={{ rotate: rotate1 }} />
+      <motion.div className="deco deco-2" style={{ rotate: rotate2 }} />
+
+      {/* Section glow */}
+      <div className="sec-glow" />
+
+      {/* Click zone */}
+      {onClick && <div className="czone" onClick={onClick} />}
+
+      {/* Animated content */}
+      <motion.div
+        className="sec-inner"
+        style={{ y: contentY, opacity: contentOpacity, scale: contentScale }}
+      >
+        {children}
+      </motion.div>
+    </motion.section>
+  )
+}
+
+/* ════════════════════════════
+   ANIMATED TEXT LINE
+════════════════════════════ */
+function AnimatedText({ children, className = '', delay = 0, extraStyle }: { children: React.ReactNode; className?: string; delay?: number; extraStyle?: React.CSSProperties }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const isInView = useInView(ref, { amount: 0.3, once: true })
+
+  return (
+    <motion.span
+      ref={ref}
+      className={`ln ${className}`}
+      style={extraStyle}
+      initial={{ opacity: 0, y: 40, filter: 'blur(6px)' }}
+      animate={isInView ? { opacity: extraStyle?.opacity ?? 1, y: 0, filter: 'blur(0px)' } : {}}
+      transition={{ duration: 1, delay, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.span>
+  )
+}
+
+/* ════════════════════════════
+   SHIMMER TEXT (for gold effects)
+════════════════════════════ */
+function ShimmerText({ children, className = '', extraStyle }: { children: React.ReactNode; className?: string; extraStyle?: React.CSSProperties }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const isInView = useInView(ref, { amount: 0.3, once: true })
+
+  return (
+    <motion.span
+      ref={ref}
+      className={`ln shimmer-text ${className}`}
+      style={extraStyle}
+      initial={{ opacity: 0, y: 50, scale: 0.85 }}
+      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+      transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.span>
+  )
+}
+
+/* ════════════════════════════
+   WAVE DIVIDER
+════════════════════════════ */
+function WaveDivider({ flip = false, color = '#0e0404' }: { flip?: boolean; color?: string }) {
+  return (
+    <div className={`wave-divider ${flip ? 'flip' : ''}`}>
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <path
+          d="M0,60 C240,120 480,0 720,60 C960,120 1200,0 1440,60 L1440,120 L0,120 Z"
+          fill={color}
+        />
+      </svg>
+    </div>
+  )
+}
+
+/* ════════════════════════════
+   NAVIGATION DOTS
+════════════════════════════ */
+function NavDots() {
+  const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    const sections = document.querySelectorAll('.sec')
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = Array.from(sections).indexOf(entry.target)
+            if (idx >= 0) setActive(idx)
+          }
+        })
+      },
+      { threshold: 0.5 }
+    )
+    sections.forEach((s) => observer.observe(s))
+    return () => observer.disconnect()
+  }, [])
+
+  const scrollTo = (idx: number) => {
+    const sections = document.querySelectorAll('.sec')
+    sections[idx]?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  return (
+    <div className="nav-dots">
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <button
+          key={i}
+          className={`nav-dot ${active === i ? 'active' : ''}`}
+          onClick={() => scrollTo(i)}
+          aria-label={`Go to section ${i + 1}`}
+        />
+      ))}
+    </div>
+  )
+}
+
+/* ════════════════════════════
    MAIN PAGE COMPONENT
 ════════════════════════════ */
 export default function Home() {
-  // Stage: gift → roses → text → date → main
   const [stage, setStage] = useState<'gift' | 'roses' | 'text' | 'date' | 'main'>('gift')
   const [giftShaking, setGiftShaking] = useState(false)
   const [wordVisible, setWordVisible] = useState({ w1: false, w2: false, myb: false })
@@ -257,15 +408,34 @@ export default function Home() {
   const [mainVisible, setMainVisible] = useState(false)
   const [scrollHintVisible, setScrollHintVisible] = useState(false)
 
-  // Cursor
   const cursorRef = useRef<HTMLDivElement>(null)
-
-  // YouTube
   const ytPlayerRef = useRef<any>(null)
   const [musicPlaying, setMusicPlaying] = useState(false)
+  const lenisRef = useRef<Lenis | null>(null)
 
-  // Scroll effects
-  useScrollEffects(mainVisible)
+  // ═══ LENIS SMOOTH SCROLL ═══
+  useEffect(() => {
+    if (!mainVisible) return
+
+    const lenis = new Lenis({
+      duration: 1.8,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      touchMultiplier: 2,
+      infinite: false,
+    })
+    lenisRef.current = lenis
+
+    function raf(time: number) {
+      lenis.raf(time)
+      requestAnimationFrame(raf)
+    }
+    requestAnimationFrame(raf)
+
+    return () => {
+      lenis.destroy()
+      lenisRef.current = null
+    }
+  }, [mainVisible])
 
   // ═══ CUSTOM CURSOR ═══
   useEffect(() => {
@@ -507,95 +677,189 @@ export default function Home() {
         </button>
       )}
 
+      {/* ══ NAVIGATION DOTS ══ */}
+      {mainVisible && <NavDots />}
+
       {/* ══ MAIN CONTENT ══ */}
       <div id="main" className={mainVisible ? 'in' : ''}>
 
-        {/* S1 */}
-        <section className="sec sec-1" id="s1">
-          <div className="bg-roses" id="bgr1" />
-          <div className="czone" onClick={(e) => boom(e, 'teddy')} />
-          <div className="sec-inner">
-            <span className="ln hero">&ldquo;Happy Birthday, Bishoy&rdquo;</span>
-            <span className="ln">&ldquo;Today the world celebrates you — and so do I&rdquo;</span>
-            <span className="ln">&ldquo;But honestly? Every single day feels like your birthday to me&rdquo;</span>
-            <span className="ln">&ldquo;Because every day with you is a gift I never want to return&rdquo;</span>
-            <div className="div">✦</div>
-            <span className="ln" style={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</span>
-          </div>
-        </section>
+        {/* ── S1: HERO ── */}
+        <AnimatedSection
+          className="sec-1"
+          id="s1"
+          bgId="bgr1"
+          onClick={(e) => boom(e, 'teddy')}
+          particleType="petal"
+          particleCount={18}
+          particleColors={['#e8897a', '#f2c4b8', '#c0463c', '#fff9f6']}
+        >
+          <AnimatedText className="hero" delay={0}>
+            &ldquo;Happy Birthday, Bishoy&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.3}>
+            &ldquo;Today the world celebrates you — and so do I&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.5}>
+            &ldquo;But honestly? Every single day feels like your birthday to me&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.7}>
+            &ldquo;Because every day with you is a gift I never want to return&rdquo;
+          </AnimatedText>
+          <div className="div">✦</div>
+          <AnimatedText delay={1} extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>
+            tap anywhere
+          </AnimatedText>
+        </AnimatedSection>
 
-        {/* S2 */}
-        <section className="sec sec-2" id="s2">
-          <div className="bg-roses" id="bgr2" />
-          <div className="czone" onClick={(e) => boom(e, 'heart')} />
-          <div className="sec-inner">
-            <span className="ln hero">&ldquo;You didn&rsquo;t just walk into my life… you became it&rdquo;</span>
-            <span className="ln">&ldquo;Before you, I didn&rsquo;t know that someone could feel like home&rdquo;</span>
-            <span className="ln">&ldquo;Now I can&rsquo;t imagine a single day without your voice, your laugh, your presence&rdquo;</span>
-            <span className="ln">&ldquo;You changed everything — quietly, deeply, forever&rdquo;</span>
-            <div className="div">✦</div>
-            <span className="ln" style={{ fontSize: '.78rem', opacity: .35, letterSpacing: '.2em' }}>tap anywhere</span>
-          </div>
-        </section>
+        <WaveDivider color="#f5ebe4" />
 
-        {/* S3 */}
-        <section className="sec sec-3" id="s3">
-          <div className="bg-roses" id="bgr3" />
-          <div className="czone" onClick={(e) => boom(e, 'rose')} />
-          <div className="sec-inner">
-            <span className="ln hero">&ldquo;Every moment with you feels like home&rdquo;</span>
-            <span className="ln">&ldquo;The small moments, the silly ones, the ones no one else would understand&rdquo;</span>
-            <span className="ln">&ldquo;Those are my favorite chapters of my life&rdquo;</span>
-            <span className="ln">&ldquo;And you&rsquo;re the reason I love the story&rdquo;</span>
-            <div className="div">✦</div>
-            <span className="ln" style={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</span>
-          </div>
-        </section>
+        {/* ── S2: LIGHT ── */}
+        <AnimatedSection
+          className="sec-2"
+          id="s2"
+          bgId="bgr2"
+          onClick={(e) => boom(e, 'heart')}
+          particleType="heart"
+          particleCount={14}
+          particleColors={['#c0463c', '#e8897a', '#f2c4b8', '#8b2a2a']}
+        >
+          <AnimatedText className="hero sec2-text" delay={0}>
+            &ldquo;You didn&rsquo;t just walk into my life… you became it&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.3} className="sec2-text">
+            &ldquo;Before you, I didn&rsquo;t know that someone could feel like home&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.5} className="sec2-text">
+            &ldquo;Now I can&rsquo;t imagine a single day without your voice, your laugh, your presence&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.7} className="sec2-text">
+            &ldquo;You changed everything — quietly, deeply, forever&rdquo;
+          </AnimatedText>
+          <div className="div sec2-div">✦</div>
+          <AnimatedText delay={1} className="sec2-text" extraStyle={{ fontSize: '.78rem', opacity: .35, letterSpacing: '.2em' }}>
+            tap anywhere
+          </AnimatedText>
+        </AnimatedSection>
 
-        {/* S4 */}
-        <section className="sec sec-4" id="s4">
-          <div className="bg-roses" id="bgr4" />
-          <div className="czone" onClick={(e) => boom(e, 'stars')} />
-          <div className="sec-inner">
-            <span className="ln hero">&ldquo;You are my favorite person in every version of every story&rdquo;</span>
-            <span className="ln">&ldquo;In every timeline, every lifetime, every universe —&rdquo;</span>
-            <span className="ln">&ldquo;I&rsquo;d find you. I&rsquo;d choose you.&rdquo;</span>
-            <span className="ln gold-txt" style={{ fontSize: 'clamp(1.6rem, 4.2vw, 2.6rem)' }}>&ldquo;Again and again and again.&rdquo;</span>
-            <div className="div">✦</div>
-            <span className="ln" style={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</span>
-          </div>
-        </section>
+        <WaveDivider flip color="#0e0404" />
 
-        {/* S5 */}
-        <section className="sec sec-5" id="s5">
-          <div className="bg-roses" id="bgr5" />
-          <div className="czone" onClick={(e) => boom(e, 'moon')} />
-          <div className="sec-inner">
-            <span className="ln arabic">الماضى اية الماضى مين نسيت ف حضنك إلى شوفتة من السنين ♥</span>
-            <div className="div">✦</div>
-            <span className="ln arabic">انت قمري والقاف عين وإذا غابت العين ابدلنا الميم بالدال ♥</span>
-            <div className="div">✦</div>
-            <span className="ln arabic">ويكفينى من هذا العمر انى حظيت بك ♥</span>
-            <div className="div">✦</div>
-            <span className="ln" style={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</span>
-          </div>
-        </section>
+        {/* ── S3: DARK ROMANTIC ── */}
+        <AnimatedSection
+          className="sec-3"
+          id="s3"
+          bgId="bgr3"
+          onClick={(e) => boom(e, 'rose')}
+          particleType="petal"
+          particleCount={16}
+          particleColors={['#8b2a2a', '#c0463c', '#e8897a', '#f2c4b8']}
+        >
+          <AnimatedText className="hero" delay={0}>
+            &ldquo;Every moment with you feels like home&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.3}>
+            &ldquo;The small moments, the silly ones, the ones no one else would understand&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.5}>
+            &ldquo;Those are my favorite chapters of my life&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.7}>
+            &ldquo;And you&rsquo;re the reason I love the story&rdquo;
+          </AnimatedText>
+          <div className="div">✦</div>
+          <AnimatedText delay={1} extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>
+            tap anywhere
+          </AnimatedText>
+        </AnimatedSection>
 
-        {/* S6 */}
-        <section className="sec sec-6" id="s6">
-          <div className="bg-roses" id="bgr6" />
-          <div className="czone" onClick={(e) => boom(e, 'cake')} />
-          <div className="sec-inner">
-            <span className="ln gold-txt" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 4rem)', fontStyle: 'italic' }}>&ldquo;Here&rsquo;s to you, here&rsquo;s to us&rdquo;</span>
-            <div className="div">✦</div>
-            <span className="ln">&ldquo;To every laugh we shared, every moment we lived&rdquo;</span>
-            <span className="ln">&ldquo;To all the birthdays yet to come —&rdquo;</span>
-            <span className="ln">&ldquo;may I spend every single one by your side&rdquo;</span>
-            <div className="div">✦</div>
-            <span className="ln gold-txt" style={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)', fontStyle: 'italic' }}>&ldquo;Happy Birthday, my love&rdquo;</span>
-            <span className="ln" style={{ fontSize: '.78rem', opacity: '.4', letterSpacing: '.2em', marginTop: '.8rem' }}>tap anywhere</span>
-          </div>
-        </section>
+        {/* ── S4: GOLDEN ── */}
+        <AnimatedSection
+          className="sec-4"
+          id="s4"
+          bgId="bgr4"
+          onClick={(e) => boom(e, 'stars')}
+          particleType="sparkle"
+          particleCount={20}
+          particleColors={['#c9995a', '#e8c98a', '#f2c4b8', '#fff9f6', '#e8897a']}
+        >
+          <AnimatedText className="hero" delay={0}>
+            &ldquo;You are my favorite person in every version of every story&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.3}>
+            &ldquo;In every timeline, every lifetime, every universe —&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.5}>
+            &ldquo;I&rsquo;d find you. I&rsquo;d choose you.&rdquo;
+          </AnimatedText>
+          <ShimmerText extraStyle={{ fontSize: 'clamp(1.6rem, 4.2vw, 2.6rem)' }}>
+            &ldquo;Again and again and again.&rdquo;
+          </ShimmerText>
+          <div className="div">✦</div>
+          <AnimatedText delay={1} extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>
+            tap anywhere
+          </AnimatedText>
+        </AnimatedSection>
+
+        {/* ── S5: ARABIC NIGHT ── */}
+        <AnimatedSection
+          className="sec-5"
+          id="s5"
+          bgId="bgr5"
+          onClick={(e) => boom(e, 'moon')}
+          particleType="star"
+          particleCount={25}
+          particleColors={['#7070a0', '#a090b8', '#c9995a', '#e8c98a', '#fff9f6']}
+        >
+          {/* Moon decoration */}
+          <div className="moon-deco">🌙</div>
+
+          <AnimatedText className="hero arabic" delay={0}>
+            الماضى اية الماضى مين نسيت ف حضنك إلى شوفتة من السنين ♥
+          </AnimatedText>
+          <div className="div">✦</div>
+          <AnimatedText className="arabic" delay={0.4}>
+            انت قمري والقاف عين وإذا غابت العين ابدلنا الميم بالدال ♥
+          </AnimatedText>
+          <div className="div">✦</div>
+          <AnimatedText className="arabic" delay={0.7}>
+            ويكفينى من هذا العمر انى حظيت بك ♥
+          </AnimatedText>
+          <div className="div">✦</div>
+          <AnimatedText delay={1} extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>
+            tap anywhere
+          </AnimatedText>
+        </AnimatedSection>
+
+        {/* ── S6: FINALE ── */}
+        <AnimatedSection
+          className="sec-6"
+          id="s6"
+          bgId="bgr6"
+          onClick={(e) => boom(e, 'cake')}
+          particleType="heart"
+          particleCount={22}
+          particleColors={['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a']}
+        >
+          <ShimmerText extraStyle={{ fontSize: 'clamp(2.2rem, 5.5vw, 4rem)', fontStyle: 'italic' }}>
+            &ldquo;Here&rsquo;s to you, here&rsquo;s to us&rdquo;
+          </ShimmerText>
+          <div className="div">✦</div>
+          <AnimatedText delay={0.3}>
+            &ldquo;To every laugh we shared, every moment we lived&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.5}>
+            &ldquo;To all the birthdays yet to come —&rdquo;
+          </AnimatedText>
+          <AnimatedText delay={0.7}>
+            &ldquo;may I spend every single one by your side&rdquo;
+          </AnimatedText>
+          <div className="div">✦</div>
+          <ShimmerText extraStyle={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)', fontStyle: 'italic' }}>
+            &ldquo;Happy Birthday, my love&rdquo;
+          </ShimmerText>
+          <AnimatedText delay={1} extraStyle={{ fontSize: '.78rem', opacity: '.4', letterSpacing: '.2em', marginTop: '.8rem' }}>
+            tap anywhere
+          </AnimatedText>
+        </AnimatedSection>
 
         {/* Footer */}
         <footer className="site-footer">
