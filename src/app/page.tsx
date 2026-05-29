@@ -662,7 +662,7 @@ export default function Home() {
       </div>
 
       {/* ══ STAGE 1: GIFT ══ */}
-      <div className={`stage ${stage !== 'gift' && !giftOpened ? 'gone' : stage === 'gift' || giftOpened ? 'entering' : 'gone'}`} id="stGift" style={{ zIndex: stage === 'roses' ? 501 : 500 }}>
+      <div className={`stage ${stage === 'gift' ? 'entering' : 'gone'}`} id="stGift" style={{ zIndex: 500 }}>
         <div className={`gift-scene ${giftShaking ? 'shake-it' : ''} ${giftOpened ? 'gift-opened' : ''}`} onClick={!giftOpened ? openGift : undefined}>
           <div className="gift-box-wrapper">
             <GiftBoxSVG />
