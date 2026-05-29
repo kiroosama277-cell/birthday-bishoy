@@ -69,6 +69,13 @@ body {
   transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease !important;
 }
 
+/* Roses fade out gently — no blur/scale that would break the split animation */
+#stRoses.stage.gone {
+  transform: none !important;
+  filter: none !important;
+  transition: opacity 0.8s ease !important;
+}
+
 .stage.hidden { display: none !important; }
 
 .stage.entering {
@@ -766,12 +773,13 @@ body {
 }
 
 .sealed-label-text {
-  font-family: var(--font-cormorant);
-  font-size: 0.8rem;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
+  font-family: var(--font-amiri), 'Amiri', var(--font-cormorant), serif;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: none;
   color: var(--petal-pink);
   white-space: nowrap;
+  direction: rtl;
 }
 
 .sealed-label-line {

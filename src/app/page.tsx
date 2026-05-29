@@ -316,7 +316,7 @@ function SealedReveal({ type, revealed, onReveal }: { type: string; revealed: bo
           </div>
           <motion.div className="sealed-label" animate={{ opacity: [0.3, 0.8, 0.3] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}>
             <span className="sealed-label-line" />
-            <span className="sealed-label-text">tap to reveal</span>
+            <span className="sealed-label-text">اضغط بلطف ✦</span>
             <span className="sealed-label-line" />
           </motion.div>
           <div className="sealed-glow" style={{ background: config.glowGradient }} />
@@ -532,7 +532,7 @@ export default function Home() {
     doShake()
   }, [stage])
 
-  // ═══ ROSE BURST — FROM GIFT CENTER ═══
+  // ═══ ROSE HEART — Roses build a heart shape, pulse, then dissolve ═══
   useEffect(() => {
     if (stage !== 'roses') return
     const container = document.getElementById('roseCanvasContainer')
@@ -542,53 +542,132 @@ export default function Home() {
     const colors = [
       ['#c0463c', '#6b1a1a'], ['#e8897a', '#b03030'], ['#f2c4b8', '#c0463c'],
       ['#d4706a', '#8b2a2a'], ['#e8a090', '#a03030'], ['#f7d6cf', '#d4706a'],
-      ['#b03030', '#6b1a1a'], ['#c9995a', '#6b3a1a'],
     ]
 
-    const total = 90
-    let count = 0
-    const cx = W / 2, cy = H / 2 + 20
+    // Soft dark background with warm vignette
+    const bgDiv = document.createElement('div')
+    bgDiv.style.cssText = 'position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%, #1a0808, #0e0404);opacity:0;transition:opacity 1.5s ease;'
+    container.appendChild(bgDiv)
+    requestAnimationFrame(() => requestAnimationFrame(() => { bgDiv.style.opacity = '1' }))
 
-    // Generate positions covering the screen
-    const positions = []
-    for (let row = 0; row < 10; row++) {
-      for (let col = 0; col < 12; col++) {
-        const x = (col / 11) * W + (Math.random() - .5) * (W / 11)
-        const y = (row / 9) * H + (Math.random() - .5) * (H / 10)
-        const sz = 40 + Math.random() * 110
-        const dist = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2)
-        positions.push({ x, y, sz, dist })
-      }
+    // Generate heart-shaped positions using parametric heart curve
+    // x = 16sin³(t), y = 13cos(t) - 5cos(2t) - 2cos(3t) - cos(4t)
+    const cx = W / 2, cy = H / 2 + 10
+    const scale = Math.min(W, H) / 42 // fit heart to screen
+    const numRoses = 70
+    const heartRoses: { x: number; y: number; sz: number; pc: string; cc: string; op: number; angle: number }[] = []
+
+    for (let i = 0; i < numRoses; i++) {
+      const t = (i / numRoses) * Math.PI * 2
+      const hx = 16 * Math.pow(Math.sin(t), 3)
+      const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))
+      const [pc, cc] = colors[Math.floor(Math.random() * colors.length)]
+      const sz = 80 + Math.random() * 120
+      // Add slight randomness so it doesn't look too perfect
+      const jitterX = (Math.random() - .5) * sz * 0.3
+      const jitterY = (Math.random() - .5) * sz * 0.3
+      heartRoses.push({
+        x: cx + hx * scale + jitterX,
+        y: cy + hy * scale + jitterY,
+        sz, pc, cc,
+        op: 0.6 + Math.random() * .35,
+        angle: Math.random() * 30 - 15
+      })
     }
-    // Sort by distance from center (wave from center outward)
-    positions.sort((a, b) => a.dist - b.dist)
 
-    positions.slice(0, total).forEach((p, i) => {
-      const delay = (p.dist / Math.sqrt(cx * cx + cy * cy)) * 1600 + Math.random() * 150
+    // Add fill roses inside the heart (for density)
+    const numFill = 40
+    for (let i = 0; i < numFill; i++) {
+      const t = Math.random() * Math.PI * 2
+      const r = Math.random() * 0.75 // inside the heart
+      const hx = 16 * Math.pow(Math.sin(t), 3) * r
+      const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * r
+      const [pc, cc] = colors[Math.floor(Math.random() * colors.length)]
+      const sz = 60 + Math.random() * 100
+      heartRoses.push({
+        x: cx + hx * scale + (Math.random() - .5) * sz * 0.2,
+        y: cy + hy * scale + (Math.random() - .5) * sz * 0.2,
+        sz, pc, cc,
+        op: 0.5 + Math.random() * .4,
+        angle: Math.random() * 30 - 15
+      })
+    }
+
+    // Sort by distance from center (build from center outward)
+    heartRoses.sort((a, b) => {
+      const da = Math.sqrt((a.x - cx) ** 2 + (a.y - cy) ** 2)
+      const db = Math.sqrt((b.x - cx) ** 2 + (b.y - cy) ** 2)
+      return da - db
+    })
+
+    // Create wrapper div for the whole heart (for pulse animation)
+    const heartWrapper = document.createElement('div')
+    heartWrapper.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transition:transform 0.6s cubic-bezier(.16,1,.3,1),opacity 1.5s ease;'
+    container.appendChild(heartWrapper)
+
+    // Create each rose element
+    const roseEls: HTMLDivElement[] = []
+    heartRoses.forEach((r) => {
+      const el = document.createElement('div')
+      el.style.cssText = `
+        position:absolute;
+        left:${r.x - r.sz / 2}px; top:${r.y - r.sz / 2}px;
+        width:${r.sz}px; height:${r.sz}px;
+        opacity:0; transform:scale(0) rotate(${r.angle}deg);
+        transition: opacity 0.9s ease, transform 1.2s cubic-bezier(.16,1,.3,1);
+        pointer-events:none;
+      `
+      el.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">${roseSVG(100, 100, 180, r.pc, r.cc, r.op)}</svg>`
+      heartWrapper.appendChild(el)
+      roseEls.push(el)
+    })
+
+    // ── Phase 1: Roses bloom one by one, building the heart shape ──
+    roseEls.forEach((el, i) => {
+      const delay = 300 + i * 80 + Math.random() * 40
       setTimeout(() => {
-        const [pc, cc] = colors[Math.floor(Math.random() * colors.length)]
-        // Use HTML div instead of SVG for reliable CSS transforms
-        const el = document.createElement('div')
-        el.style.cssText = `
-          position: absolute;
-          left: ${p.x}px; top: ${p.y}px;
-          width: ${p.sz}px; height: ${p.sz}px;
-          transform: translate(${cx - p.x}px, ${cy - p.y}px) scale(0.1);
-          opacity: 0;
-          transition: opacity .5s ease, transform .7s cubic-bezier(.16,1,.3,1);
-          pointer-events: none;
-          z-index: 1;
-        `
-        el.innerHTML = `<svg width="${p.sz}" height="${p.sz}" viewBox="0 0 ${p.sz} ${p.sz}">${roseSVG(p.sz / 2, p.sz / 2, p.sz, pc, cc)}</svg>`
-        container.appendChild(el)
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          el.style.opacity = '1'
-          el.style.transform = 'translate(0px, 0px) scale(1)'
-        }))
-        count++
-        if (count >= total) setTimeout(() => setStage('text'), 800)
+        el.style.opacity = '1'
+        el.style.transform = `scale(1) rotate(${Math.random() * 8 - 4}deg)`
       }, delay)
     })
+
+    // ── Phase 2: Heart pulses (beats) ──
+    const buildDone = 300 + heartRoses.length * 80 + 800
+
+    setTimeout(() => {
+      // Pulse 1
+      heartWrapper.style.transform = 'scale(1.08)'
+      setTimeout(() => { heartWrapper.style.transform = 'scale(1)' }, 350)
+      // Pulse 2
+      setTimeout(() => { heartWrapper.style.transform = 'scale(1.12)' }, 700)
+      setTimeout(() => { heartWrapper.style.transform = 'scale(1)' }, 1050)
+      // Pulse 3 (gentler)
+      setTimeout(() => { heartWrapper.style.transform = 'scale(1.05)' }, 1400)
+      setTimeout(() => { heartWrapper.style.transform = 'scale(1)' }, 1700)
+    }, buildDone)
+
+    // ── Phase 3: Heart dissolves — roses fly away like petals ──
+    const pulseDone = buildDone + 2200
+
+    setTimeout(() => {
+      roseEls.forEach((el, i) => {
+        const drift = (Math.random() - .5) * 120
+        const flyUp = -(40 + Math.random() * 80)
+        const delay = i * 35 + Math.random() * 150
+        setTimeout(() => {
+          el.style.transition = 'opacity 1.5s ease, transform 2s ease'
+          el.style.opacity = '0'
+          el.style.transform = `scale(0.4) translateY(${flyUp}px) translateX(${drift}px) rotate(${Math.random() * 60 - 30}deg)`
+        }, delay)
+      })
+
+      // Fade background
+      bgDiv.style.transition = 'opacity 1.2s ease .6s'
+      bgDiv.style.opacity = '0'
+
+      // Move to text stage
+      setTimeout(() => setStage('text'), 1600)
+    }, pulseDone)
   }, [stage])
 
   // ═══ STAGGER TEXT ═══
@@ -675,13 +754,13 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ══ STAGE 2: ROSES ══ */}
+      {/* ══ STAGE 2: ROSES ══ — gradual fill + split curtain reveal */}
       <div className={`stage ${stage === 'music' || stage === 'gift' ? 'hidden' : stage === 'roses' ? 'entering' : 'gone'}`} id="stRoses" style={{ zIndex: 500 }}>
         <div id="roseCanvasContainer" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'hidden' }} />
       </div>
 
       {/* ══ STAGE 3: TEXT ══ */}
-      <div className={`stage ${['music', 'gift', 'roses'].includes(stage) ? 'hidden' : stage === 'text' ? 'entering' : 'gone'}`} id="stText">
+      <div className={`stage ${['music', 'gift', 'roses'].includes(stage) ? 'hidden' : stage === 'text' ? 'entering' : 'gone'}`} id="stText" style={{ zIndex: 500 }}>
         <div className={`wrd ${wordVisible.w1 ? 'in' : ''}`}>Happy</div>
         <div className={`wrd ${wordVisible.w2 ? 'in' : ''}`}>Birthday</div>
         <div className={`myb-row ${wordVisible.myb ? 'in' : ''}`}>
@@ -693,7 +772,7 @@ export default function Home() {
       </div>
 
       {/* ══ STAGE 4: DATE ══ */}
-      <div className={`stage ${['music', 'gift', 'roses', 'text'].includes(stage) ? 'hidden' : stage === 'date' ? 'entering' : 'gone'}`} id="stDate">
+      <div className={`stage ${['music', 'gift', 'roses', 'text'].includes(stage) ? 'hidden' : stage === 'date' ? 'entering' : 'gone'}`} id="stDate" style={{ zIndex: 500 }}>
         <div className={`date-num ${dateVisible ? 'in' : ''}`}>June 19</div>
         <div className={`date-sub ${dateSubVisible ? 'in' : ''}`}>his special day</div>
       </div>
@@ -723,7 +802,7 @@ export default function Home() {
           <AnimatedText delay={0.35} revealed={revealed.s1} variant="slideUp">&ldquo;But honestly? Every single day feels like your birthday to me&rdquo;</AnimatedText>
           <AnimatedText delay={0.5} revealed={revealed.s1} variant="slideUp">&ldquo;Because every day with you is a gift I never want to return&rdquo;</AnimatedText>
           <RevealDivider revealed={revealed.s1} delay={0.65} />
-          <AnimatedText delay={0.8} revealed={revealed.s1} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <AnimatedText delay={0.8} revealed={revealed.s1} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap gently</AnimatedText>
         </AnimatedSection>
 
         <WaveDivider color="#f5ebe4" />
@@ -738,7 +817,7 @@ export default function Home() {
           <AnimatedText delay={0.35} revealed={revealed.s2} variant="scaleIn" className="sec2-text">&ldquo;Now I can&rsquo;t imagine a single day without your voice, your laugh, your presence&rdquo;</AnimatedText>
           <AnimatedText delay={0.5} revealed={revealed.s2} variant="scaleIn" className="sec2-text">&ldquo;You changed everything — quietly, deeply, forever&rdquo;</AnimatedText>
           <RevealDivider revealed={revealed.s2} delay={0.65} className="sec2-div" />
-          <AnimatedText delay={0.8} revealed={revealed.s2} variant="blurIn" className="sec2-text" extraStyle={{ fontSize: '.78rem', opacity: .35, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <AnimatedText delay={0.8} revealed={revealed.s2} variant="blurIn" className="sec2-text" extraStyle={{ fontSize: '.78rem', opacity: .35, letterSpacing: '.2em' }}>tap gently</AnimatedText>
         </AnimatedSection>
 
         <WaveDivider flip color="#0e0404" />
@@ -753,7 +832,7 @@ export default function Home() {
           <AnimatedText delay={0.35} revealed={revealed.s3} variant="blurIn">&ldquo;Those are my favorite chapters of my life&rdquo;</AnimatedText>
           <AnimatedText delay={0.5} revealed={revealed.s3} variant="blurIn">&ldquo;And you&rsquo;re the reason I love the story&rdquo;</AnimatedText>
           <RevealDivider revealed={revealed.s3} delay={0.65} />
-          <AnimatedText delay={0.8} revealed={revealed.s3} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <AnimatedText delay={0.8} revealed={revealed.s3} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap gently</AnimatedText>
         </AnimatedSection>
 
         {/* S4 */}
@@ -766,7 +845,7 @@ export default function Home() {
           <AnimatedText delay={0.35} revealed={revealed.s4} variant="slideLeft">&ldquo;I&rsquo;d find you. I&rsquo;d choose you.&rdquo;</AnimatedText>
           <ShimmerText delay={0.5} revealed={revealed.s4} extraStyle={{ fontSize: 'clamp(1.6rem, 4.2vw, 2.6rem)' }}>&ldquo;Again and again and again.&rdquo;</ShimmerText>
           <RevealDivider revealed={revealed.s4} delay={0.65} />
-          <AnimatedText delay={0.8} revealed={revealed.s4} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <AnimatedText delay={0.8} revealed={revealed.s4} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap gently</AnimatedText>
         </AnimatedSection>
 
         {/* S5 — Arabic poetry section */}
@@ -794,7 +873,7 @@ export default function Home() {
           <AnimatedText className="arabic" delay={1.3} revealed={revealed.s5} variant="slideRight">يا مَن أحبّك قد كفاني.. من الدّهور وجودُ عينِك ♥</AnimatedText>
           <RevealDivider revealed={revealed.s5} delay={1.25} />
 
-          <AnimatedText delay={1.4} revealed={revealed.s5} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <AnimatedText delay={1.4} revealed={revealed.s5} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap gently</AnimatedText>
         </AnimatedSection>
 
         {/* S6 */}
@@ -809,7 +888,7 @@ export default function Home() {
           <AnimatedText delay={0.65} revealed={revealed.s6} variant="zoomIn">&ldquo;may I spend every single one by your side&rdquo;</AnimatedText>
           <RevealDivider revealed={revealed.s6} delay={0.75} />
           <ShimmerText delay={0.85} revealed={revealed.s6} extraStyle={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)', fontStyle: 'italic' }}>&ldquo;Happy Birthday, my love&rdquo;</ShimmerText>
-          <AnimatedText delay={1.1} revealed={revealed.s6} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: '.4', letterSpacing: '.2em', marginTop: '.8rem' }}>tap anywhere</AnimatedText>
+          <AnimatedText delay={1.1} revealed={revealed.s6} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: '.4', letterSpacing: '.2em', marginTop: '.8rem' }}>tap gently</AnimatedText>
         </AnimatedSection>
 
         <footer className="site-footer">
