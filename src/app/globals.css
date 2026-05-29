@@ -208,6 +208,55 @@ body {
 }
 @keyframes labelPulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 0.2; } }
 
+/* ── GIFT OPENED STATE ── */
+.gift-box-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.gift-scene.gift-opened {
+  animation: none !important;
+}
+.gift-scene.gift-opened .gift-box-wrapper {
+  animation: giftBoxSink 1.2s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes giftBoxSink {
+  0% { transform: scale(1); opacity: 1; }
+  40% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.3) translateY(60px); opacity: 0; }
+}
+
+.gift-lid-fly {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  animation: lidFlyOff 0.8s cubic-bezier(.16,1,.3,1) forwards;
+  pointer-events: none;
+}
+@keyframes lidFlyOff {
+  0% { transform: translateX(-50%) translateY(0) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-250px) rotate(35deg) scale(0.3); opacity: 0; }
+}
+
+.gift-glow-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,137,122,0.9) 0%, rgba(192,70,60,0.5) 30%, rgba(242,196,184,0.3) 50%, transparent 70%);
+  animation: glowBurst 1s cubic-bezier(.16,1,.3,1) forwards;
+  pointer-events: none;
+}
+@keyframes glowBurst {
+  0% { width: 20px; height: 20px; opacity: 1; }
+  60% { width: 500px; height: 500px; opacity: 0.7; }
+  100% { width: 900px; height: 900px; opacity: 0; }
+}
+
 /* ── STAGE 1: ROSES BLOOM ── */
 #stRoses { background: #0e0404; overflow: hidden; }
 

@@ -438,6 +438,7 @@ function NavDots() {
 export default function Home() {
   const [stage, setStage] = useState<'music' | 'gift' | 'roses' | 'text' | 'date' | 'main'>('music')
   const [giftShaking, setGiftShaking] = useState(false)
+  const [giftOpened, setGiftOpened] = useState(false)
   const [wordVisible, setWordVisible] = useState({ w1: false, w2: false, myb: false })
   const [heartDrawn, setHeartDrawn] = useState(false)
   const [dateVisible, setDateVisible] = useState(false)
@@ -516,12 +517,22 @@ export default function Home() {
     let s = 0
     const doShake = () => {
       setGiftShaking(true)
-      setTimeout(() => { setGiftShaking(false); s++; if (s < 3) setTimeout(doShake, 220); else setStage('roses') }, 550)
+      setTimeout(() => {
+        setGiftShaking(false)
+        s++
+        if (s < 3) {
+          setTimeout(doShake, 220)
+        } else {
+          // Gift opens — lid flies off, then roses burst
+          setGiftOpened(true)
+          setTimeout(() => setStage('roses'), 900)
+        }
+      }, 550)
     }
     doShake()
   }, [stage])
 
-  // ═══ ROSE BURST — MORE ROSES ═══
+  // ═══ ROSE BURST — FROM GIFT CENTER ═══
   useEffect(() => {
     if (stage !== 'roses') return
     const svg = document.getElementById('roseCanvas')
@@ -535,35 +546,42 @@ export default function Home() {
       ['#b03030', '#6b1a1a'], ['#c9995a', '#6b3a1a'],
     ]
 
+    // Roses originate from center (gift box position) and spread outward
+    const cx = W / 2
+    const cy = H / 2 + 20 // slightly below center where gift sits
+    const total = 90
+
     let count = 0
-    const total = 90 // Increased from 55 to 90 — more roses!
-    const positions = []
+    const roses = []
 
-    for (let row = 0; row < 10; row++) {
-      for (let col = 0; col < 12; col++) {
-        positions.push({
-          x: (col / 11) * W + (Math.random() - .5) * (W / 11),
-          y: (row / 9) * H + (Math.random() - .5) * (H / 10),
-          sz: 40 + Math.random() * 110, // Wider size range for more variety
-          delay: (row * 12 + col) * 40 + Math.random() * 60, // Faster spawn
-        })
-      }
+    // Generate target positions covering the whole screen
+    for (let i = 0; i < total; i++) {
+      const targetX = Math.random() * W
+      const targetY = Math.random() * H
+      const sz = 40 + Math.random() * 110
+      // Stagger: closer roses first, farther ones later
+      const dist = Math.sqrt((targetX - cx) ** 2 + (targetY - cy) ** 2)
+      const maxDist = Math.sqrt(cx * cx + cy * cy)
+      const delay = (dist / maxDist) * 1800 + Math.random() * 200
+      roses.push({ targetX, targetY, sz, delay, dist })
     }
-    positions.sort(() => Math.random() - .5)
 
-    positions.slice(0, total).forEach((p) => {
+    // Sort by distance for a wave effect
+    roses.sort((a, b) => a.dist - b.dist)
+
+    roses.forEach((p) => {
       setTimeout(() => {
         const [pc, cc] = colors[Math.floor(Math.random() * colors.length)]
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+        // Start at center (gift position)
         g.style.opacity = '0'
-        g.style.transition = 'opacity .5s ease, transform .5s cubic-bezier(.16,1,.3,1)'
-        g.style.transform = 'scale(0.2)'
-        g.style.transformOrigin = `${p.x}px ${p.y}px`
-        g.innerHTML = roseSVG(p.x, p.y, p.sz, pc, cc)
+        g.style.transition = 'opacity .6s ease, transform .8s cubic-bezier(.16,1,.3,1)'
+        g.style.transform = `translate(${cx - p.targetX}px, ${cy - p.targetY}px) scale(0.1)`
+        g.innerHTML = roseSVG(p.targetX, p.targetY, p.sz, pc, cc)
         svg.appendChild(g)
         requestAnimationFrame(() => requestAnimationFrame(() => {
           g.style.opacity = '1'
-          g.style.transform = 'scale(1)'
+          g.style.transform = 'translate(0px, 0px) scale(1)'
         }))
         count++
         if (count >= total) setTimeout(() => setStage('text'), 800)
@@ -642,15 +660,21 @@ export default function Home() {
       </div>
 
       {/* ══ STAGE 1: GIFT ══ */}
-      <div className={`stage ${stage !== 'gift' ? 'gone' : 'entering'}`} id="stGift">
-        <div className={`gift-scene ${giftShaking ? 'shake-it' : ''}`} onClick={openGift}>
-          <GiftBoxSVG />
-          <p className="gift-label">tap to open ✦</p>
+      <div className={`stage ${stage !== 'gift' && !giftOpened ? 'gone' : stage === 'gift' || giftOpened ? 'entering' : 'gone'}`} id="stGift" style={{ zIndex: stage === 'roses' ? 501 : 500 }}>
+        <div className={`gift-scene ${giftShaking ? 'shake-it' : ''} ${giftOpened ? 'gift-opened' : ''}`} onClick={!giftOpened ? openGift : undefined}>
+          <div className="gift-box-wrapper">
+            <GiftBoxSVG />
+            {/* Lid flies off when opened */}
+            {giftOpened && <div className="gift-lid-fly">🎁</div>}
+          </div>
+          {/* Glow burst from inside */}
+          {giftOpened && <div className="gift-glow-burst" />}
+          {!giftOpened && <p className="gift-label">tap to open ✦</p>}
         </div>
       </div>
 
       {/* ══ STAGE 2: ROSES ══ */}
-      <div className={`stage ${stage === 'music' || stage === 'gift' ? 'hidden' : stage === 'roses' ? 'entering' : 'gone'}`} id="stRoses">
+      <div className={`stage ${stage === 'music' || stage === 'gift' ? 'hidden' : stage === 'roses' ? 'entering' : 'gone'}`} id="stRoses" style={{ zIndex: 500 }}>
         <svg id="roseCanvas" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} xmlns="http://www.w3.org/2000/svg" />
       </div>
 
