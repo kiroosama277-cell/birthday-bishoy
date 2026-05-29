@@ -96,7 +96,6 @@ function spawnEl(html: string, x: number, y: number, cls: string) {
 
 function boom(e: React.MouseEvent, type: string) {
   const x = e.clientX, y = e.clientY
-
   if (type === 'teddy') {
     ;['🐻', '💋', '🐻', '💝', '🤍'].forEach((s, i) =>
       setTimeout(() => spawnEl(s, x + (Math.random() - .5) * 180, y + (Math.random() - .5) * 110, 'pop'), i * 130)
@@ -152,9 +151,6 @@ function boom(e: React.MouseEvent, type: string) {
   }
 }
 
-/* ════════════════════════════
-   CONFETTI EXPLOSION
-════════════════════════════ */
 function createExplosion(x: number, y: number, colors: string[], count = 55) {
   for (let i = 0; i < count; i++) {
     const el = document.createElement('div')
@@ -179,9 +175,6 @@ function createExplosion(x: number, y: number, colors: string[], count = 55) {
   }
 }
 
-/* ════════════════════════════
-   SCREEN FLASH
-════════════════════════════ */
 function createFlash(color: string) {
   const el = document.createElement('div')
   el.className = 'reveal-flash'
@@ -196,9 +189,6 @@ function createFlash(color: string) {
   })
 }
 
-/* ════════════════════════════
-   SCREEN SHAKE
-════════════════════════════ */
 function triggerShake() {
   const main = document.getElementById('main')
   if (main) {
@@ -207,9 +197,6 @@ function triggerShake() {
   }
 }
 
-/* ════════════════════════════
-   BACKGROUND ROSES BUILDER
-════════════════════════════ */
 function buildBgRosesHTML(id: string, n: number, colors: string[][]) {
   if (typeof document === 'undefined') return
   const el = document.getElementById(id)
@@ -228,7 +215,7 @@ function buildBgRosesHTML(id: string, n: number, colors: string[][]) {
 }
 
 /* ════════════════════════════
-   FLOATING PARTICLES COMPONENT
+   FLOATING PARTICLES
 ════════════════════════════ */
 function FloatingParticles({ count = 15, colors = ['#e8897a', '#f2c4b8', '#c9995a'], type = 'petal' }: { count?: number; colors?: string[]; type?: 'petal' | 'star' | 'heart' | 'sparkle' }) {
   const particles = useRef(
@@ -243,7 +230,6 @@ function FloatingParticles({ count = 15, colors = ['#e8897a', '#f2c4b8', '#c9995
       startY: Math.random() * 100,
     }))
   )
-
   return (
     <div className="floating-particles">
       {particles.current.map((p) => (
@@ -251,14 +237,9 @@ function FloatingParticles({ count = 15, colors = ['#e8897a', '#f2c4b8', '#c9995
           key={p.id}
           className={`fp fp-${type}`}
           style={{
-            left: `${p.x}%`,
-            top: `${p.startY}%`,
-            animationDelay: `${p.delay}s`,
-            animationDuration: `${p.duration}s`,
-            width: p.size,
-            height: p.size,
-            color: p.color,
-            '--drift': `${p.drift}px`,
+            left: `${p.x}%`, top: `${p.startY}%`,
+            animationDelay: `${p.delay}s`, animationDuration: `${p.duration}s`,
+            width: p.size, height: p.size, color: p.color, '--drift': `${p.drift}px`,
           } as React.CSSProperties}
         >
           {type === 'heart' && '♥'}
@@ -274,235 +255,73 @@ function FloatingParticles({ count = 15, colors = ['#e8897a', '#f2c4b8', '#c9995
    SEALED REVEAL CONFIG
 ════════════════════════════ */
 const SEAL_CONFIG: Record<string, {
-  icon: string
-  color: string
-  boomType: string
-  ringColor1: string
-  ringColor2: string
-  glowGradient: string
-  flashColor: string
-  confettiColors: string[]
-  particles: string[]
+  icon: string; color: string; boomType: string
+  ringColor1: string; ringColor2: string
+  glowGradient: string; flashColor: string
+  confettiColors: string[]; particles: string[]
 }> = {
-  gift: {
-    icon: '🎁',
-    color: '#e8897a',
-    boomType: 'teddy',
-    ringColor1: 'rgba(232,137,122,0.25)',
-    ringColor2: 'rgba(201,153,90,0.15)',
-    glowGradient: 'radial-gradient(circle, rgba(232,137,122,0.18) 0%, rgba(192,70,60,0.06) 40%, transparent 65%)',
-    flashColor: 'rgba(232,137,122,0.35)',
-    confettiColors: ['#e8897a', '#f2c4b8', '#c0463c', '#fff9f6', '#c9995a'],
-    particles: ['🎀', '✨', '💝', '🤍', '✦'],
-  },
-  heart: {
-    icon: '♥',
-    color: '#c0463c',
-    boomType: 'heart',
-    ringColor1: 'rgba(192,70,60,0.3)',
-    ringColor2: 'rgba(232,137,122,0.18)',
-    glowGradient: 'radial-gradient(circle, rgba(192,70,60,0.2) 0%, rgba(139,42,42,0.06) 40%, transparent 65%)',
-    flashColor: 'rgba(192,70,60,0.3)',
-    confettiColors: ['#c0463c', '#e8897a', '#f2c4b8', '#8b2a2a', '#fff9f6'],
-    particles: ['💗', '💕', '❤️', '🤍', '♥'],
-  },
-  rose: {
-    icon: '🌹',
-    color: '#e8897a',
-    boomType: 'rose',
-    ringColor1: 'rgba(232,137,122,0.25)',
-    ringColor2: 'rgba(139,42,42,0.15)',
-    glowGradient: 'radial-gradient(circle, rgba(139,42,42,0.2) 0%, rgba(107,26,26,0.06) 40%, transparent 65%)',
-    flashColor: 'rgba(232,137,122,0.3)',
-    confettiColors: ['#8b2a2a', '#c0463c', '#e8897a', '#f2c4b8'],
-    particles: ['🌸', '🌺', '🌷', '✿', '❀'],
-  },
-  star: {
-    icon: '✦',
-    color: '#c9995a',
-    boomType: 'stars',
-    ringColor1: 'rgba(201,153,90,0.3)',
-    ringColor2: 'rgba(232,201,138,0.18)',
-    glowGradient: 'radial-gradient(circle, rgba(201,153,90,0.22) 0%, rgba(201,153,90,0.06) 40%, transparent 65%)',
-    flashColor: 'rgba(201,153,90,0.35)',
-    confettiColors: ['#c9995a', '#e8c98a', '#f2c4b8', '#fff9f6', '#e8897a'],
-    particles: ['⭐', '🌟', '✨', '💫', '✦'],
-  },
-  moon: {
-    icon: '🌙',
-    color: '#a090b8',
-    boomType: 'moon',
-    ringColor1: 'rgba(160,144,184,0.25)',
-    ringColor2: 'rgba(201,153,90,0.12)',
-    glowGradient: 'radial-gradient(circle, rgba(160,144,184,0.18) 0%, rgba(112,112,160,0.06) 40%, transparent 65%)',
-    flashColor: 'rgba(160,144,184,0.3)',
-    confettiColors: ['#7070a0', '#a090b8', '#c9995a', '#e8c98a', '#fff9f6'],
-    particles: ['⭐', '🌟', '✨', '💫', '🌙'],
-  },
-  cake: {
-    icon: '🎂',
-    color: '#e8897a',
-    boomType: 'cake',
-    ringColor1: 'rgba(232,137,122,0.25)',
-    ringColor2: 'rgba(201,153,90,0.18)',
-    glowGradient: 'radial-gradient(circle, rgba(192,70,60,0.2) 0%, rgba(201,153,90,0.06) 40%, transparent 65%)',
-    flashColor: 'rgba(232,137,122,0.35)',
-    confettiColors: ['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a'],
-    particles: ['🎉', '🎊', '🎈', '✨', '🥂'],
-  },
+  gift: { icon: '🎁', color: '#e8897a', boomType: 'teddy', ringColor1: 'rgba(232,137,122,0.25)', ringColor2: 'rgba(201,153,90,0.15)', glowGradient: 'radial-gradient(circle, rgba(232,137,122,0.18) 0%, rgba(192,70,60,0.06) 40%, transparent 65%)', flashColor: 'rgba(232,137,122,0.35)', confettiColors: ['#e8897a', '#f2c4b8', '#c0463c', '#fff9f6', '#c9995a'], particles: ['🎀', '✨', '💝', '🤍', '✦'] },
+  heart: { icon: '♥', color: '#c0463c', boomType: 'heart', ringColor1: 'rgba(192,70,60,0.3)', ringColor2: 'rgba(232,137,122,0.18)', glowGradient: 'radial-gradient(circle, rgba(192,70,60,0.2) 0%, rgba(139,42,42,0.06) 40%, transparent 65%)', flashColor: 'rgba(192,70,60,0.3)', confettiColors: ['#c0463c', '#e8897a', '#f2c4b8', '#8b2a2a', '#fff9f6'], particles: ['💗', '💕', '❤️', '🤍', '♥'] },
+  rose: { icon: '🌹', color: '#e8897a', boomType: 'rose', ringColor1: 'rgba(232,137,122,0.25)', ringColor2: 'rgba(139,42,42,0.15)', glowGradient: 'radial-gradient(circle, rgba(139,42,42,0.2) 0%, rgba(107,26,26,0.06) 40%, transparent 65%)', flashColor: 'rgba(232,137,122,0.3)', confettiColors: ['#8b2a2a', '#c0463c', '#e8897a', '#f2c4b8'], particles: ['🌸', '🌺', '🌷', '✿', '❀'] },
+  star: { icon: '✦', color: '#c9995a', boomType: 'stars', ringColor1: 'rgba(201,153,90,0.3)', ringColor2: 'rgba(232,201,138,0.18)', glowGradient: 'radial-gradient(circle, rgba(201,153,90,0.22) 0%, rgba(201,153,90,0.06) 40%, transparent 65%)', flashColor: 'rgba(201,153,90,0.35)', confettiColors: ['#c9995a', '#e8c98a', '#f2c4b8', '#fff9f6', '#e8897a'], particles: ['⭐', '🌟', '✨', '💫', '✦'] },
+  moon: { icon: '🌙', color: '#a090b8', boomType: 'moon', ringColor1: 'rgba(160,144,184,0.25)', ringColor2: 'rgba(201,153,90,0.12)', glowGradient: 'radial-gradient(circle, rgba(160,144,184,0.18) 0%, rgba(112,112,160,0.06) 40%, transparent 65%)', flashColor: 'rgba(160,144,184,0.3)', confettiColors: ['#7070a0', '#a090b8', '#c9995a', '#e8c98a', '#fff9f6'], particles: ['⭐', '🌟', '✨', '💫', '🌙'] },
+  cake: { icon: '🎂', color: '#e8897a', boomType: 'cake', ringColor1: 'rgba(232,137,122,0.25)', ringColor2: 'rgba(201,153,90,0.18)', glowGradient: 'radial-gradient(circle, rgba(192,70,60,0.2) 0%, rgba(201,153,90,0.06) 40%, transparent 65%)', flashColor: 'rgba(232,137,122,0.35)', confettiColors: ['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a'], particles: ['🎉', '🎊', '🎈', '✨', '🥂'] },
 }
 
 /* ════════════════════════════
    SEALED REVEAL COMPONENT
 ════════════════════════════ */
-function SealedReveal({
-  type,
-  revealed,
-  onReveal,
-}: {
-  type: string
-  revealed: boolean
-  onReveal: (e: React.MouseEvent) => void
-}) {
+function SealedReveal({ type, revealed, onReveal }: { type: string; revealed: boolean; onReveal: (e: React.MouseEvent) => void }) {
   const config = SEAL_CONFIG[type]
   const ref = useRef<HTMLDivElement>(null)
-
   return (
     <AnimatePresence>
       {!revealed && (
-        <motion.div
-          ref={ref}
-          className="sealed-reveal"
-          onClick={onReveal}
+        <motion.div ref={ref} className="sealed-reveal" onClick={onReveal}
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: [1, 1.4, 0], opacity: [1, 1, 0], filter: ['blur(0px)', 'blur(0px)', 'blur(25px)'] }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Outer rotating ring */}
-          <motion.div
-            className="sealed-ring-container ring-outer"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          >
+          <motion.div className="sealed-ring-container ring-outer" animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }}>
             <svg viewBox="0 0 320 320" className="sealed-ring-svg">
               <circle cx="160" cy="160" r="150" fill="none" stroke={config.ringColor1} strokeWidth="1" strokeDasharray="12 8" />
               <circle cx="160" cy="160" r="140" fill="none" stroke={config.ringColor2} strokeWidth="0.5" strokeDasharray="3 10" />
-              {/* Decorative dots on the ring */}
               {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => {
                 const rad = (angle * Math.PI) / 180
-                const cx = 160 + Math.cos(rad) * 150
-                const cy = 160 + Math.sin(rad) * 150
-                return <circle key={i} cx={cx} cy={cy} r="2" fill={config.ringColor1} />
+                return <circle key={i} cx={160 + Math.cos(rad) * 150} cy={160 + Math.sin(rad) * 150} r="2" fill={config.ringColor1} />
               })}
             </svg>
           </motion.div>
-
-          {/* Inner rotating ring (opposite direction) */}
-          <motion.div
-            className="sealed-ring-container ring-inner"
-            animate={{ rotate: -360 }}
-            transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
-          >
+          <motion.div className="sealed-ring-container ring-inner" animate={{ rotate: -360 }} transition={{ duration: 22, repeat: Infinity, ease: "linear" }}>
             <svg viewBox="0 0 320 320" className="sealed-ring-svg">
               <circle cx="160" cy="160" r="110" fill="none" stroke={config.ringColor2} strokeWidth="0.8" strokeDasharray="6 12" />
               <circle cx="160" cy="160" r="100" fill="none" stroke={config.ringColor1} strokeWidth="0.4" strokeDasharray="2 8" />
               {[0, 60, 120, 180, 240, 300].map((angle, i) => {
                 const rad = (angle * Math.PI) / 180
-                const cx = 160 + Math.cos(rad) * 110
-                const cy = 160 + Math.sin(rad) * 110
-                return <circle key={i} cx={cx} cy={cy} r="1.5" fill={config.ringColor2} />
+                return <circle key={i} cx={160 + Math.cos(rad) * 110} cy={160 + Math.sin(rad) * 110} r="1.5" fill={config.ringColor2} />
               })}
             </svg>
           </motion.div>
-
-          {/* Central icon */}
-          <motion.div
-            className="sealed-icon"
-            style={{ color: config.color }}
-            animate={{
-              y: [0, -12, 0],
-              scale: [1, 1.08, 1],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
+          <motion.div className="sealed-icon" style={{ color: config.color }} animate={{ y: [0, -12, 0], scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
             {config.icon}
           </motion.div>
-
-          {/* Floating mini particles around icon */}
           <div className="sealed-mini-particles">
             {config.particles.map((p, i) => (
-              <motion.span
-                key={i}
-                className="sealed-mini-p"
-                style={{
-                  '--angle': `${(i / config.particles.length) * 360}deg`,
-                  '--distance': `${80 + Math.random() * 40}px`,
-                  color: config.color,
-                } as React.CSSProperties}
-                animate={{
-                  opacity: [0, 0.7, 0],
-                  scale: [0.5, 1, 0.5],
-                  rotate: [0, 180],
-                }}
-                transition={{
-                  duration: 3 + Math.random() * 2,
-                  repeat: Infinity,
-                  delay: i * 0.6,
-                  ease: "easeInOut",
-                }}
-              >
-                {p}
-              </motion.span>
+              <motion.span key={i} className="sealed-mini-p" style={{ '--angle': `${(i / config.particles.length) * 360}deg`, '--distance': `${80 + Math.random() * 40}px`, color: config.color } as React.CSSProperties}
+                animate={{ opacity: [0, 0.7, 0], scale: [0.5, 1, 0.5], rotate: [0, 180] }}
+                transition={{ duration: 3 + Math.random() * 2, repeat: Infinity, delay: i * 0.6, ease: "easeInOut" }}
+              >{p}</motion.span>
             ))}
           </div>
-
-          {/* Label */}
-          <motion.div
-            className="sealed-label"
-            animate={{ opacity: [0.3, 0.8, 0.3] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          >
+          <motion.div className="sealed-label" animate={{ opacity: [0.3, 0.8, 0.3] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}>
             <span className="sealed-label-line" />
             <span className="sealed-label-text">tap to reveal</span>
             <span className="sealed-label-line" />
           </motion.div>
-
-          {/* Background glow */}
           <div className="sealed-glow" style={{ background: config.glowGradient }} />
-
-          {/* Pulsing aura */}
-          <motion.div
-            className="sealed-aura"
-            style={{ borderColor: config.color }}
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.15, 0, 0.15],
-            }}
-            transition={{
-              duration: 2.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-          <motion.div
-            className="sealed-aura sealed-aura-2"
-            style={{ borderColor: config.color }}
-            animate={{
-              scale: [1, 1.35, 1],
-              opacity: [0.08, 0, 0.08],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.5,
-            }}
-          />
+          <motion.div className="sealed-aura" style={{ borderColor: config.color }} animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0, 0.15] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }} />
+          <motion.div className="sealed-aura sealed-aura-2" style={{ borderColor: config.color }} animate={{ scale: [1, 1.35, 1], opacity: [0.08, 0, 0.08] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
         </motion.div>
       )}
     </AnimatePresence>
@@ -510,145 +329,60 @@ function SealedReveal({
 }
 
 /* ════════════════════════════
-   ANIMATED TEXT — controlled by reveal
+   ANIMATED TEXT
 ════════════════════════════ */
-function AnimatedText({
-  children,
-  className = '',
-  delay = 0,
-  extraStyle,
-  revealed = true,
-  variant = 'slideUp',
-}: {
-  children: React.ReactNode
-  className?: string
-  delay?: number
-  extraStyle?: React.CSSProperties
-  revealed?: boolean
+function AnimatedText({ children, className = '', delay = 0, extraStyle, revealed = true, variant = 'slideUp' }: {
+  children: React.ReactNode; className?: string; delay?: number; extraStyle?: React.CSSProperties; revealed?: boolean
   variant?: 'slideUp' | 'scaleIn' | 'blurIn' | 'slideLeft' | 'slideRight' | 'zoomIn'
 }) {
   const variants = {
-    slideUp: {
-      hidden: { opacity: 0, y: 50, filter: 'blur(6px)' },
-      visible: { opacity: extraStyle?.opacity ?? 1, y: 0, filter: 'blur(0px)' },
-    },
-    scaleIn: {
-      hidden: { opacity: 0, scale: 0.5, filter: 'blur(4px)' },
-      visible: { opacity: extraStyle?.opacity ?? 1, scale: 1, filter: 'blur(0px)' },
-    },
-    blurIn: {
-      hidden: { opacity: 0, filter: 'blur(16px)' },
-      visible: { opacity: extraStyle?.opacity ?? 1, filter: 'blur(0px)' },
-    },
-    slideLeft: {
-      hidden: { opacity: 0, x: 60, filter: 'blur(4px)' },
-      visible: { opacity: extraStyle?.opacity ?? 1, x: 0, filter: 'blur(0px)' },
-    },
-    slideRight: {
-      hidden: { opacity: 0, x: -60, filter: 'blur(4px)' },
-      visible: { opacity: extraStyle?.opacity ?? 1, x: 0, filter: 'blur(0px)' },
-    },
-    zoomIn: {
-      hidden: { opacity: 0, scale: 2, filter: 'blur(10px)' },
-      visible: { opacity: extraStyle?.opacity ?? 1, scale: 1, filter: 'blur(0px)' },
-    },
+    slideUp: { hidden: { opacity: 0, y: 50, filter: 'blur(6px)' }, visible: { opacity: extraStyle?.opacity ?? 1, y: 0, filter: 'blur(0px)' } },
+    scaleIn: { hidden: { opacity: 0, scale: 0.5, filter: 'blur(4px)' }, visible: { opacity: extraStyle?.opacity ?? 1, scale: 1, filter: 'blur(0px)' } },
+    blurIn: { hidden: { opacity: 0, filter: 'blur(16px)' }, visible: { opacity: extraStyle?.opacity ?? 1, filter: 'blur(0px)' } },
+    slideLeft: { hidden: { opacity: 0, x: 60, filter: 'blur(4px)' }, visible: { opacity: extraStyle?.opacity ?? 1, x: 0, filter: 'blur(0px)' } },
+    slideRight: { hidden: { opacity: 0, x: -60, filter: 'blur(4px)' }, visible: { opacity: extraStyle?.opacity ?? 1, x: 0, filter: 'blur(0px)' } },
+    zoomIn: { hidden: { opacity: 0, scale: 2, filter: 'blur(10px)' }, visible: { opacity: extraStyle?.opacity ?? 1, scale: 1, filter: 'blur(0px)' } },
   }
-
   const v = variants[variant]
-
   return (
-    <motion.span
-      className={`ln ${className}`}
-      style={extraStyle}
-      initial={v.hidden}
-      animate={revealed ? v.visible : v.hidden}
+    <motion.span className={`ln ${className}`} style={extraStyle} initial={v.hidden} animate={revealed ? v.visible : v.hidden}
       transition={{ duration: 1, delay, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {children}
-    </motion.span>
+    >{children}</motion.span>
   )
 }
 
-/* ════════════════════════════
-   SHIMMER TEXT — controlled by reveal
-════════════════════════════ */
-function ShimmerText({
-  children,
-  className = '',
-  extraStyle,
-  revealed = true,
-  delay = 0,
-}: {
-  children: React.ReactNode
-  className?: string
-  extraStyle?: React.CSSProperties
-  revealed?: boolean
-  delay?: number
+function ShimmerText({ children, className = '', extraStyle, revealed = true, delay = 0 }: {
+  children: React.ReactNode; className?: string; extraStyle?: React.CSSProperties; revealed?: boolean; delay?: number
 }) {
   return (
-    <motion.span
-      className={`ln shimmer-text ${className}`}
-      style={extraStyle}
+    <motion.span className={`ln shimmer-text ${className}`} style={extraStyle}
       initial={{ opacity: 0, y: 50, scale: 0.85 }}
       animate={revealed ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.85 }}
       transition={{ duration: 1.4, delay, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {children}
-    </motion.span>
+    >{children}</motion.span>
   )
 }
 
-/* ════════════════════════════
-   REVEAL DIVIDER
-════════════════════════════ */
 function RevealDivider({ revealed = true, delay = 0, className = '' }: { revealed?: boolean; delay?: number; className?: string }) {
   return (
-    <motion.div
-      className={`div ${className}`}
-      initial={{ opacity: 0, scale: 0.3 }}
+    <motion.div className={`div ${className}`} initial={{ opacity: 0, scale: 0.3 }}
       animate={revealed ? { opacity: 0.4, scale: 1 } : { opacity: 0, scale: 0.3 }}
       transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
-    >
-      ✦
-    </motion.div>
+    >✦</motion.div>
   )
 }
 
 /* ════════════════════════════
    ANIMATED SECTION WRAPPER
 ════════════════════════════ */
-function AnimatedSection({
-  children,
-  className,
-  id,
-  bgId,
-  onClick,
-  particleType = 'petal',
-  particleCount = 12,
-  particleColors,
-  sealType,
-  revealed,
-  onReveal,
-}: {
-  children: React.ReactNode
-  className: string
-  id: string
-  bgId: string
-  onClick?: (e: React.MouseEvent) => void
-  particleType?: 'petal' | 'star' | 'heart' | 'sparkle'
-  particleCount?: number
-  particleColors?: string[]
-  sealType: string
-  revealed: boolean
-  onReveal: (e: React.MouseEvent) => void
+function AnimatedSection({ children, className, id, bgId, onClick, particleType = 'petal', particleCount = 12, particleColors, sealType, revealed, onReveal }: {
+  children: React.ReactNode; className: string; id: string; bgId: string; onClick?: (e: React.MouseEvent) => void
+  particleType?: 'petal' | 'star' | 'heart' | 'sparkle'; particleCount?: number; particleColors?: string[]
+  sealType: string; revealed: boolean; onReveal: (e: React.MouseEvent) => void
 }) {
   const config = SEAL_CONFIG[sealType]
-
   const handleReveal = useCallback((e: React.MouseEvent) => {
-    const x = e.clientX
-    const y = e.clientY
-    // Trigger all the dramatic effects
-    createExplosion(x, y, config.confettiColors, 60)
+    createExplosion(e.clientX, e.clientY, config.confettiColors, 60)
     createFlash(config.flashColor)
     boom(e, config.boomType)
     triggerShake()
@@ -656,90 +390,43 @@ function AnimatedSection({
   }, [config, onReveal])
 
   return (
-    <motion.section
-      className={`sec ${className}`}
-      id={id}
-    >
+    <motion.section className={`sec ${className}`} id={id}>
       <div className="bg-roses" id={bgId} />
-
       <FloatingParticles count={particleCount} type={particleType} colors={particleColors} />
-
-      <div className="deco deco-1" />
-      <div className="deco deco-2" />
-
+      <div className="deco deco-1" /><div className="deco deco-2" />
       <div className="sec-glow" />
-
-      {/* Click zone — only active after reveal */}
       {onClick && revealed && <div className="czone" onClick={onClick} />}
-
-      {/* Sealed reveal element */}
-      <SealedReveal
-        type={sealType}
-        revealed={revealed}
-        onReveal={handleReveal}
-      />
-
-      {/* Content — each child handles its own reveal animation */}
-      <div className="sec-inner">
-        {children}
-      </div>
+      <SealedReveal type={sealType} revealed={revealed} onReveal={handleReveal} />
+      <div className="sec-inner">{children}</div>
     </motion.section>
   )
 }
 
-/* ════════════════════════════
-   WAVE DIVIDER
-════════════════════════════ */
 function WaveDivider({ flip = false, color = '#0e0404' }: { flip?: boolean; color?: string }) {
   return (
     <div className={`wave-divider ${flip ? 'flip' : ''}`}>
       <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-        <path
-          d="M0,60 C240,120 480,0 720,60 C960,120 1200,0 1440,60 L1440,120 L0,120 Z"
-          fill={color}
-        />
+        <path d="M0,60 C240,120 480,0 720,60 C960,120 1200,0 1440,60 L1440,120 L0,120 Z" fill={color} />
       </svg>
     </div>
   )
 }
 
-/* ════════════════════════════
-   NAVIGATION DOTS
-════════════════════════════ */
 function NavDots() {
   const [active, setActive] = useState(0)
-
   useEffect(() => {
     const sections = document.querySelectorAll('.sec')
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const idx = Array.from(sections).indexOf(entry.target)
-            if (idx >= 0) setActive(idx)
-          }
-        })
-      },
-      { threshold: 0.5 }
-    )
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => { if (entry.isIntersecting) { const idx = Array.from(sections).indexOf(entry.target); if (idx >= 0) setActive(idx) } })
+    }, { threshold: 0.5 })
     sections.forEach((s) => observer.observe(s))
     return () => observer.disconnect()
   }, [])
-
-  const scrollTo = (idx: number) => {
-    const sections = document.querySelectorAll('.sec')
-    sections[idx]?.scrollIntoView({ behavior: 'smooth' })
-  }
-
+  const scrollTo = (idx: number) => { document.querySelectorAll('.sec')[idx]?.scrollIntoView({ behavior: 'smooth' }) }
   return (
     <div className="nav-dots">
       {[0, 1, 2, 3, 4, 5].map((i) => (
-        <button
-          key={i}
-          className={`nav-dot ${active === i ? 'active' : ''}`}
-          onClick={() => scrollTo(i)}
-          aria-label={`Go to section ${i + 1}`}
-        />
+        <button key={i} className={`nav-dot ${active === i ? 'active' : ''}`} onClick={() => scrollTo(i)} aria-label={`Go to section ${i + 1}`} />
       ))}
     </div>
   )
@@ -749,7 +436,7 @@ function NavDots() {
    MAIN PAGE COMPONENT
 ════════════════════════════ */
 export default function Home() {
-  const [stage, setStage] = useState<'gift' | 'roses' | 'text' | 'date' | 'main'>('gift')
+  const [stage, setStage] = useState<'music' | 'gift' | 'roses' | 'text' | 'date' | 'main'>('music')
   const [giftShaking, setGiftShaking] = useState(false)
   const [wordVisible, setWordVisible] = useState({ w1: false, w2: false, myb: false })
   const [heartDrawn, setHeartDrawn] = useState(false)
@@ -757,93 +444,71 @@ export default function Home() {
   const [dateSubVisible, setDateSubVisible] = useState(false)
   const [mainVisible, setMainVisible] = useState(false)
   const [scrollHintVisible, setScrollHintVisible] = useState(false)
+  const [musicAccepted, setMusicAccepted] = useState(false)
 
-  // Reveal state for each section
-  const [revealed, setRevealed] = useState({
-    s1: false,
-    s2: false,
-    s3: false,
-    s4: false,
-    s5: false,
-    s6: false,
-  })
+  const [revealed, setRevealed] = useState({ s1: false, s2: false, s3: false, s4: false, s5: false, s6: false })
 
   const cursorRef = useRef<HTMLDivElement>(null)
-  const ytPlayerRef = useRef<any>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const [musicPlaying, setMusicPlaying] = useState(false)
   const lenisRef = useRef<Lenis | null>(null)
 
-  // Section reveal handler
   const handleReveal = useCallback((sectionKey: string, e: React.MouseEvent) => {
     setRevealed(prev => ({ ...prev, [sectionKey]: true }))
   }, [])
 
+  // ═══ MUSIC CONSENT ═══
+  const acceptMusic = useCallback(() => {
+    setMusicAccepted(true)
+    setMusicPlaying(true)
+    setStage('gift')
+  }, [])
+
+  const declineMusic = useCallback(() => {
+    setMusicAccepted(false)
+    setStage('gift')
+  }, [])
+
+  // ═══ HTML5 AUDIO ═══
+  useEffect(() => {
+    if (!musicAccepted || typeof window === 'undefined') return
+    const audio = new Audio('/song.mp3')
+    audio.loop = true
+    audio.volume = 0.5
+    audio.play().then(() => {
+      setMusicPlaying(true)
+    }).catch(() => {
+      // Autoplay blocked — user needs to interact first
+      setMusicPlaying(false)
+    })
+    audioRef.current = audio
+    return () => { audio.pause(); audioRef.current = null }
+  }, [musicAccepted])
+
+  const toggleMusic = useCallback(() => {
+    if (!audioRef.current) return
+    if (musicPlaying) { audioRef.current.pause(); setMusicPlaying(false) }
+    else { audioRef.current.play().then(() => setMusicPlaying(true)).catch(() => {}) }
+  }, [musicPlaying])
+
   // ═══ LENIS SMOOTH SCROLL ═══
   useEffect(() => {
     if (!mainVisible) return
-
-    const lenis = new Lenis({
-      duration: 1.8,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      touchMultiplier: 2,
-      infinite: false,
-    })
+    const lenis = new Lenis({ duration: 1.8, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), touchMultiplier: 2, infinite: false })
     lenisRef.current = lenis
-
-    function raf(time: number) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
-    }
+    function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf) }
     requestAnimationFrame(raf)
-
-    return () => {
-      lenis.destroy()
-      lenisRef.current = null
-    }
+    return () => { lenis.destroy(); lenisRef.current = null }
   }, [mainVisible])
 
   // ═══ CUSTOM CURSOR ═══
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (cursorRef.current) {
-        cursorRef.current.style.left = (e.clientX - 9) + 'px'
-        cursorRef.current.style.top = (e.clientY - 9) + 'px'
-      }
+      if (cursorRef.current) { cursorRef.current.style.left = (e.clientX - 9) + 'px'; cursorRef.current.style.top = (e.clientY - 9) + 'px' }
     }
     document.addEventListener('mousemove', handleMouseMove)
     return () => document.removeEventListener('mousemove', handleMouseMove)
   }, [])
-
-  // ═══ YOUTUBE MUSIC ═══
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const tag = document.createElement('script')
-    tag.src = 'https://www.youtube.com/iframe_api'
-    document.head.appendChild(tag)
-    ;(window as any).onYouTubeIframeAPIReady = () => {
-      const YT = (window as any).YT
-      if (!YT) return
-      ytPlayerRef.current = new YT.Player('ytp', {
-        videoId: 'rNEsMFXDkMU',
-        playerVars: { autoplay: 1, loop: 1, playlist: 'rNEsMFXDkMU', controls: 0, fs: 0, rel: 0, iv_load_policy: 3, modestbranding: 1 },
-        events: {
-          onReady: (e: any) => {
-            e.target.setVolume(55)
-            e.target.playVideo()
-            setMusicPlaying(true)
-          },
-        },
-      })
-    }
-  }, [])
-
-  const toggleMusic = useCallback(() => {
-    if (!ytPlayerRef.current) return
-    try {
-      if (musicPlaying) { ytPlayerRef.current.pauseVideo(); setMusicPlaying(false) }
-      else { ytPlayerRef.current.playVideo(); setMusicPlaying(true) }
-    } catch { /* not ready */ }
-  }, [musicPlaying])
 
   // ═══ GIFT OPEN ═══
   const openGift = useCallback(() => {
@@ -851,44 +516,36 @@ export default function Home() {
     let s = 0
     const doShake = () => {
       setGiftShaking(true)
-      setTimeout(() => {
-        setGiftShaking(false)
-        s++
-        if (s < 3) setTimeout(doShake, 220)
-        else setStage('roses')
-      }, 550)
+      setTimeout(() => { setGiftShaking(false); s++; if (s < 3) setTimeout(doShake, 220); else setStage('roses') }, 550)
     }
     doShake()
   }, [stage])
 
-  // ═══ ROSE BURST ═══
+  // ═══ ROSE BURST — MORE ROSES ═══
   useEffect(() => {
     if (stage !== 'roses') return
-
     const svg = document.getElementById('roseCanvas')
     if (!svg) return
     const W = window.innerWidth, H = window.innerHeight
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`)
 
     const colors = [
-      ['#c0463c', '#6b1a1a'],
-      ['#e8897a', '#b03030'],
-      ['#f2c4b8', '#c0463c'],
-      ['#d4706a', '#8b2a2a'],
-      ['#e8a090', '#a03030'],
+      ['#c0463c', '#6b1a1a'], ['#e8897a', '#b03030'], ['#f2c4b8', '#c0463c'],
+      ['#d4706a', '#8b2a2a'], ['#e8a090', '#a03030'], ['#f7d6cf', '#d4706a'],
+      ['#b03030', '#6b1a1a'], ['#c9995a', '#6b3a1a'],
     ]
 
     let count = 0
-    const total = 55
+    const total = 90 // Increased from 55 to 90 — more roses!
     const positions = []
 
-    for (let row = 0; row < 8; row++) {
-      for (let col = 0; col < 9; col++) {
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 12; col++) {
         positions.push({
-          x: (col / 8) * W + (Math.random() - .5) * (W / 9),
-          y: (row / 7) * H + (Math.random() - .5) * (H / 8),
-          sz: 60 + Math.random() * 80,
-          delay: (row * 9 + col) * 55 + Math.random() * 80,
+          x: (col / 11) * W + (Math.random() - .5) * (W / 11),
+          y: (row / 9) * H + (Math.random() - .5) * (H / 10),
+          sz: 40 + Math.random() * 110, // Wider size range for more variety
+          delay: (row * 12 + col) * 40 + Math.random() * 60, // Faster spawn
         })
       }
     }
@@ -899,7 +556,7 @@ export default function Home() {
         const [pc, cc] = colors[Math.floor(Math.random() * colors.length)]
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
         g.style.opacity = '0'
-        g.style.transition = 'opacity .6s ease, transform .6s cubic-bezier(.16,1,.3,1)'
+        g.style.transition = 'opacity .5s ease, transform .5s cubic-bezier(.16,1,.3,1)'
         g.style.transform = 'scale(0.2)'
         g.style.transformOrigin = `${p.x}px ${p.y}px`
         g.innerHTML = roseSVG(p.x, p.y, p.sz, pc, cc)
@@ -909,7 +566,7 @@ export default function Home() {
           g.style.transform = 'scale(1)'
         }))
         count++
-        if (count >= total) setTimeout(() => setStage('text'), 900)
+        if (count >= total) setTimeout(() => setStage('text'), 800)
       }, p.delay)
     })
   }, [stage])
@@ -919,10 +576,7 @@ export default function Home() {
     if (stage !== 'text') return
     const t1 = setTimeout(() => setWordVisible(v => ({ ...v, w1: true })), 150)
     const t2 = setTimeout(() => setWordVisible(v => ({ ...v, w2: true })), 850)
-    const t3 = setTimeout(() => {
-      setWordVisible(v => ({ ...v, myb: true }))
-      setTimeout(() => setHeartDrawn(true), 350)
-    }, 1650)
+    const t3 = setTimeout(() => { setWordVisible(v => ({ ...v, myb: true })); setTimeout(() => setHeartDrawn(true), 350) }, 1650)
     const t4 = setTimeout(() => setStage('date'), 5800)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, [stage])
@@ -941,7 +595,6 @@ export default function Home() {
     setMainVisible(true)
     setScrollHintVisible(true)
     const t = setTimeout(() => setScrollHintVisible(false), 7000)
-
     setTimeout(() => {
       buildBgRosesHTML('bgr1', 12, [['#c0463c', '#6b1a1a'], ['#e8897a', '#b03030']])
       buildBgRosesHTML('bgr2', 10, [['#e8897a', '#c0463c'], ['#f2c4b8', '#e8897a']])
@@ -950,7 +603,6 @@ export default function Home() {
       buildBgRosesHTML('bgr5', 12, [['#7070a0', '#2a2a50'], ['#a090b8', '#4a3060']])
       buildBgRosesHTML('bgr6', 16, [['#c0463c', '#6b1a1a'], ['#e8897a', '#b03030'], ['#c9995a', '#6b3a1a']])
     }, 100)
-
     return () => clearTimeout(t)
   }, [stage])
 
@@ -962,7 +614,34 @@ export default function Home() {
     <>
       <div id="cursor" ref={cursorRef}><CursorSVG /></div>
 
-      {/* ══ STAGE 0: GIFT ══ */}
+      {/* ══ STAGE 0: MUSIC CONSENT ══ */}
+      <div className={`stage ${stage !== 'music' ? 'gone' : 'entering'}`} id="stMusic">
+        <motion.div
+          className="music-consent"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <motion.div className="music-consent-icon"
+            animate={{ y: [0, -8, 0], scale: [1, 1.05, 1] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          >
+            🎵
+          </motion.div>
+          <h2 className="music-consent-title">Allow Music?</h2>
+          <p className="music-consent-desc">This experience is better with music</p>
+          <div className="music-consent-buttons">
+            <button className="music-btn music-accept" onClick={acceptMusic}>
+              <span className="music-btn-icon">🎶</span> Yes, play music
+            </button>
+            <button className="music-btn music-decline" onClick={declineMusic}>
+              No, silence
+            </button>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ══ STAGE 1: GIFT ══ */}
       <div className={`stage ${stage !== 'gift' ? 'gone' : 'entering'}`} id="stGift">
         <div className={`gift-scene ${giftShaking ? 'shake-it' : ''}`} onClick={openGift}>
           <GiftBoxSVG />
@@ -970,13 +649,13 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ══ STAGE 1: ROSES ══ */}
-      <div className={`stage ${stage === 'gift' ? 'hidden' : stage === 'roses' ? 'entering' : 'gone'}`} id="stRoses">
+      {/* ══ STAGE 2: ROSES ══ */}
+      <div className={`stage ${stage === 'music' || stage === 'gift' ? 'hidden' : stage === 'roses' ? 'entering' : 'gone'}`} id="stRoses">
         <svg id="roseCanvas" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} xmlns="http://www.w3.org/2000/svg" />
       </div>
 
-      {/* ══ STAGE 2: TEXT ══ */}
-      <div className={`stage ${['gift', 'roses'].includes(stage) ? 'hidden' : stage === 'text' ? 'entering' : 'gone'}`} id="stText">
+      {/* ══ STAGE 3: TEXT ══ */}
+      <div className={`stage ${['music', 'gift', 'roses'].includes(stage) ? 'hidden' : stage === 'text' ? 'entering' : 'gone'}`} id="stText">
         <div className={`wrd ${wordVisible.w1 ? 'in' : ''}`}>Happy</div>
         <div className={`wrd ${wordVisible.w2 ? 'in' : ''}`}>Birthday</div>
         <div className={`myb-row ${wordVisible.myb ? 'in' : ''}`}>
@@ -987,8 +666,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ══ STAGE 3: DATE ══ */}
-      <div className={`stage ${['gift', 'roses', 'text'].includes(stage) ? 'hidden' : stage === 'date' ? 'entering' : 'gone'}`} id="stDate">
+      {/* ══ STAGE 4: DATE ══ */}
+      <div className={`stage ${['music', 'gift', 'roses', 'text'].includes(stage) ? 'hidden' : stage === 'date' ? 'entering' : 'gone'}`} id="stDate">
         <div className={`date-num ${dateVisible ? 'in' : ''}`}>June 19</div>
         <div className={`date-sub ${dateSubVisible ? 'in' : ''}`}>his special day</div>
       </div>
@@ -1008,14 +687,10 @@ export default function Home() {
       {/* ══ MAIN CONTENT ══ */}
       <div id="main" className={mainVisible ? 'in' : ''}>
 
-        {/* S1 — Gift reveal */}
-        <AnimatedSection
-          className="sec-1" id="s1" bgId="bgr1"
-          onClick={(e) => boom(e, 'teddy')}
-          particleType="petal" particleCount={18}
-          particleColors={['#e8897a', '#f2c4b8', '#c0463c', '#fff9f6']}
-          sealType="gift" revealed={revealed.s1}
-          onReveal={(e) => handleReveal('s1', e)}
+        {/* S1 */}
+        <AnimatedSection className="sec-1" id="s1" bgId="bgr1" onClick={(e) => boom(e, 'teddy')}
+          particleType="petal" particleCount={18} particleColors={['#e8897a', '#f2c4b8', '#c0463c', '#fff9f6']}
+          sealType="gift" revealed={revealed.s1} onReveal={(e) => handleReveal('s1', e)}
         >
           <AnimatedText className="hero" delay={0} revealed={revealed.s1} variant="slideUp">&ldquo;Happy Birthday, Bishoy&rdquo;</AnimatedText>
           <AnimatedText delay={0.2} revealed={revealed.s1} variant="slideUp">&ldquo;Today the world celebrates you — and so do I&rdquo;</AnimatedText>
@@ -1027,14 +702,10 @@ export default function Home() {
 
         <WaveDivider color="#f5ebe4" />
 
-        {/* S2 — Heart reveal */}
-        <AnimatedSection
-          className="sec-2" id="s2" bgId="bgr2"
-          onClick={(e) => boom(e, 'heart')}
-          particleType="heart" particleCount={14}
-          particleColors={['#c0463c', '#e8897a', '#f2c4b8', '#8b2a2a']}
-          sealType="heart" revealed={revealed.s2}
-          onReveal={(e) => handleReveal('s2', e)}
+        {/* S2 */}
+        <AnimatedSection className="sec-2" id="s2" bgId="bgr2" onClick={(e) => boom(e, 'heart')}
+          particleType="heart" particleCount={14} particleColors={['#c0463c', '#e8897a', '#f2c4b8', '#8b2a2a']}
+          sealType="heart" revealed={revealed.s2} onReveal={(e) => handleReveal('s2', e)}
         >
           <AnimatedText className="hero sec2-text" delay={0} revealed={revealed.s2} variant="scaleIn">&ldquo;You didn&rsquo;t just walk into my life… you became it&rdquo;</AnimatedText>
           <AnimatedText delay={0.2} revealed={revealed.s2} variant="scaleIn" className="sec2-text">&ldquo;Before you, I didn&rsquo;t know that someone could feel like home&rdquo;</AnimatedText>
@@ -1046,14 +717,10 @@ export default function Home() {
 
         <WaveDivider flip color="#0e0404" />
 
-        {/* S3 — Rose reveal */}
-        <AnimatedSection
-          className="sec-3" id="s3" bgId="bgr3"
-          onClick={(e) => boom(e, 'rose')}
-          particleType="petal" particleCount={16}
-          particleColors={['#8b2a2a', '#c0463c', '#e8897a', '#f2c4b8']}
-          sealType="rose" revealed={revealed.s3}
-          onReveal={(e) => handleReveal('s3', e)}
+        {/* S3 */}
+        <AnimatedSection className="sec-3" id="s3" bgId="bgr3" onClick={(e) => boom(e, 'rose')}
+          particleType="petal" particleCount={16} particleColors={['#8b2a2a', '#c0463c', '#e8897a', '#f2c4b8']}
+          sealType="rose" revealed={revealed.s3} onReveal={(e) => handleReveal('s3', e)}
         >
           <AnimatedText className="hero" delay={0} revealed={revealed.s3} variant="blurIn">&ldquo;Every moment with you feels like home&rdquo;</AnimatedText>
           <AnimatedText delay={0.2} revealed={revealed.s3} variant="blurIn">&ldquo;The small moments, the silly ones, the ones no one else would understand&rdquo;</AnimatedText>
@@ -1063,14 +730,10 @@ export default function Home() {
           <AnimatedText delay={0.8} revealed={revealed.s3} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
         </AnimatedSection>
 
-        {/* S4 — Star reveal */}
-        <AnimatedSection
-          className="sec-4" id="s4" bgId="bgr4"
-          onClick={(e) => boom(e, 'stars')}
-          particleType="sparkle" particleCount={20}
-          particleColors={['#c9995a', '#e8c98a', '#f2c4b8', '#fff9f6', '#e8897a']}
-          sealType="star" revealed={revealed.s4}
-          onReveal={(e) => handleReveal('s4', e)}
+        {/* S4 */}
+        <AnimatedSection className="sec-4" id="s4" bgId="bgr4" onClick={(e) => boom(e, 'stars')}
+          particleType="sparkle" particleCount={20} particleColors={['#c9995a', '#e8c98a', '#f2c4b8', '#fff9f6', '#e8897a']}
+          sealType="star" revealed={revealed.s4} onReveal={(e) => handleReveal('s4', e)}
         >
           <AnimatedText className="hero" delay={0} revealed={revealed.s4} variant="slideLeft">&ldquo;You are my favorite person in every version of every story&rdquo;</AnimatedText>
           <AnimatedText delay={0.2} revealed={revealed.s4} variant="slideLeft">&ldquo;In every timeline, every lifetime, every universe —&rdquo;</AnimatedText>
@@ -1080,38 +743,38 @@ export default function Home() {
           <AnimatedText delay={0.8} revealed={revealed.s4} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
         </AnimatedSection>
 
-        {/* S5 — Moon reveal */}
-        <AnimatedSection
-          className="sec-5" id="s5" bgId="bgr5"
-          onClick={(e) => boom(e, 'moon')}
-          particleType="star" particleCount={25}
-          particleColors={['#7070a0', '#a090b8', '#c9995a', '#e8c98a', '#fff9f6']}
-          sealType="moon" revealed={revealed.s5}
-          onReveal={(e) => handleReveal('s5', e)}
+        {/* S5 — Arabic poetry section */}
+        <AnimatedSection className="sec-5" id="s5" bgId="bgr5" onClick={(e) => boom(e, 'moon')}
+          particleType="star" particleCount={25} particleColors={['#7070a0', '#a090b8', '#c9995a', '#e8c98a', '#fff9f6']}
+          sealType="moon" revealed={revealed.s5} onReveal={(e) => handleReveal('s5', e)}
         >
-          <motion.div
-            className="moon-deco"
-            initial={{ opacity: 0, scale: 0 }}
-            animate={revealed.s5 ? { opacity: 0.15, scale: 1 } : { opacity: 0, scale: 0 }}
-            transition={{ duration: 1.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          >🌙</motion.div>
-          <AnimatedText className="hero arabic" delay={0} revealed={revealed.s5} variant="slideRight">الماضى اية الماضى مين نسيت ف حضنك إلى شوفتة من السنين ♥</AnimatedText>
-          <RevealDivider revealed={revealed.s5} delay={0.3} />
-          <AnimatedText className="arabic" delay={0.45} revealed={revealed.s5} variant="slideRight">انت قمري والقاف عين وإذا غابت العين ابدلنا الميم بالدال ♥</AnimatedText>
-          <RevealDivider revealed={revealed.s5} delay={0.55} />
-          <AnimatedText className="arabic" delay={0.65} revealed={revealed.s5} variant="slideRight">ويكفينى من هذا العمر انى حظيت بك ♥</AnimatedText>
-          <RevealDivider revealed={revealed.s5} delay={0.75} />
-          <AnimatedText delay={0.9} revealed={revealed.s5} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
+          <motion.div className="moon-deco" initial={{ opacity: 0, scale: 0 }} animate={revealed.s5 ? { opacity: 0.15, scale: 1 } : { opacity: 0, scale: 0 }} transition={{ duration: 1.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>🌙</motion.div>
+
+          <AnimatedText className="hero arabic" delay={0} revealed={revealed.s5} variant="slideRight">ما تقلقش يا عمرو دياب على اللي فات ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={0.2} />
+
+          <AnimatedText className="arabic" delay={0.35} revealed={revealed.s5} variant="slideRight">الماضى اية الماضى مين نسيت ف حضنك إلى شوفتة من السنين ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={0.45} />
+
+          <AnimatedText className="arabic" delay={0.55} revealed={revealed.s5} variant="slideRight">انت قمري والقاف عين وإذا غابت العين ابدلنا الميم بالدال ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={0.65} />
+
+          <AnimatedText className="arabic" delay={0.75} revealed={revealed.s5} variant="slideRight">ويكفينى من هذا العمر انى حظيت بك ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={0.85} />
+
+          <AnimatedText className="arabic" delay={0.95} revealed={revealed.s5} variant="slideRight">لو سألونى مين الناس مختار قلت أنت وبس ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={1.05} />
+
+          <AnimatedText className="arabic" delay={1.15} revealed={revealed.s5} variant="slideRight">عمري الذي فات كان حلم وجيت أنت صحيتني منه ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={1.25} />
+
+          <AnimatedText delay={1.4} revealed={revealed.s5} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
         </AnimatedSection>
 
-        {/* S6 — Cake reveal */}
-        <AnimatedSection
-          className="sec-6" id="s6" bgId="bgr6"
-          onClick={(e) => boom(e, 'cake')}
-          particleType="heart" particleCount={22}
-          particleColors={['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a']}
-          sealType="cake" revealed={revealed.s6}
-          onReveal={(e) => handleReveal('s6', e)}
+        {/* S6 */}
+        <AnimatedSection className="sec-6" id="s6" bgId="bgr6" onClick={(e) => boom(e, 'cake')}
+          particleType="heart" particleCount={22} particleColors={['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a']}
+          sealType="cake" revealed={revealed.s6} onReveal={(e) => handleReveal('s6', e)}
         >
           <ShimmerText delay={0} revealed={revealed.s6} extraStyle={{ fontSize: 'clamp(2.2rem, 5.5vw, 4rem)', fontStyle: 'italic' }}>&ldquo;Here&rsquo;s to you, here&rsquo;s to us&rdquo;</ShimmerText>
           <RevealDivider revealed={revealed.s6} delay={0.2} />
@@ -1128,8 +791,6 @@ export default function Home() {
           <p>Made with love</p>
         </footer>
       </div>
-
-      <div id="ytp" style={{ position: 'fixed', bottom: -9999, left: -9999, width: 1, height: 1 }} />
     </>
   )
 }

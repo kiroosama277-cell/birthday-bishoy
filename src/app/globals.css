@@ -86,7 +86,95 @@ body {
   }
 }
 
-/* ── STAGE 0: GIFT ── */
+/* ── STAGE 0: MUSIC CONSENT ── */
+#stMusic { background: radial-gradient(ellipse 80% 80% at 50% 60%, #2e0a0a, #0e0404); }
+
+.music-consent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.music-consent-icon {
+  font-size: clamp(4rem, 12vw, 7rem);
+  line-height: 1;
+  filter: drop-shadow(0 0 30px rgba(232, 137, 122, 0.5));
+  margin-bottom: 0.5rem;
+}
+
+.music-consent-title {
+  font-family: var(--font-cormorant);
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--petal-pink);
+  letter-spacing: 0.08em;
+}
+
+.music-consent-desc {
+  font-family: var(--font-cormorant);
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  color: rgba(232, 137, 122, 0.45);
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+}
+
+.music-consent-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.music-btn {
+  font-family: var(--font-cormorant);
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  padding: 0.85rem 2.4rem;
+  border-radius: 50px;
+  cursor: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.music-accept {
+  background: linear-gradient(135deg, var(--rose-mid), var(--rose-light));
+  color: var(--white);
+  border: none;
+  box-shadow: 0 4px 25px rgba(192, 70, 60, 0.35);
+}
+.music-accept:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 35px rgba(192, 70, 60, 0.5);
+}
+.music-accept:active {
+  transform: scale(0.96);
+}
+
+.music-btn-icon {
+  font-size: 1.1rem;
+}
+
+.music-decline {
+  background: transparent;
+  color: rgba(232, 137, 122, 0.4);
+  border: 1px solid rgba(232, 137, 122, 0.15);
+}
+.music-decline:hover {
+  border-color: rgba(232, 137, 122, 0.35);
+  color: rgba(232, 137, 122, 0.6);
+  transform: scale(1.04);
+}
+
+/* ── STAGE 1: GIFT ── */
 #stGift { background: radial-gradient(ellipse 80% 80% at 50% 60%, #2e0a0a, #0e0404); }
 
 .gift-scene {
