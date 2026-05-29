@@ -535,10 +535,9 @@ export default function Home() {
   // ═══ ROSE BURST — FROM GIFT CENTER ═══
   useEffect(() => {
     if (stage !== 'roses') return
-    const svg = document.getElementById('roseCanvas')
-    if (!svg) return
+    const container = document.getElementById('roseCanvasContainer')
+    if (!container) return
     const W = window.innerWidth, H = window.innerHeight
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`)
 
     const colors = [
       ['#c0463c', '#6b1a1a'], ['#e8897a', '#b03030'], ['#f2c4b8', '#c0463c'],
@@ -546,46 +545,49 @@ export default function Home() {
       ['#b03030', '#6b1a1a'], ['#c9995a', '#6b3a1a'],
     ]
 
-    // Roses originate from center (gift box position) and spread outward
-    const cx = W / 2
-    const cy = H / 2 + 20 // slightly below center where gift sits
     const total = 90
-
     let count = 0
-    const roses = []
+    const cx = W / 2, cy = H / 2 + 20
 
-    // Generate target positions covering the whole screen
-    for (let i = 0; i < total; i++) {
-      const targetX = Math.random() * W
-      const targetY = Math.random() * H
-      const sz = 40 + Math.random() * 110
-      // Stagger: closer roses first, farther ones later
-      const dist = Math.sqrt((targetX - cx) ** 2 + (targetY - cy) ** 2)
-      const maxDist = Math.sqrt(cx * cx + cy * cy)
-      const delay = (dist / maxDist) * 1800 + Math.random() * 200
-      roses.push({ targetX, targetY, sz, delay, dist })
+    // Generate positions covering the screen
+    const positions = []
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 12; col++) {
+        const x = (col / 11) * W + (Math.random() - .5) * (W / 11)
+        const y = (row / 9) * H + (Math.random() - .5) * (H / 10)
+        const sz = 40 + Math.random() * 110
+        const dist = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2)
+        positions.push({ x, y, sz, dist })
+      }
     }
+    // Sort by distance from center (wave from center outward)
+    positions.sort((a, b) => a.dist - b.dist)
 
-    // Sort by distance for a wave effect
-    roses.sort((a, b) => a.dist - b.dist)
-
-    roses.forEach((p) => {
+    positions.slice(0, total).forEach((p, i) => {
+      const delay = (p.dist / Math.sqrt(cx * cx + cy * cy)) * 1600 + Math.random() * 150
       setTimeout(() => {
         const [pc, cc] = colors[Math.floor(Math.random() * colors.length)]
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-        // Start at center (gift position)
-        g.style.opacity = '0'
-        g.style.transition = 'opacity .6s ease, transform .8s cubic-bezier(.16,1,.3,1)'
-        g.style.transform = `translate(${cx - p.targetX}px, ${cy - p.targetY}px) scale(0.1)`
-        g.innerHTML = roseSVG(p.targetX, p.targetY, p.sz, pc, cc)
-        svg.appendChild(g)
+        // Use HTML div instead of SVG for reliable CSS transforms
+        const el = document.createElement('div')
+        el.style.cssText = `
+          position: absolute;
+          left: ${p.x}px; top: ${p.y}px;
+          width: ${p.sz}px; height: ${p.sz}px;
+          transform: translate(${cx - p.x}px, ${cy - p.y}px) scale(0.1);
+          opacity: 0;
+          transition: opacity .5s ease, transform .7s cubic-bezier(.16,1,.3,1);
+          pointer-events: none;
+          z-index: 1;
+        `
+        el.innerHTML = `<svg width="${p.sz}" height="${p.sz}" viewBox="0 0 ${p.sz} ${p.sz}">${roseSVG(p.sz / 2, p.sz / 2, p.sz, pc, cc)}</svg>`
+        container.appendChild(el)
         requestAnimationFrame(() => requestAnimationFrame(() => {
-          g.style.opacity = '1'
-          g.style.transform = 'translate(0px, 0px) scale(1)'
+          el.style.opacity = '1'
+          el.style.transform = 'translate(0px, 0px) scale(1)'
         }))
         count++
         if (count >= total) setTimeout(() => setStage('text'), 800)
-      }, p.delay)
+      }, delay)
     })
   }, [stage])
 
@@ -675,7 +677,7 @@ export default function Home() {
 
       {/* ══ STAGE 2: ROSES ══ */}
       <div className={`stage ${stage === 'music' || stage === 'gift' ? 'hidden' : stage === 'roses' ? 'entering' : 'gone'}`} id="stRoses" style={{ zIndex: 500 }}>
-        <svg id="roseCanvas" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} xmlns="http://www.w3.org/2000/svg" />
+        <div id="roseCanvasContainer" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'hidden' }} />
       </div>
 
       {/* ══ STAGE 3: TEXT ══ */}
