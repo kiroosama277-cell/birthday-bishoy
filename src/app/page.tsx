@@ -750,22 +750,22 @@ export default function Home() {
         >
           <motion.div className="moon-deco" initial={{ opacity: 0, scale: 0 }} animate={revealed.s5 ? { opacity: 0.15, scale: 1 } : { opacity: 0, scale: 0 }} transition={{ duration: 1.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>🌙</motion.div>
 
-          <AnimatedText className="hero arabic" delay={0} revealed={revealed.s5} variant="slideRight">ما تقلقش يا عمرو دياب على اللي فات ♥</AnimatedText>
+          <AnimatedText className="hero arabic" delay={0} revealed={revealed.s5} variant="slideRight">انت قمري والقاف عين وإذا غابت العين ابدلنا الميم بالدال ♥</AnimatedText>
           <RevealDivider revealed={revealed.s5} delay={0.2} />
 
           <AnimatedText className="arabic" delay={0.35} revealed={revealed.s5} variant="slideRight">الماضى اية الماضى مين نسيت ف حضنك إلى شوفتة من السنين ♥</AnimatedText>
           <RevealDivider revealed={revealed.s5} delay={0.45} />
 
-          <AnimatedText className="arabic" delay={0.55} revealed={revealed.s5} variant="slideRight">انت قمري والقاف عين وإذا غابت العين ابدلنا الميم بالدال ♥</AnimatedText>
+          <AnimatedText className="arabic" delay={0.55} revealed={revealed.s5} variant="slideRight">ويكفينى من هذا العمر انى حظيت بك ♥</AnimatedText>
           <RevealDivider revealed={revealed.s5} delay={0.65} />
 
-          <AnimatedText className="arabic" delay={0.75} revealed={revealed.s5} variant="slideRight">ويكفينى من هذا العمر انى حظيت بك ♥</AnimatedText>
-          <RevealDivider revealed={revealed.s5} delay={0.85} />
+          <AnimatedText className="arabic" delay={0.8} revealed={revealed.s5} variant="slideRight">متى أذنت دهرك باللقاءِ.. كأنّي لم أوطّئ ماءَ مزنِ ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={0.9} />
 
-          <AnimatedText className="arabic" delay={0.95} revealed={revealed.s5} variant="slideRight">لو سألونى مين الناس مختار قلت أنت وبس ♥</AnimatedText>
-          <RevealDivider revealed={revealed.s5} delay={1.05} />
+          <AnimatedText className="arabic" delay={1.05} revealed={revealed.s5} variant="slideRight">ليس في الأرض كلّها مكانٌ.. يسعني غير المكانِ الذي أنت فيه ♥</AnimatedText>
+          <RevealDivider revealed={revealed.s5} delay={1.15} />
 
-          <AnimatedText className="arabic" delay={1.15} revealed={revealed.s5} variant="slideRight">عمري الذي فات كان حلم وجيت أنت صحيتني منه ♥</AnimatedText>
+          <AnimatedText className="arabic" delay={1.3} revealed={revealed.s5} variant="slideRight">يا مَن أحبّك قد كفاني.. من الدّهور وجودُ عينِك ♥</AnimatedText>
           <RevealDivider revealed={revealed.s5} delay={1.25} />
 
           <AnimatedText delay={1.4} revealed={revealed.s5} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap anywhere</AnimatedText>
