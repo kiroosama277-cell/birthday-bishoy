@@ -218,8 +218,11 @@ function buildBgRosesHTML(id: string, n: number, colors: string[][]) {
    FLOATING PARTICLES
 ════════════════════════════ */
 function FloatingParticles({ count = 15, colors = ['#e8897a', '#f2c4b8', '#c9995a'], type = 'petal' }: { count?: number; colors?: string[]; type?: 'petal' | 'star' | 'heart' | 'sparkle' }) {
-  const particles = useRef(
-    Array.from({ length: count }, (_, i) => ({
+  const [mounted, setMounted] = useState(false)
+  const particles = useRef<any[]>([])
+
+  useEffect(() => {
+    particles.current = Array.from({ length: count }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       delay: Math.random() * 8,
@@ -229,10 +232,14 @@ function FloatingParticles({ count = 15, colors = ['#e8897a', '#f2c4b8', '#c9995
       drift: -30 + Math.random() * 60,
       startY: Math.random() * 100,
     }))
-  )
+    setMounted(true)
+  }, [count, type, colors])
+
+  if (!mounted) return <div className="floating-particles" />
+
   return (
     <div className="floating-particles">
-      {particles.current.map((p) => (
+      {particles.current.map((p: any) => (
         <div
           key={p.id}
           className={`fp fp-${type}`}
@@ -274,6 +281,13 @@ const SEAL_CONFIG: Record<string, {
 function SealedReveal({ type, revealed, onReveal }: { type: string; revealed: boolean; onReveal: (e: React.MouseEvent) => void }) {
   const config = SEAL_CONFIG[type]
   const ref = useRef<HTMLDivElement>(null)
+  // Pre-compute random values to avoid hydration mismatch
+  const particleMeta = useRef(
+    config.particles.map((_, i) => ({
+      distance: 80 + ((i * 17 + 13) % 40),
+      duration: 3 + ((i * 7 + 5) % 20) / 10,
+    }))
+  )
   return (
     <AnimatePresence>
       {!revealed && (
@@ -308,9 +322,9 @@ function SealedReveal({ type, revealed, onReveal }: { type: string; revealed: bo
           </motion.div>
           <div className="sealed-mini-particles">
             {config.particles.map((p, i) => (
-              <motion.span key={i} className="sealed-mini-p" style={{ '--angle': `${(i / config.particles.length) * 360}deg`, '--distance': `${80 + Math.random() * 40}px`, color: config.color } as React.CSSProperties}
+              <motion.span key={i} className="sealed-mini-p" style={{ '--angle': `${(i / config.particles.length) * 360}deg`, '--distance': `${particleMeta.current[i].distance}px`, color: config.color } as React.CSSProperties}
                 animate={{ opacity: [0, 0.7, 0], scale: [0.5, 1, 0.5], rotate: [0, 180] }}
-                transition={{ duration: 3 + Math.random() * 2, repeat: Infinity, delay: i * 0.6, ease: "easeInOut" }}
+                transition={{ duration: particleMeta.current[i].duration, repeat: Infinity, delay: i * 0.6, ease: "easeInOut" }}
               >{p}</motion.span>
             ))}
           </div>

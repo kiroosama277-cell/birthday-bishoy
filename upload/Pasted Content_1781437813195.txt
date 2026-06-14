@@ -1,0 +1,3092 @@
+A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+
+
+  ...
+    <RedirectBoundary>
+      <RedirectErrorBoundary router={{...}}>
+        <InnerLayoutRouter url="/" tree={[...]} params={{}} cacheNode={{rsc:<Fragment>, ...}} segmentPath={[...]} ...>
+          <SegmentViewNode type="page" pagePath="/Downloads...">
+            <SegmentTrieNode>
+            <ClientPageRoot Component={function Home} serverProvidedParams={{...}}>
+              <Home params={Promise} searchParams={Promise}>
+                <div>
+                <div>
+                <div>
+                <div>
+                <div>
+                <div>
+                <div>
+                <div id="main" className="">
+                  <AnimatedSection className="sec-1" id="s1" bgId="bgr1" onClick={function onClick} particleType="petal" ...>
+                    <motion.section className="sec sec-1" id="s1">
+                      <section className="sec sec-1" id="s1" style={{}} ref={function useMotionRef.useCallback}>
+                        <div>
+                        <FloatingParticles count={18} type="petal" colors={[...]}>
+                          <div className="floating-p...">
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "9.210961896377057%"
+-                               left: "18.5792%"
++                               top: "38.08644590322229%"
+-                               top: "36.505%"
++                               animationDelay: "2.3097537845245384s"
++                               animationDuration: "6.192254265321608s"
++                               width: 5.784256464197372
+-                               width: "6.57842px"
++                               height: 5.784256464197372
+-                               height: "6.57842px"
++                               color: "#c0463c"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "20.186122328525485px"
+-                               --drift: "15.516329402712188px"
+-                               animation-delay: "4.86094s"
+-                               animation-duration: "8.85532s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "44.56382870167835%"
+-                               left: "5.39978%"
++                               top: "97.06971635068406%"
+-                               top: "9.20289%"
++                               animationDelay: "1.5086370713063104s"
++                               animationDuration: "9.855393656982294s"
++                               width: 11.176702532590657
+-                               width: "9.93354px"
++                               height: 11.176702532590657
+-                               height: "9.93354px"
++                               color: "#f2c4b8"
+-                               color: "rgb(255, 249, 246)"
++                               --drift: "-13.776260921032943px"
+-                               --drift: "-15.632805147274595px"
+-                               animation-delay: "3.33834s"
+-                               animation-duration: "7.37839s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "74.79709292756104%"
+-                               left: "44.3499%"
++                               top: "86.15422096463968%"
+-                               top: "24.5564%"
++                               animationDelay: "0.1315910918606349s"
++                               animationDuration: "6.1629069474394695s"
++                               width: 8.231502087653505
+-                               width: "11.427px"
++                               height: 8.231502087653505
+-                               height: "11.427px"
++                               color: "#c0463c"
+-                               color: "rgb(255, 249, 246)"
++                               --drift: "-24.161488924197577px"
+-                               --drift: "12.453308627278489px"
+-                               animation-delay: "0.885326s"
+-                               animation-duration: "6.05928s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "69.91938425391947%"
+-                               left: "14.769%"
++                               top: "10.718152590062724%"
+-                               top: "9.20698%"
++                               animationDelay: "3.9286026161686216s"
++                               animationDuration: "9.203375904245203s"
++                               width: 10.971112538925397
+-                               width: "8.4515px"
++                               height: 10.971112538925397
+-                               height: "8.4515px"
++                               color: "#f2c4b8"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "11.227809476559955px"
+-                               --drift: "27.876189860128015px"
+-                               animation-delay: "7.69084s"
+-                               animation-duration: "11.7724s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "2.062445401869617%"
+-                               left: "37.1049%"
++                               top: "90.51695408245598%"
+-                               top: "44.2037%"
++                               animationDelay: "4.671262127776998s"
++                               animationDuration: "14.192355341349014s"
++                               width: 8.733391058538313
+-                               width: "5.91048px"
++                               height: 8.733391058538313
+-                               height: "5.91048px"
++                               color: "#fff9f6"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "-9.757132827980794px"
+-                               --drift: "22.502656975906646px"
+-                               animation-delay: "2.46634s"
+-                               animation-duration: "13.4272s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "2.9964397743140747%"
+-                               left: "7.27684%"
++                               top: "94.25992422556973%"
+-                               top: "98.8125%"
++                               animationDelay: "6.915017415112045s"
++                               animationDuration: "11.433413630594611s"
++                               width: 11.32580457469551
+-                               width: "9.40176px"
++                               height: 11.32580457469551
+-                               height: "9.40176px"
++                               color: "#c0463c"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-22.37702364054351px"
+-                               --drift: "26.103781491293155px"
+-                               animation-delay: "2.92224s"
+-                               animation-duration: "14.5364s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "43.25383146798395%"
+-                               left: "29.5059%"
++                               top: "19.414260112173952%"
+-                               top: "47.3436%"
++                               animationDelay: "7.174709890636837s"
++                               animationDuration: "7.721144086539999s"
++                               width: 11.40634981717055
+-                               width: "11.5079px"
++                               height: 11.40634981717055
+-                               height: "11.5079px"
++                               color: "#fff9f6"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "15.725593081231949px"
+-                               --drift: "-0.47263207739504054px"
+-                               animation-delay: "7.97216s"
+-                               animation-duration: "8.91925s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "81.10509370923758%"
+-                               left: "97.8252%"
++                               top: "31.660016396275804%"
+-                               top: "25.0212%"
++                               animationDelay: "5.851291542638451s"
++                               animationDuration: "13.928499722250955s"
++                               width: 5.293892042524326
+-                               width: "10.5052px"
++                               height: 5.293892042524326
+-                               height: "10.5052px"
++                               color: "#c0463c"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "1.4937410802364397px"
+-                               --drift: "-13.466328578327044px"
+-                               animation-delay: "2.52276s"
+-                               animation-duration: "13.81s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "5.760004921136119%"
+-                               left: "26.3725%"
++                               top: "33.19477135576147%"
+-                               top: "86.9138%"
++                               animationDelay: "4.241520129024819s"
++                               animationDuration: "14.446997750969377s"
++                               width: 11.260141346674343
+-                               width: "7.84626px"
++                               height: 11.260141346674343
+-                               height: "7.84626px"
++                               color: "#e8897a"
+-                               color: "rgb(255, 249, 246)"
++                               --drift: "-20.4978847048422px"
+-                               --drift: "-10.273884346409325px"
+-                               animation-delay: "5.22367s"
+-                               animation-duration: "14.9004s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "36.42105278811869%"
+-                               left: "25.5028%"
++                               top: "24.75431123529106%"
+-                               top: "85.7972%"
++                               animationDelay: "2.005774765876752s"
++                               animationDuration: "8.733987704657478s"
++                               width: 4.825340164490357
+-                               width: "9.94928px"
++                               height: 4.825340164490357
+-                               height: "9.94928px"
++                               color: "#e8897a"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "-20.593050560434435px"
+-                               --drift: "-10.793363476435335px"
+-                               animation-delay: "6.21091s"
+-                               animation-duration: "7.36634s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "62.580734166344754%"
+-                               left: "50.2109%"
++                               top: "8.674366465410976%"
+-                               top: "70.8362%"
++                               animationDelay: "1.7022160676250664s"
++                               animationDuration: "6.836395625331142s"
++                               width: 6.496961061118712
+-                               width: "6.41174px"
++                               height: 6.496961061118712
+-                               height: "6.41174px"
++                               color: "#fff9f6"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "13.072656336591649px"
+-                               --drift: "26.089380514011246px"
+-                               animation-delay: "3.80862s"
+-                               animation-duration: "7.97477s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "65.93797624251148%"
+-                               left: "67.0198%"
++                               top: "68.80907408498263%"
+-                               top: "57.6486%"
++                               animationDelay: "4.914607084071058s"
++                               animationDuration: "13.900869800500885s"
++                               width: 10.018637999456159
+-                               width: "4.02728px"
++                               height: 10.018637999456159
+-                               height: "4.02728px"
++                               color: "#e8897a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "-7.091324895033569px"
+-                               --drift: "-12.966982625731593px"
+-                               animation-delay: "5.67162s"
+-                               animation-duration: "15.9908s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "35.84277617815089%"
+-                               left: "26.9777%"
++                               top: "37.817928411256005%"
+-                               top: "59.4924%"
++                               animationDelay: "6.083283515417435s"
++                               animationDuration: "6.024859765075721s"
++                               width: 5.3848601033679016
+-                               width: "11.0395px"
++                               height: 5.3848601033679016
+-                               height: "11.0395px"
++                               color: "#e8897a"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "13.821700334580697px"
+-                               --drift: "25.663566794400822px"
+-                               animation-delay: "6.6371s"
+-                               animation-duration: "13.1027s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "14.105111278199455%"
+-                               left: "74.334%"
++                               top: "4.309659346043915%"
+-                               top: "35.5594%"
++                               animationDelay: "7.815408443273586s"
++                               animationDuration: "8.539539993609488s"
++                               width: 4.104204399773741
+-                               width: "10.0543px"
++                               height: 4.104204399773741
+-                               height: "10.0543px"
++                               color: "#c0463c"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-28.97595059358522px"
+-                               --drift: "-5.1907039441538885px"
+-                               animation-delay: "7.11444s"
+-                               animation-duration: "11.814s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "97.92205225614195%"
+-                               left: "15.2298%"
++                               top: "2.574544065307105%"
+-                               top: "26.1835%"
++                               animationDelay: "7.248372288760904s"
++                               animationDuration: "10.512963861128075s"
++                               width: 6.263457044275731
+-                               width: "7.17023px"
++                               height: 6.263457044275731
+-                               height: "7.17023px"
++                               color: "#e8897a"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "8.732801610179926px"
+-                               --drift: "-26.481677368291912px"
+-                               animation-delay: "4.06316s"
+-                               animation-duration: "7.35248s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "68.05079900093472%"
+-                               left: "26.0773%"
++                               top: "69.35066771496605%"
+-                               top: "49.6403%"
++                               animationDelay: "0.5445856253212842s"
++                               animationDuration: "13.776937018401398s"
++                               width: 4.027397314880725
+-                               width: "9.56215px"
++                               height: 4.027397314880725
+-                               height: "9.56215px"
++                               color: "#e8897a"
+-                               color: "rgb(255, 249, 246)"
++                               --drift: "-21.255661728524395px"
+-                               --drift: "-22.379526765174198px"
+-                               animation-delay: "3.17812s"
+-                               animation-duration: "15.3755s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "29.22588301103567%"
+-                               left: "35.2349%"
++                               top: "47.50768710649258%"
+-                               top: "93.963%"
++                               animationDelay: "2.157406727806829s"
++                               animationDuration: "10.685109268077674s"
++                               width: 11.67414306726447
+-                               width: "7.16018px"
++                               height: 11.67414306726447
+-                               height: "7.16018px"
++                               color: "#f2c4b8"
+-                               color: "rgb(255, 249, 246)"
++                               --drift: "-13.71590114137387px"
+-                               --drift: "-1.4633503591204402px"
+-                               animation-delay: "6.51312s"
+-                               animation-duration: "13.8749s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "58.03170941436462%"
+-                               left: "48.5914%"
++                               top: "37.845977928542084%"
+-                               top: "60.7894%"
++                               animationDelay: "4.74077940401209s"
++                               animationDuration: "9.531205473806303s"
++                               width: 5.489794629575302
+-                               width: "6.6815px"
++                               height: 5.489794629575302
+-                               height: "6.6815px"
++                               color: "#fff9f6"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "4.043132644076188px"
+-                               --drift: "-13.537427303837049px"
+-                               animation-delay: "3.84285s"
+-                               animation-duration: "6.35782s"
+                              }}
+                            >
+                        <div>
+                        <div>
+                        <div>
+                        ...
+                          <div className="sealed-reveal" onClick={function AnimatedSection.useCallback[handleReveal]} ...>
+                            <motion.div>
+                            ...
+                              <div className="sealed-rin..." style={{}} ref={function useMotionRef.useCallback}>
+                                <svg viewBox="0 0 320 320" className="sealed-rin...">
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle
+                                    cx={104.99999999999994}
++                                   cy={64.73720558371178}
+-                                   cy="64.73720558371177"
+                                    r="1.5"
+                                    fill="rgba(201,153,90,0.15)"
+                                  >
+                                  ...
+                            <motion.div>
+                            <div className="sealed-min...">
+                              <motion.span className="sealed-mini-p" style={{--angle:"0deg", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "0deg"
+-                                   --angle: "0deg"
++                                   --distance: "96.12052283200872px"
+-                                   --distance: "116.98666664000228px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🎀
+                              <motion.span className="sealed-mini-p" style={{--angle:"7...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "72deg"
+-                                   --angle: "72deg"
++                                   --distance: "97.47128332685884px"
+-                                   --distance: "83.65454514360405px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ✨
+                              <motion.span className="sealed-mini-p" style={{--angle:"1...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "144deg"
+-                                   --angle: "144deg"
++                                   --distance: "95.35487990011023px"
+-                                   --distance: "100.75440953839254px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 💝
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "216deg"
+-                                   --angle: "216deg"
++                                   --distance: "101.42340788851172px"
+-                                   --distance: "85.20715556126848px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🤍
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "288deg"
+-                                   --angle: "288deg"
++                                   --distance: "101.59918132948604px"
+-                                   --distance: "113.75992689501344px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ✦
+                            ...
+                        ...
+                  <WaveDivider>
+                  <AnimatedSection className="sec-2" id="s2" bgId="bgr2" onClick={function onClick} particleType="heart" ...>
+                    <motion.section className="sec sec-2" id="s2">
+                      <section className="sec sec-2" id="s2" style={{}} ref={function useMotionRef.useCallback}>
+                        <div>
+                        <FloatingParticles count={14} type="heart" colors={[...]}>
+                          <div className="floating-p...">
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "48.38548145970948%"
+-                               left: "58.4%"
++                               top: "80.15628472486598%"
+-                               top: "93.4485%"
++                               animationDelay: "0.8303391824073199s"
++                               animationDuration: "11.071957012993293s"
++                               width: 16.718331203832882
+-                               width: "10.8547px"
++                               height: 16.718331203832882
+-                               height: "10.8547px"
++                               color: "#8b2a2a"
+-                               color: "rgb(139, 42, 42)"
++                               --drift: "-23.418447020703105px"
+-                               --drift: "13.232190743594316px"
+-                               animation-delay: "1.72901s"
+-                               animation-duration: "6.28555s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "23.07116212080923%"
+-                               left: "74.5849%"
++                               top: "79.44577984680936%"
+-                               top: "20.549%"
++                               animationDelay: "6.608733327629037s"
++                               animationDuration: "15.017498859066901s"
++                               width: 20.163878487817826
+-                               width: "20.0577px"
++                               height: 20.163878487817826
+-                               height: "20.0577px"
++                               color: "#f2c4b8"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-9.726806734298858px"
+-                               --drift: "15.54081764922875px"
+-                               animation-delay: "1.06339s"
+-                               animation-duration: "7.90244s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "0.017003902657997116%"
+-                               left: "86.5318%"
++                               top: "2.428519185629785%"
+-                               top: "1.90176%"
++                               animationDelay: "3.280383868378217s"
++                               animationDuration: "7.869407021769357s"
++                               width: 10.611165681172691
+-                               width: "19.2432px"
++                               height: 10.611165681172691
+-                               height: "19.2432px"
++                               color: "#8b2a2a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "6.663615240572767px"
+-                               --drift: "-21.191325591958826px"
+-                               animation-delay: "7.34772s"
+-                               animation-duration: "9.24322s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "6.5151887663800085%"
+-                               left: "21.007%"
++                               top: "95.75832527388035%"
+-                               top: "68.9983%"
++                               animationDelay: "5.9988119956107795s"
++                               animationDuration: "10.26252574766703s"
++                               width: 12.517386561376707
+-                               width: "16.5069px"
++                               height: 12.517386561376707
+-                               height: "16.5069px"
++                               color: "#e8897a"
+-                               color: "rgb(139, 42, 42)"
++                               --drift: "17.388659342000885px"
+-                               --drift: "16.629555603347214px"
+-                               animation-delay: "7.58379s"
+-                               animation-duration: "7.40807s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "25.753891795320182%"
+-                               left: "27.93%"
++                               top: "97.4348376907516%"
+-                               top: "50.0457%"
++                               animationDelay: "6.815830660308522s"
++                               animationDuration: "15.934423408151773s"
++                               width: 17.91896034499493
+-                               width: "16.4111px"
++                               height: 17.91896034499493
+-                               height: "16.4111px"
++                               color: "#c0463c"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "14.270878111699211px"
+-                               --drift: "-8.850659791626597px"
+-                               animation-delay: "7.01446s"
+-                               animation-duration: "15.6149s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "47.25491723305346%"
+-                               left: "9.91059%"
++                               top: "30.313438915769943%"
+-                               top: "68.3308%"
++                               animationDelay: "5.186911398324183s"
++                               animationDuration: "6.128724380669208s"
++                               width: 13.194460871405653
+-                               width: "12.2504px"
++                               height: 13.194460871405653
+-                               height: "12.2504px"
++                               color: "#e8897a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "-4.736604775515751px"
+-                               --drift: "-16.75810380649441px"
+-                               animation-delay: "1.03045s"
+-                               animation-duration: "6.32602s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "84.66476261494317%"
+-                               left: "68.6387%"
++                               top: "33.66061673727475%"
+-                               top: "38.4456%"
++                               animationDelay: "5.473517104584459s"
++                               animationDuration: "7.253922405606458s"
++                               width: 22.676375808120575
+-                               width: "12.8946px"
++                               height: 22.676375808120575
+-                               height: "12.8946px"
++                               color: "#8b2a2a"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-0.2575737951182724px"
+-                               --drift: "-13.323469309404178px"
+-                               animation-delay: "5.49915s"
+-                               animation-duration: "12.3888s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "90.19731356045772%"
+-                               left: "48.9084%"
++                               top: "86.70424223266092%"
+-                               top: "2.65754%"
++                               animationDelay: "2.2909418037665024s"
++                               animationDuration: "10.23906320088853s"
++                               width: 14.646705393097243
+-                               width: "19.5308px"
++                               height: 14.646705393097243
+-                               height: "19.5308px"
++                               color: "#e8897a"
+-                               color: "rgb(139, 42, 42)"
++                               --drift: "-22.781797827820863px"
+-                               --drift: "-16.077309031532394px"
+-                               animation-delay: "3.70915s"
+-                               animation-duration: "7.25804s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "44.9712613652229%"
+-                               left: "35.8455%"
++                               top: "99.776988460599%"
+-                               top: "43.0861%"
++                               animationDelay: "3.791297092451834s"
++                               animationDuration: "6.919577853757675s"
++                               width: 17.747562062330687
+-                               width: "10.0056px"
++                               height: 17.747562062330687
+-                               height: "10.0056px"
++                               color: "#f2c4b8"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "29.267929299074915px"
+-                               --drift: "17.877549120293573px"
+-                               animation-delay: "0.585174s"
+-                               animation-duration: "12.1924s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "49.33998008476379%"
+-                               left: "91.294%"
++                               top: "41.371141916704914%"
+-                               top: "60.2592%"
++                               animationDelay: "3.240806671595898s"
++                               animationDuration: "9.967451465342101s"
++                               width: 17.16027994215522
+-                               width: "17.7609px"
++                               height: 17.16027994215522
+-                               height: "17.7609px"
++                               color: "#c0463c"
+-                               color: "rgb(139, 42, 42)"
++                               --drift: "1.698059155384012px"
+-                               --drift: "-18.34807410111464px"
+-                               animation-delay: "6.82887s"
+-                               animation-duration: "7.72127s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "89.24781076187087%"
+-                               left: "93.8853%"
++                               top: "57.8033757757735%"
+-                               top: "96.7343%"
++                               animationDelay: "6.039687872812363s"
++                               animationDuration: "10.242958352315238s"
++                               width: 10.71812788773633
+-                               width: "22.3117px"
++                               height: 10.71812788773633
+-                               height: "22.3117px"
++                               color: "#f2c4b8"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "8.032650378073434px"
+-                               --drift: "23.60079418217026px"
+-                               animation-delay: "0.880647s"
+-                               animation-duration: "9.12281s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "58.870120486073866%"
+-                               left: "54.4502%"
++                               top: "84.85486828631045%"
+-                               top: "67.8756%"
++                               animationDelay: "7.532407686800026s"
++                               animationDuration: "13.731428679108383s"
++                               width: 13.328044973523616
+-                               width: "14.6953px"
++                               height: 13.328044973523616
+-                               height: "14.6953px"
++                               color: "#f2c4b8"
+-                               color: "rgb(139, 42, 42)"
++                               --drift: "-21.308783566918166px"
+-                               --drift: "-4.533255531047043px"
+-                               animation-delay: "0.0814605s"
+-                               animation-duration: "15.9117s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "40.35989131820672%"
+-                               left: "60.6847%"
++                               top: "49.69598562466921%"
+-                               top: "61.8111%"
++                               animationDelay: "7.185739842791676s"
++                               animationDuration: "9.353888880214047s"
++                               width: 10.497615768770105
+-                               width: "17.5001px"
++                               height: 10.497615768770105
+-                               height: "17.5001px"
++                               color: "#8b2a2a"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "13.914233949030368px"
+-                               --drift: "-13.811223893323227px"
+-                               animation-delay: "2.45273s"
+-                               animation-duration: "6.15416s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "5.327304721724113%"
+-                               left: "20.7158%"
++                               top: "65.41632438064227%"
+-                               top: "25.4641%"
++                               animationDelay: "2.393256418563631s"
++                               animationDuration: "15.882247122184884s"
++                               width: 18.035229172837788
+-                               width: "22.8198px"
++                               height: 18.035229172837788
+-                               height: "22.8198px"
++                               color: "#c0463c"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "21.070105704435868px"
+-                               --drift: "-17.177027171269835px"
+-                               animation-delay: "4.85966s"
+-                               animation-duration: "15.1525s"
+                              }}
+                            >
+                        <div>
+                        <div>
+                        <div>
+                        ...
+                          <div className="sealed-reveal" onClick={function AnimatedSection.useCallback[handleReveal]} ...>
+                            <motion.div>
+                            ...
+                              <div className="sealed-rin..." style={{}} ref={function useMotionRef.useCallback}>
+                                <svg viewBox="0 0 320 320" className="sealed-rin...">
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle
+                                    cx={104.99999999999994}
++                                   cy={64.73720558371178}
+-                                   cy="64.73720558371177"
+                                    r="1.5"
+                                    fill="rgba(232,137,122,0.18)"
+                                  >
+                                  ...
+                            <motion.div>
+                            <div className="sealed-min...">
+                              <motion.span className="sealed-mini-p" style={{--angle:"0deg", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "0deg"
+-                                   --angle: "0deg"
++                                   --distance: "112.2611999715433px"
+-                                   --distance: "107.41956638130353px"
++                                   color: "#c0463c"
+-                                   color: "rgb(192, 70, 60)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 💗
+                              <motion.span className="sealed-mini-p" style={{--angle:"7...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "72deg"
+-                                   --angle: "72deg"
++                                   --distance: "99.61571379261784px"
+-                                   --distance: "86.57559755884864px"
++                                   color: "#c0463c"
+-                                   color: "rgb(192, 70, 60)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 💕
+                              <motion.span className="sealed-mini-p" style={{--angle:"1...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "144deg"
+-                                   --angle: "144deg"
++                                   --distance: "89.29119413080463px"
+-                                   --distance: "93.17100132318417px"
++                                   color: "#c0463c"
+-                                   color: "rgb(192, 70, 60)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ❤️
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "216deg"
+-                                   --angle: "216deg"
++                                   --distance: "107.27259679833922px"
+-                                   --distance: "98.46354541045858px"
++                                   color: "#c0463c"
+-                                   color: "rgb(192, 70, 60)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🤍
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "288deg"
+-                                   --angle: "288deg"
++                                   --distance: "98.73365299639917px"
+-                                   --distance: "114.68912647413802px"
++                                   color: "#c0463c"
+-                                   color: "rgb(192, 70, 60)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ♥
+                            ...
+                        ...
+                  <WaveDivider>
+                  <AnimatedSection className="sec-3" id="s3" bgId="bgr3" onClick={function onClick} particleType="petal" ...>
+                    <motion.section className="sec sec-3" id="s3">
+                      <section className="sec sec-3" id="s3" style={{}} ref={function useMotionRef.useCallback}>
+                        <div>
+                        <FloatingParticles count={16} type="petal" colors={[...]}>
+                          <div className="floating-p...">
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "66.54508549340878%"
+-                               left: "87.2747%"
++                               top: "4.826061565688267%"
+-                               top: "63.7525%"
++                               animationDelay: "3.9465449587747408s"
++                               animationDuration: "14.335309002959976s"
++                               width: 4.756465200903389
+-                               width: "6.0289px"
++                               height: 4.756465200903389
+-                               height: "6.0289px"
++                               color: "#e8897a"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "10.251379499631689px"
+-                               --drift: "-16.329430370651277px"
+-                               animation-delay: "4.08737s"
+-                               animation-duration: "12.1242s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "58.487274904406384%"
+-                               left: "75.2057%"
++                               top: "82.58711352837877%"
+-                               top: "73.2456%"
++                               animationDelay: "6.362516173046221s"
++                               animationDuration: "12.216692956029414s"
++                               width: 11.202178876431473
+-                               width: "8.29573px"
++                               height: 11.202178876431473
+-                               height: "8.29573px"
++                               color: "#8b2a2a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "-29.04634884654542px"
+-                               --drift: "-23.695185104692083px"
+-                               animation-delay: "2.05576s"
+-                               animation-duration: "8.27482s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "93.2833001896464%"
+-                               left: "95.7673%"
++                               top: "14.819991026517599%"
+-                               top: "6.7804%"
++                               animationDelay: "5.070852842487313s"
++                               animationDuration: "6.09098684935684s"
++                               width: 10.11064398839655
+-                               width: "6.95375px"
++                               height: 10.11064398839655
+-                               height: "6.95375px"
++                               color: "#8b2a2a"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-11.233377384726964px"
+-                               --drift: "28.98463982446384px"
+-                               animation-delay: "6.79633s"
+-                               animation-duration: "7.35384s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "71.98610182756161%"
+-                               left: "18.4051%"
++                               top: "11.673338131265709%"
+-                               top: "14.8536%"
++                               animationDelay: "3.3083904978405805s"
++                               animationDuration: "13.736002204861386s"
++                               width: 8.703984608338624
+-                               width: "9.88777px"
++                               height: 8.703984608338624
+-                               height: "9.88777px"
++                               color: "#f2c4b8"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "2.0505958819360046px"
+-                               --drift: "-25.619653482213725px"
+-                               animation-delay: "1.74146s"
+-                               animation-duration: "12.4406s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "17.751816994696192%"
+-                               left: "6.71165%"
++                               top: "85.88861551930435%"
+-                               top: "45.1235%"
++                               animationDelay: "4.449131484324873s"
++                               animationDuration: "11.325106518949362s"
++                               width: 8.954822169502734
+-                               width: "5.13431px"
++                               height: 8.954822169502734
+-                               height: "5.13431px"
++                               color: "#c0463c"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "25.976208774147523px"
+-                               --drift: "8.122395155027775px"
+-                               animation-delay: "6.89275s"
+-                               animation-duration: "8.53092s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "35.478072518909244%"
+-                               left: "54.1042%"
++                               top: "57.92080516512651%"
+-                               top: "73.0417%"
++                               animationDelay: "0.9355150498033975s"
++                               animationDuration: "10.709413379552966s"
++                               width: 6.590292961744134
+-                               width: "5.68983px"
++                               height: 6.590292961744134
+-                               height: "5.68983px"
++                               color: "#e8897a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "23.47814521673618px"
+-                               --drift: "-5.632703796648272px"
+-                               animation-delay: "1.20278s"
+-                               animation-duration: "10.3643s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "94.0032034884133%"
+-                               left: "67.762%"
++                               top: "45.55228752235578%"
+-                               top: "76.2%"
++                               animationDelay: "0.18290849566350165s"
++                               animationDuration: "12.030763921103254s"
++                               width: 11.805044519863657
+-                               width: "5.04693px"
++                               height: 11.805044519863657
+-                               height: "5.04693px"
++                               color: "#e8897a"
+-                               color: "rgb(139, 42, 42)"
++                               --drift: "20.055173179586504px"
+-                               --drift: "-8.009510185260009px"
+-                               animation-delay: "0.702217s"
+-                               animation-duration: "12.1607s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "80.79357968108319%"
+-                               left: "66.2632%"
++                               top: "62.928214406626324%"
+-                               top: "23.0169%"
++                               animationDelay: "0.6766230890409606s"
++                               animationDuration: "15.905456552541693s"
++                               width: 5.653517287166764
+-                               width: "7.23673px"
++                               height: 5.653517287166764
+-                               height: "7.23673px"
++                               color: "#e8897a"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-19.98327477955177px"
+-                               --drift: "20.57163808951578px"
+-                               animation-delay: "4.13661s"
+-                               animation-duration: "14.6257s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "16.15999586923593%"
+-                               left: "16.5486%"
++                               top: "18.860737212512745%"
+-                               top: "46.1043%"
++                               animationDelay: "5.773440542774074s"
++                               animationDuration: "15.623620989802294s"
++                               width: 9.809668043798045
+-                               width: "5.49974px"
++                               height: 9.809668043798045
+-                               height: "5.49974px"
++                               color: "#e8897a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "14.82405277147295px"
+-                               --drift: "6.341780543984207px"
+-                               animation-delay: "0.138005s"
+-                               animation-duration: "9.75213s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "6.229801430581306%"
+-                               left: "99.924%"
++                               top: "6.053542399270917%"
+-                               top: "60.0479%"
++                               animationDelay: "1.6461559942229718s"
++                               animationDuration: "11.68426796559486s"
++                               width: 11.292042182663952
+-                               width: "11.4403px"
++                               height: 11.292042182663952
+-                               height: "11.4403px"
++                               color: "#f2c4b8"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "-11.621547850483658px"
+-                               --drift: "-1.521307687944443px"
+-                               animation-delay: "3.88882s"
+-                               animation-duration: "15.0803s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "72.90661138571907%"
+-                               left: "12.9421%"
++                               top: "88.33404068892857%"
+-                               top: "88.3679%"
++                               animationDelay: "6.024029849322244s"
++                               animationDuration: "11.426641091375505s"
++                               width: 7.909444045461643
+-                               width: "9.24181px"
++                               height: 7.909444045461643
+-                               height: "9.24181px"
++                               color: "#f2c4b8"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-9.053199280464145px"
+-                               --drift: "15.227163241882366px"
+-                               animation-delay: "3.80282s"
+-                               animation-duration: "6.08078s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "56.63633308179901%"
+-                               left: "47.9949%"
++                               top: "34.159945321927474%"
+-                               top: "88.8312%"
++                               animationDelay: "0.8903059377236824s"
++                               animationDuration: "14.715449214758078s"
++                               width: 11.531708781955398
+-                               width: "6.88926px"
++                               height: 11.531708781955398
+-                               height: "6.88926px"
++                               color: "#f2c4b8"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-15.33770941197366px"
+-                               --drift: "-10.507959674902281px"
+-                               animation-delay: "3.38375s"
+-                               animation-duration: "12.284s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "18.849734629261405%"
+-                               left: "69.4113%"
++                               top: "14.359220855980592%"
+-                               top: "7.3283%"
++                               animationDelay: "5.480713641006053s"
++                               animationDuration: "6.873356514008272s"
++                               width: 4.77558923850385
+-                               width: "8.44268px"
++                               height: 4.77558923850385
+-                               height: "8.44268px"
++                               color: "#e8897a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "-22.85698026190028px"
+-                               --drift: "10.810415977986203px"
+-                               animation-delay: "6.07944s"
+-                               animation-duration: "9.6386s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "88.99367905477848%"
+-                               left: "60.4686%"
++                               top: "17.092513102313855%"
+-                               top: "81.3812%"
++                               animationDelay: "0.9560159426563981s"
++                               animationDuration: "9.037401358651593s"
++                               width: 8.002250267472663
+-                               width: "10.2795px"
++                               height: 8.002250267472663
+-                               height: "10.2795px"
++                               color: "#f2c4b8"
+-                               color: "rgb(139, 42, 42)"
++                               --drift: "-19.103735320396847px"
+-                               --drift: "-4.937462990601425px"
+-                               animation-delay: "3.64199s"
+-                               animation-duration: "14.8125s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "8.623621970709639%"
+-                               left: "8.10672%"
++                               top: "81.533986129009%"
+-                               top: "84.6708%"
++                               animationDelay: "2.169902253341771s"
++                               animationDuration: "15.455271673767093s"
++                               width: 6.693531612244041
+-                               width: "7.22908px"
++                               height: 6.693531612244041
+-                               height: "7.22908px"
++                               color: "#c0463c"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "10.393502157587065px"
+-                               --drift: "-25.22825161280813px"
+-                               animation-delay: "5.16001s"
+-                               animation-duration: "6.92373s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-petal"
+                              style={{
++                               left: "17.277181527423803%"
+-                               left: "63.6936%"
++                               top: "98.42585235542543%"
+-                               top: "83.7497%"
++                               animationDelay: "5.320766742330232s"
++                               animationDuration: "7.1790360499039645s"
++                               width: 5.465654600354291
+-                               width: "8.79835px"
++                               height: 5.465654600354291
+-                               height: "8.79835px"
++                               color: "#c0463c"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "-22.851268367758404px"
+-                               --drift: "13.76240501857707px"
+-                               animation-delay: "6.07858s"
+-                               animation-duration: "11.2444s"
+                              }}
+                            >
+                        <div>
+                        <div>
+                        <div>
+                        ...
+                          <div className="sealed-reveal" onClick={function AnimatedSection.useCallback[handleReveal]} ...>
+                            <motion.div>
+                            ...
+                              <div className="sealed-rin..." style={{}} ref={function useMotionRef.useCallback}>
+                                <svg viewBox="0 0 320 320" className="sealed-rin...">
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle
+                                    cx={104.99999999999994}
++                                   cy={64.73720558371178}
+-                                   cy="64.73720558371177"
+                                    r="1.5"
+                                    fill="rgba(139,42,42,0.15)"
+                                  >
+                                  ...
+                            <motion.div>
+                            <div className="sealed-min...">
+                              <motion.span className="sealed-mini-p" style={{--angle:"0deg", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "0deg"
+-                                   --angle: "0deg"
++                                   --distance: "84.74524854062886px"
+-                                   --distance: "87.49921446902597px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🌸
+                              <motion.span className="sealed-mini-p" style={{--angle:"7...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "72deg"
+-                                   --angle: "72deg"
++                                   --distance: "105.54889258228535px"
+-                                   --distance: "108.36459399776143px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🌺
+                              <motion.span className="sealed-mini-p" style={{--angle:"1...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "144deg"
+-                                   --angle: "144deg"
++                                   --distance: "102.01275490015045px"
+-                                   --distance: "104.76306894923752px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🌷
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "216deg"
+-                                   --angle: "216deg"
++                                   --distance: "94.75301971191479px"
+-                                   --distance: "103.73846226816418px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ✿
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "288deg"
+-                                   --angle: "288deg"
++                                   --distance: "107.94509748840791px"
+-                                   --distance: "113.36268288337979px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ❀
+                            ...
+                        ...
+                  <AnimatedSection className="sec-4" id="s4" bgId="bgr4" onClick={function onClick} ...>
+                    <motion.section className="sec sec-4" id="s4">
+                      <section className="sec sec-4" id="s4" style={{}} ref={function useMotionRef.useCallback}>
+                        <div>
+                        <FloatingParticles count={20} type="sparkle" colors={[...]}>
+                          <div className="floating-p...">
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "58.277608922013194%"
+-                               left: "74.353%"
++                               top: "41.66038192399072%"
+-                               top: "89.3435%"
++                               animationDelay: "2.4803017688075375s"
++                               animationDuration: "7.733837659932317s"
++                               width: 15.02961372433685
+-                               width: "9.27455px"
++                               height: 15.02961372433685
+-                               height: "9.27455px"
++                               color: "#f2c4b8"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "-29.704968526868903px"
+-                               --drift: "-1.05351326067208px"
+-                               animation-delay: "7.74s"
+-                               animation-duration: "14.9892s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "63.636181163764945%"
+-                               left: "0.408168%"
++                               top: "2.2461301750256735%"
+-                               top: "28.1758%"
++                               animationDelay: "1.07677928330354s"
++                               animationDuration: "13.750417017878448s"
++                               width: 8.459325348043464
+-                               width: "14.733px"
++                               height: 8.459325348043464
+-                               height: "14.733px"
++                               color: "#f2c4b8"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "-13.966009513298875px"
+-                               --drift: "22.06191941562689px"
+-                               animation-delay: "0.67323s"
+-                               animation-duration: "11.4505s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "69.88036574071594%"
+-                               left: "33.5147%"
++                               top: "84.60873480924975%"
+-                               top: "98.0165%"
++                               animationDelay: "1.6253231582587455s"
++                               animationDuration: "8.924744031661245s"
++                               width: 14.727381567889276
+-                               width: "6.31219px"
++                               height: 14.727381567889276
+-                               height: "6.31219px"
++                               color: "#e8c98a"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "23.684431372147806px"
+-                               --drift: "20.74909203972934px"
+-                               animation-delay: "3.20499s"
+-                               animation-duration: "14.3734s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "47.448784567761194%"
+-                               left: "60.7047%"
++                               top: "38.82978084171741%"
+-                               top: "61.2531%"
++                               animationDelay: "6.334079925638263s"
++                               animationDuration: "7.183477328945603s"
++                               width: 9.694856115851106
+-                               width: "6.90327px"
++                               height: 9.694856115851106
+-                               height: "6.90327px"
++                               color: "#e8897a"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-5.395431074758495px"
+-                               --drift: "-27.821935982476063px"
+-                               animation-delay: "7.24844s"
+-                               animation-duration: "15.2233s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "53.08003777648756%"
+-                               left: "23.8724%"
++                               top: "97.92585473869781%"
+-                               top: "25.0683%"
++                               animationDelay: "2.510701850008144s"
++                               animationDuration: "10.239806812743225s"
++                               width: 9.037209135680042
+-                               width: "11.9615px"
++                               height: 9.037209135680042
+-                               height: "11.9615px"
++                               color: "#f2c4b8"
+-                               color: "rgb(255, 249, 246)"
++                               --drift: "-2.029754432492414px"
+-                               --drift: "-10.291453923662445px"
+-                               animation-delay: "4.97845s"
+-                               animation-duration: "12.0043s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "95.92625602533096%"
+-                               left: "86.199%"
++                               top: "74.7000577000529%"
+-                               top: "28.6148%"
++                               animationDelay: "5.6060021835897285s"
++                               animationDuration: "12.706430846155929s"
++                               width: 8.458101113416548
+-                               width: "8.4273px"
++                               height: 8.458101113416548
+-                               height: "8.4273px"
++                               color: "#f2c4b8"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "-10.597908475972403px"
+-                               --drift: "24.60587149703496px"
+-                               animation-delay: "0.584728s"
+-                               animation-duration: "9.37229s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "74.74360701843736%"
+-                               left: "4.09686%"
++                               top: "15.848390084927056%"
+-                               top: "89.9742%"
++                               animationDelay: "6.124283506821088s"
++                               animationDuration: "8.346408592653003s"
++                               width: 11.817854827112738
+-                               width: "9.08897px"
++                               height: 11.817854827112738
+-                               height: "9.08897px"
++                               color: "#fff9f6"
+-                               color: "rgb(255, 249, 246)"
++                               --drift: "5.342693618196016px"
+-                               --drift: "-9.205007265434485px"
+-                               animation-delay: "5.1835s"
+-                               animation-duration: "14.6729s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "71.2806625968399%"
+-                               left: "39.4246%"
++                               top: "71.80996647663987%"
+-                               top: "43.8897%"
++                               animationDelay: "3.081084388077276s"
++                               animationDuration: "11.280837319127958s"
++                               width: 13.69516274964829
+-                               width: "11.3838px"
++                               height: 13.69516274964829
+-                               height: "11.3838px"
++                               color: "#c9995a"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "-10.621379470278288px"
+-                               --drift: "-13.533769093542233px"
+-                               animation-delay: "6.41692s"
+-                               animation-duration: "12.6748s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "48.142061852433486%"
+-                               left: "54.6236%"
++                               top: "54.23474870105862%"
+-                               top: "50.5213%"
++                               animationDelay: "2.249214549788004s"
++                               animationDuration: "10.252230971481055s"
++                               width: 7.811179055590497
+-                               width: "14.631px"
++                               height: 7.811179055590497
+-                               height: "14.631px"
++                               color: "#fff9f6"
+-                               color: "rgb(255, 249, 246)"
++                               --drift: "15.449397439250873px"
+-                               --drift: "-24.549765309717312px"
+-                               animation-delay: "2.4177s"
+-                               animation-duration: "11.9824s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "70.33058344979457%"
+-                               left: "6.82249%"
++                               top: "98.23691298626642%"
+-                               top: "26.3465%"
++                               animationDelay: "6.380481589469977s"
++                               animationDuration: "13.849872926365487s"
++                               width: 11.354173126847899
+-                               width: "10.2238px"
++                               height: 11.354173126847899
+-                               height: "10.2238px"
++                               color: "#fff9f6"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "-16.754050308568956px"
+-                               --drift: "18.801934098982088px"
+-                               animation-delay: "0.248587s"
+-                               animation-duration: "9.25141s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "65.18317628186252%"
+-                               left: "94.5118%"
++                               top: "34.18352255574861%"
+-                               top: "20.8195%"
++                               animationDelay: "4.2851046323993796s"
++                               animationDuration: "6.468507900389375s"
++                               width: 9.638550328441672
+-                               width: "14.8726px"
++                               height: 9.638550328441672
+-                               height: "14.8726px"
++                               color: "#f2c4b8"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "21.22552322208024px"
+-                               --drift: "0.9046285841081847px"
+-                               animation-delay: "1.01513s"
+-                               animation-duration: "14.2435s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "44.71721664075067%"
+-                               left: "95.8674%"
++                               top: "4.2536615425422415%"
+-                               top: "51.6708%"
++                               animationDelay: "3.446916884360581s"
++                               animationDuration: "15.858497383840408s"
++                               width: 9.073416054937233
+-                               width: "7.37142px"
++                               height: 9.073416054937233
+-                               height: "7.37142px"
++                               color: "#c9995a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "-7.77741393501007px"
+-                               --drift: "-17.291364731159874px"
+-                               animation-delay: "6.57206s"
+-                               animation-duration: "6.87568s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "41.557756040086204%"
+-                               left: "62.5528%"
++                               top: "66.10679712546977%"
+-                               top: "76.7529%"
++                               animationDelay: "6.801617049167593s"
++                               animationDuration: "13.406298893752936s"
++                               width: 11.057592231267517
+-                               width: "11.6123px"
++                               height: 11.057592231267517
+-                               height: "11.6123px"
++                               color: "#f2c4b8"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "-18.891378396173664px"
+-                               --drift: "-7.995137947148109px"
+-                               animation-delay: "0.219424s"
+-                               animation-duration: "9.11887s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "19.11487231683401%"
+-                               left: "20.9104%"
++                               top: "55.18053533579149%"
+-                               top: "73.3405%"
++                               animationDelay: "0.14828539253605033s"
++                               animationDuration: "15.654141455651672s"
++                               width: 9.006247976717322
+-                               width: "7.59563px"
++                               height: 9.006247976717322
+-                               height: "7.59563px"
++                               color: "#fff9f6"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-19.296158189121954px"
+-                               --drift: "-6.603907606449376px"
+-                               animation-delay: "4.5814s"
+-                               animation-duration: "13.1901s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "1.9788632417914176%"
+-                               left: "39.1627%"
++                               top: "52.65691733123106%"
+-                               top: "24.2124%"
++                               animationDelay: "2.956230183423683s"
++                               animationDuration: "10.299651563811988s"
++                               width: 8.029520066207436
+-                               width: "14.8734px"
++                               height: 8.029520066207436
+-                               height: "14.8734px"
++                               color: "#e8c98a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "12.816664160582022px"
+-                               --drift: "-0.19732156943576484px"
+-                               animation-delay: "6.47806s"
+-                               animation-duration: "15.7874s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "66.49247605172135%"
+-                               left: "94.6489%"
++                               top: "86.64967199231877%"
+-                               top: "89.0486%"
++                               animationDelay: "4.935858225557593s"
++                               animationDuration: "15.559963936878926s"
++                               width: 11.535076517097167
+-                               width: "15.407px"
++                               height: 11.535076517097167
+-                               height: "15.407px"
++                               color: "#c9995a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "-10.306436287602462px"
+-                               --drift: "15.776952615716212px"
+-                               animation-delay: "5.40037s"
+-                               animation-duration: "6.87567s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "82.45009674408153%"
+-                               left: "4.22133%"
++                               top: "55.440647187291184%"
+-                               top: "16.8822%"
++                               animationDelay: "5.437889305025636s"
++                               animationDuration: "12.66816719006697s"
++                               width: 10.558830820127707
+-                               width: "10.9511px"
++                               height: 10.558830820127707
+-                               height: "10.9511px"
++                               color: "#fff9f6"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "16.044174454545676px"
+-                               --drift: "3.2394626643045186px"
+-                               animation-delay: "0.632632s"
+-                               animation-duration: "6.13318s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "43.42444698293222%"
+-                               left: "23.6413%"
++                               top: "46.788835185938474%"
+-                               top: "82.0264%"
++                               animationDelay: "2.478091649031221s"
++                               animationDuration: "11.228454651234856s"
++                               width: 7.117096125153645
+-                               width: "12.1134px"
++                               height: 7.117096125153645
+-                               height: "12.1134px"
++                               color: "#e8c98a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "11.267290939180256px"
+-                               --drift: "-17.519786284357757px"
+-                               animation-delay: "0.480025s"
+-                               animation-duration: "7.04679s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "27.10575474475113%"
+-                               left: "14.3856%"
++                               top: "58.96401447705709%"
+-                               top: "53.6432%"
++                               animationDelay: "5.245980958421648s"
++                               animationDuration: "8.238659825744222s"
++                               width: 10.071644350548308
+-                               width: "15.9549px"
++                               height: 10.071644350548308
+-                               height: "15.9549px"
++                               color: "#e8c98a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "15.957369592284337px"
+-                               --drift: "-11.068099970923694px"
+-                               animation-delay: "6.02163s"
+-                               animation-duration: "9.50329s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-sparkle"
+                              style={{
++                               left: "41.39840132010914%"
+-                               left: "95.8851%"
++                               top: "78.46974452332753%"
+-                               top: "86.2201%"
++                               animationDelay: "0.139311144377527s"
++                               animationDuration: "11.171240708001395s"
++                               width: 7.214579804447801
+-                               width: "8.49812px"
++                               height: 7.214579804447801
+-                               height: "8.49812px"
++                               color: "#fff9f6"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "21.49145529016367px"
+-                               --drift: "7.220705046382086px"
+-                               animation-delay: "3.13141s"
+-                               animation-duration: "10.8486s"
+                              }}
+                            >
+                        <div>
+                        <div>
+                        <div>
+                        ...
+                          <div className="sealed-reveal" onClick={function AnimatedSection.useCallback[handleReveal]} ...>
+                            <motion.div>
+                            ...
+                              <div className="sealed-rin..." style={{}} ref={function useMotionRef.useCallback}>
+                                <svg viewBox="0 0 320 320" className="sealed-rin...">
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle
+                                    cx={104.99999999999994}
++                                   cy={64.73720558371178}
+-                                   cy="64.73720558371177"
+                                    r="1.5"
+                                    fill="rgba(232,201,138,0.18)"
+                                  >
+                                  ...
+                            <motion.div>
+                            <div className="sealed-min...">
+                              <motion.span className="sealed-mini-p" style={{--angle:"0deg", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "0deg"
+-                                   --angle: "0deg"
++                                   --distance: "86.92166164503942px"
+-                                   --distance: "105.37011087242803px"
++                                   color: "#c9995a"
+-                                   color: "rgb(201, 153, 90)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ⭐
+                              <motion.span className="sealed-mini-p" style={{--angle:"7...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "72deg"
+-                                   --angle: "72deg"
++                                   --distance: "96.62090059500687px"
+-                                   --distance: "113.14124727438002px"
++                                   color: "#c9995a"
+-                                   color: "rgb(201, 153, 90)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🌟
+                              <motion.span className="sealed-mini-p" style={{--angle:"1...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "144deg"
+-                                   --angle: "144deg"
++                                   --distance: "80.8956418448107px"
+-                                   --distance: "88.34279473257337px"
++                                   color: "#c9995a"
+-                                   color: "rgb(201, 153, 90)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ✨
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "216deg"
+-                                   --angle: "216deg"
++                                   --distance: "104.13837017652224px"
+-                                   --distance: "86.42193549654772px"
++                                   color: "#c9995a"
+-                                   color: "rgb(201, 153, 90)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 💫
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "288deg"
+-                                   --angle: "288deg"
++                                   --distance: "117.6854970273242px"
+-                                   --distance: "97.89190052046081px"
++                                   color: "#c9995a"
+-                                   color: "rgb(201, 153, 90)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ✦
+                            ...
+                        ...
+                  <AnimatedSection className="sec-5" id="s5" bgId="bgr5" onClick={function onClick} particleType="star" ...>
+                    <motion.section className="sec sec-5" id="s5">
+                      <section className="sec sec-5" id="s5" style={{}} ref={function useMotionRef.useCallback}>
+                        <div>
+                        <FloatingParticles count={25} type="star" colors={[...]}>
+                          <div className="floating-p...">
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "89.04400912495359%"
+-                               left: "15.0192%"
++                               top: "84.43127749077222%"
+-                               top: "2.65472%"
++                               animationDelay: "1.5844273693062982s"
++                               animationDuration: "12.226862891185862s"
++                               width: 6.585080005176603
+-                               width: "4.48605px"
++                               height: 6.585080005176603
+-                               height: "4.48605px"
++                               color: "#e8c98a"
+-                               color: "rgb(255, 249, 246)"
++                               --drift: "4.387656715687974px"
+-                               --drift: "9.350562569790291px"
+-                               animation-delay: "2.67663s"
+-                               animation-duration: "8.55482s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "71.51749699429794%"
+-                               left: "77.8521%"
++                               top: "48.37320806391414%"
+-                               top: "50.9475%"
++                               animationDelay: "7.458067835196181s"
++                               animationDuration: "14.265030849670381s"
++                               width: 8.42093059620139
+-                               width: "6.59715px"
++                               height: 8.42093059620139
+-                               height: "6.59715px"
++                               color: "#7070a0"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "19.59463003131546px"
+-                               --drift: "27.466858365242913px"
+-                               animation-delay: "3.90598s"
+-                               animation-duration: "15.6485s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "43.84185336520511%"
+-                               left: "76.3828%"
++                               top: "67.24701902902278%"
+-                               top: "56.0148%"
++                               animationDelay: "7.421068217328692s"
++                               animationDuration: "11.867091161396822s"
++                               width: 7.9291475675130725
+-                               width: "11.1997px"
++                               height: 7.9291475675130725
+-                               height: "11.1997px"
++                               color: "#7070a0"
+-                               color: "rgb(160, 144, 184)"
++                               --drift: "23.41470992482514px"
+-                               --drift: "16.58121935531534px"
+-                               animation-delay: "1.02313s"
+-                               animation-duration: "7.2766s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "6.955726750175561%"
+-                               left: "27.8871%"
++                               top: "56.05387800235888%"
+-                               top: "51.6632%"
++                               animationDelay: "4.4062660546752035s"
++                               animationDuration: "8.826981808992347s"
++                               width: 6.3726734460747805
+-                               width: "4.58751px"
++                               height: 6.3726734460747805
+-                               height: "4.58751px"
++                               color: "#fff9f6"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "-5.594031335739967px"
+-                               --drift: "-14.973857955077039px"
+-                               animation-delay: "1.20082s"
+-                               animation-duration: "15.4897s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "20.16091438730363%"
+-                               left: "26.0523%"
++                               top: "8.05389752996496%"
+-                               top: "23.9346%"
++                               animationDelay: "6.553227608436355s"
++                               animationDuration: "11.367764436322979s"
++                               width: 7.3120893305945565
+-                               width: "9.99877px"
++                               height: 7.3120893305945565
+-                               height: "9.99877px"
++                               color: "#c9995a"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "2.519592986878642px"
+-                               --drift: "-5.557534943260528px"
+-                               animation-delay: "2.3695s"
+-                               animation-duration: "13.8581s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "54.55191143397157%"
+-                               left: "42.02%"
++                               top: "81.34316351518785%"
+-                               top: "69.136%"
++                               animationDelay: "5.698722125431672s"
++                               animationDuration: "6.4263795939092185s"
++                               width: 11.97124688150285
+-                               width: "7.90262px"
++                               height: 11.97124688150285
+-                               height: "7.90262px"
++                               color: "#c9995a"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "-18.186755163952647px"
+-                               --drift: "-12.328458557703769px"
+-                               animation-delay: "2.60413s"
+-                               animation-duration: "13.7041s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "62.05617184587416%"
+-                               left: "93.1138%"
++                               top: "66.97634960317586%"
+-                               top: "6.22249%"
++                               animationDelay: "3.1710883644416823s"
++                               animationDuration: "12.375481058384281s"
++                               width: 10.364103622302512
+-                               width: "10.9334px"
++                               height: 10.364103622302512
+-                               height: "10.9334px"
++                               color: "#fff9f6"
+-                               color: "rgb(160, 144, 184)"
++                               --drift: "-26.465706507126324px"
+-                               --drift: "-9.481166951852877px"
+-                               animation-delay: "1.58767s"
+-                               animation-duration: "10.8293s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "67.45825785592604%"
+-                               left: "90.0969%"
++                               top: "6.403743912030002%"
+-                               top: "47.8676%"
++                               animationDelay: "6.582019476739554s"
++                               animationDuration: "6.954660263342825s"
++                               width: 10.390129723407856
+-                               width: "10.5889px"
++                               height: 10.390129723407856
+-                               height: "10.5889px"
++                               color: "#fff9f6"
+-                               color: "rgb(160, 144, 184)"
++                               --drift: "18.09797174021911px"
+-                               --drift: "-23.60125379444194px"
+-                               animation-delay: "2.13589s"
+-                               animation-duration: "10.9453s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "70.93556387367241%"
+-                               left: "39.1055%"
++                               top: "22.49677624618991%"
+-                               top: "79.7697%"
++                               animationDelay: "1.4059689343856627s"
++                               animationDuration: "15.906954140295s"
++                               width: 6.522287845240891
+-                               width: "6.29814px"
++                               height: 6.522287845240891
+-                               height: "6.29814px"
++                               color: "#a090b8"
+-                               color: "rgb(112, 112, 160)"
++                               --drift: "28.01377624031486px"
+-                               --drift: "4.64491306607021px"
+-                               animation-delay: "5.74656s"
+-                               animation-duration: "13.4338s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "30.67607863209062%"
+-                               left: "35.6068%"
++                               top: "45.93128244110344%"
+-                               top: "35.0368%"
++                               animationDelay: "1.5424233845706086s"
++                               animationDuration: "11.92753729024505s"
++                               width: 11.098522650947025
+-                               width: "6.22065px"
++                               height: 11.098522650947025
+-                               height: "6.22065px"
++                               color: "#fff9f6"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "-0.1412427661516915px"
+-                               --drift: "-10.05868714742818px"
+-                               animation-delay: "4.84067s"
+-                               animation-duration: "12.7552s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "22.09348349704141%"
+-                               left: "76.4146%"
++                               top: "8.079364977789282%"
+-                               top: "76.7284%"
++                               animationDelay: "6.655911751495995s"
++                               animationDuration: "11.982601629978545s"
++                               width: 8.153989558271874
+-                               width: "5.69475px"
++                               height: 8.153989558271874
+-                               height: "5.69475px"
++                               color: "#a090b8"
+-                               color: "rgb(160, 144, 184)"
++                               --drift: "-16.93630916173324px"
+-                               --drift: "-9.452352301516225px"
+-                               animation-delay: "7.48775s"
+-                               animation-duration: "14.072s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "13.205269404803522%"
+-                               left: "55.2209%"
++                               top: "2.15172443409003%"
+-                               top: "99.8995%"
++                               animationDelay: "0.11858757288333344s"
++                               animationDuration: "9.194492533189667s"
++                               width: 9.674784988681989
+-                               width: "4.09066px"
++                               height: 9.674784988681989
+-                               height: "4.09066px"
++                               color: "#c9995a"
+-                               color: "rgb(160, 144, 184)"
++                               --drift: "20.498220997824554px"
+-                               --drift: "-9.228335198663803px"
+-                               animation-delay: "7.79508s"
+-                               animation-duration: "6.71524s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "12.718356516631635%"
+-                               left: "30.7407%"
++                               top: "7.4163751301911995%"
+-                               top: "27.4115%"
++                               animationDelay: "6.566090639930642s"
++                               animationDuration: "6.14922982193462s"
++                               width: 4.493287180893427
+-                               width: "5.63193px"
++                               height: 4.493287180893427
+-                               height: "5.63193px"
++                               color: "#c9995a"
+-                               color: "rgb(160, 144, 184)"
++                               --drift: "16.361165023621083px"
+-                               --drift: "2.611168733389839px"
+-                               animation-delay: "4.74034s"
+-                               animation-duration: "13.4739s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "22.11238057095377%"
+-                               left: "72.2172%"
++                               top: "90.68926423469071%"
+-                               top: "19.6993%"
++                               animationDelay: "5.909053309698292s"
++                               animationDuration: "9.6447473303053s"
++                               width: 11.913715708859332
+-                               width: "4.47607px"
++                               height: 11.913715708859332
+-                               height: "4.47607px"
++                               color: "#7070a0"
+-                               color: "rgb(160, 144, 184)"
++                               --drift: "-21.247966669436167px"
+-                               --drift: "14.576661296326328px"
+-                               animation-delay: "2.92887s"
+-                               animation-duration: "10.5605s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "66.62917024296647%"
+-                               left: "94.0379%"
++                               top: "27.971857070183248%"
+-                               top: "28.4403%"
++                               animationDelay: "0.8031056834233921s"
++                               animationDuration: "6.624384447633823s"
++                               width: 7.8976713178979265
+-                               width: "4.26217px"
++                               height: 7.8976713178979265
+-                               height: "4.26217px"
++                               color: "#7070a0"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "24.77865053740512px"
+-                               --drift: "-27.25417057764324px"
+-                               animation-delay: "2.93649s"
+-                               animation-duration: "9.43969s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "37.41368026885357%"
+-                               left: "71.3776%"
++                               top: "26.313273963590444%"
+-                               top: "1.2982%"
++                               animationDelay: "6.2140973166481475s"
++                               animationDuration: "9.37242848598714s"
++                               width: 5.834796557978159
+-                               width: "10.4439px"
++                               height: 5.834796557978159
+-                               height: "10.4439px"
++                               color: "#c9995a"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "-9.511872439250983px"
+-                               --drift: "18.79048676464592px"
+-                               animation-delay: "7.29444s"
+-                               animation-duration: "10.7772s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "40.71717980438606%"
+-                               left: "53.3739%"
++                               top: "51.64946560159935%"
+-                               top: "92.8893%"
++                               animationDelay: "2.5513199147990937s"
++                               animationDuration: "9.355258067659872s"
++                               width: 6.821266614115502
+-                               width: "7.56647px"
++                               height: 6.821266614115502
+-                               height: "7.56647px"
++                               color: "#a090b8"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "24.215397819270066px"
+-                               --drift: "-19.998098561793096px"
+-                               animation-delay: "6.51084s"
+-                               animation-duration: "7.71629s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "61.643366812592326%"
+-                               left: "12.2702%"
++                               top: "26.68199172745751%"
+-                               top: "54.6623%"
++                               animationDelay: "6.320800958988876s"
++                               animationDuration: "8.43675463854272s"
++                               width: 5.6397073394795125
+-                               width: "11.8179px"
++                               height: 5.6397073394795125
+-                               height: "11.8179px"
++                               color: "#7070a0"
+-                               color: "rgb(255, 249, 246)"
++                               --drift: "24.249123261460973px"
+-                               --drift: "1.7787302713676816px"
+-                               animation-delay: "6.77435s"
+-                               animation-duration: "8.40499s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "65.15342807711068%"
+-                               left: "62.0261%"
++                               top: "27.55007775565842%"
+-                               top: "96.5555%"
++                               animationDelay: "6.037310014670585s"
++                               animationDuration: "13.769614367283818s"
++                               width: 8.579115797062581
+-                               width: "7.26855px"
++                               height: 8.579115797062581
+-                               height: "7.26855px"
++                               color: "#e8c98a"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "-25.721925721803025px"
+-                               --drift: "-28.336294628316992px"
+-                               animation-delay: "6.90504s"
+-                               animation-duration: "11.3919s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "79.20195564999435%"
+-                               left: "96.6446%"
++                               top: "31.987319859727837%"
+-                               top: "80.0064%"
++                               animationDelay: "2.325728261138047s"
++                               animationDuration: "13.362141890232152s"
++                               width: 10.172599932492378
+-                               width: "11.6907px"
++                               height: 10.172599932492378
+-                               height: "11.6907px"
++                               color: "#e8c98a"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "3.961753558080879px"
+-                               --drift: "-0.022701195432308197px"
+-                               animation-delay: "5.62287s"
+-                               animation-duration: "11.9656s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "65.43999866036809%"
+-                               left: "58.36%"
++                               top: "13.191250098746444%"
+-                               top: "71.7378%"
++                               animationDelay: "4.920026090651208s"
++                               animationDuration: "15.903626699853753s"
++                               width: 4.664635917913233
+-                               width: "6.14303px"
++                               height: 4.664635917913233
+-                               height: "6.14303px"
++                               color: "#e8c98a"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "11.362609749527195px"
+-                               --drift: "21.491949546446236px"
+-                               animation-delay: "6.45589s"
+-                               animation-duration: "13.8571s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "99.38765106845429%"
+-                               left: "54.5368%"
++                               top: "96.61580455143218%"
+-                               top: "34.1538%"
++                               animationDelay: "1.3132387930938103s"
++                               animationDuration: "10.424960307376786s"
++                               width: 6.404884321113874
+-                               width: "8.62129px"
++                               height: 6.404884321113874
+-                               height: "8.62129px"
++                               color: "#fff9f6"
+-                               color: "rgb(112, 112, 160)"
++                               --drift: "16.662739815636193px"
+-                               --drift: "28.384739981968117px"
+-                               animation-delay: "1.67561s"
+-                               animation-duration: "12.0322s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "91.91202163467838%"
+-                               left: "93.7279%"
++                               top: "15.939104817928495%"
+-                               top: "18.8507%"
++                               animationDelay: "3.2153524977730292s"
++                               animationDuration: "9.24119073048706s"
++                               width: 10.15308270165798
+-                               width: "7.62947px"
++                               height: 10.15308270165798
+-                               height: "7.62947px"
++                               color: "#c9995a"
+-                               color: "rgb(160, 144, 184)"
++                               --drift: "4.260112794717422px"
+-                               --drift: "-16.484512764847985px"
+-                               animation-delay: "6.42609s"
+-                               animation-duration: "13.1583s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "58.88291603248259%"
+-                               left: "50.0204%"
++                               top: "5.955976963446686%"
+-                               top: "47.8206%"
++                               animationDelay: "1.7928927114611772s"
++                               animationDuration: "15.057050066862521s"
++                               width: 4.203522413878303
+-                               width: "10.7976px"
++                               height: 4.203522413878303
+-                               height: "10.7976px"
++                               color: "#7070a0"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "-14.027977185419228px"
+-                               --drift: "-27.875943436831683px"
+-                               animation-delay: "2.66849s"
+-                               animation-duration: "14.2363s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-star"
+                              style={{
++                               left: "62.75763562610172%"
+-                               left: "15.3334%"
++                               top: "16.756104929556948%"
+-                               top: "61.7339%"
++                               animationDelay: "5.273395446508868s"
++                               animationDuration: "6.276485676972543s"
++                               width: 10.675524326366844
+-                               width: "4.84475px"
++                               height: 10.675524326366844
+-                               height: "4.84475px"
++                               color: "#fff9f6"
+-                               color: "rgb(160, 144, 184)"
++                               --drift: "-17.718130531801556px"
+-                               --drift: "-27.265489157010013px"
+-                               animation-delay: "0.265687s"
+-                               animation-duration: "13.25s"
+                              }}
+                            >
+                        <div>
+                        <div>
+                        <div>
+                        ...
+                          <div className="sealed-reveal" onClick={function AnimatedSection.useCallback[handleReveal]} ...>
+                            <motion.div>
+                            ...
+                              <div className="sealed-rin..." style={{}} ref={function useMotionRef.useCallback}>
+                                <svg viewBox="0 0 320 320" className="sealed-rin...">
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle
+                                    cx={104.99999999999994}
++                                   cy={64.73720558371178}
+-                                   cy="64.73720558371177"
+                                    r="1.5"
+                                    fill="rgba(201,153,90,0.12)"
+                                  >
+                                  ...
+                            <motion.div>
+                            <div className="sealed-min...">
+                              <motion.span className="sealed-mini-p" style={{--angle:"0deg", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "0deg"
+-                                   --angle: "0deg"
++                                   --distance: "89.27967199913623px"
+-                                   --distance: "96.84066769468927px"
++                                   color: "#a090b8"
+-                                   color: "rgb(160, 144, 184)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ⭐
+                              <motion.span className="sealed-mini-p" style={{--angle:"7...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "72deg"
+-                                   --angle: "72deg"
++                                   --distance: "108.5427420473795px"
+-                                   --distance: "106.1594930845153px"
++                                   color: "#a090b8"
+-                                   color: "rgb(160, 144, 184)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🌟
+                              <motion.span className="sealed-mini-p" style={{--angle:"1...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "144deg"
+-                                   --angle: "144deg"
++                                   --distance: "115.53498796491357px"
+-                                   --distance: "88.64932842709673px"
++                                   color: "#a090b8"
+-                                   color: "rgb(160, 144, 184)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ✨
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "216deg"
+-                                   --angle: "216deg"
++                                   --distance: "110.61868193175724px"
+-                                   --distance: "91.30689931211091px"
++                                   color: "#a090b8"
+-                                   color: "rgb(160, 144, 184)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 💫
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "288deg"
+-                                   --angle: "288deg"
++                                   --distance: "83.18183630111042px"
+-                                   --distance: "113.56467379127352px"
++                                   color: "#a090b8"
+-                                   color: "rgb(160, 144, 184)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🌙
+                            ...
+                        ...
+                  <AnimatedSection className="sec-6" id="s6" bgId="bgr6" onClick={function onClick} particleType="heart" ...>
+                    <motion.section className="sec sec-6" id="s6">
+                      <section className="sec sec-6" id="s6" style={{}} ref={function useMotionRef.useCallback}>
+                        <div>
+                        <FloatingParticles count={22} type="heart" colors={[...]}>
+                          <div className="floating-p...">
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "82.37389797517584%"
+-                               left: "68.1634%"
++                               top: "12.538507703849477%"
+-                               top: "8.30898%"
++                               animationDelay: "1.476633671125911s"
++                               animationDuration: "14.098232059571878s"
++                               width: 16.82049887168303
+-                               width: "22.5454px"
++                               height: 16.82049887168303
+-                               height: "22.5454px"
++                               color: "#f2c4b8"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "21.600624009415164px"
+-                               --drift: "28.196656470349005px"
+-                               animation-delay: "5.73081s"
+-                               animation-duration: "8.11558s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "80.19892827725874%"
+-                               left: "2.0229%"
++                               top: "72.15486204083648%"
+-                               top: "47.0693%"
++                               animationDelay: "0.5908521318152742s"
++                               animationDuration: "10.9401774857189s"
++                               width: 12.579622179027691
+-                               width: "13.4412px"
++                               height: 12.579622179027691
+-                               height: "13.4412px"
++                               color: "#c9995a"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "24.415977828575485px"
+-                               --drift: "-29.879023716368422px"
+-                               animation-delay: "1.76044s"
+-                               animation-duration: "8.13283s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "53.0957315398774%"
+-                               left: "42.1781%"
++                               top: "0.24552599124345598%"
+-                               top: "25.1231%"
++                               animationDelay: "6.995907662106726s"
++                               animationDuration: "7.798138218774081s"
++                               width: 10.535431383741379
+-                               width: "18.7344px"
++                               height: 10.535431383741379
+-                               height: "18.7344px"
++                               color: "#c9995a"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "22.188429099623306px"
+-                               --drift: "8.93283018926627px"
+-                               animation-delay: "5.66477s"
+-                               animation-duration: "6.79393s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "68.08290988673636%"
+-                               left: "91.0569%"
++                               top: "40.231980271869716%"
+-                               top: "46.754%"
++                               animationDelay: "4.72127052203128s"
++                               animationDuration: "14.775303775401287s"
++                               width: 17.07382559215124
+-                               width: "23.0113px"
++                               height: 17.07382559215124
+-                               height: "23.0113px"
++                               color: "#c9995a"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "-17.892672940417803px"
+-                               --drift: "-24.36517159685466px"
+-                               animation-delay: "6.60458s"
+-                               animation-duration: "13.3798s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "27.175345375787106%"
+-                               left: "43.3629%"
++                               top: "46.36756972275062%"
+-                               top: "8.36291%"
++                               animationDelay: "6.048066281437114s"
++                               animationDuration: "10.48430662181581s"
++                               width: 15.838565130217763
+-                               width: "17.779px"
++                               height: 15.838565130217763
+-                               height: "17.779px"
++                               color: "#f2c4b8"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "23.15328390473241px"
+-                               --drift: "17.15982384304258px"
+-                               animation-delay: "7.55602s"
+-                               animation-duration: "11.0825s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "62.12213715192851%"
+-                               left: "33.0878%"
++                               top: "45.35961406133694%"
+-                               top: "33.7858%"
++                               animationDelay: "5.049954894115403s"
++                               animationDuration: "11.347749617464794s"
++                               width: 13.516212671116456
+-                               width: "18.1524px"
++                               height: 13.516212671116456
+-                               height: "18.1524px"
++                               color: "#c0463c"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "-14.464757070643515px"
+-                               --drift: "4.938273830057689px"
+-                               animation-delay: "6.82219s"
+-                               animation-duration: "11.1514s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "61.21247247317232%"
+-                               left: "75.9176%"
++                               top: "34.49213806268647%"
+-                               top: "46.376%"
++                               animationDelay: "0.1324196882869595s"
++                               animationDuration: "6.141127611933759s"
++                               width: 21.835264458328265
+-                               width: "22.9739px"
++                               height: 21.835264458328265
+-                               height: "22.9739px"
++                               color: "#c9995a"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "-7.327204438612583px"
+-                               --drift: "-11.940004224538097px"
+-                               animation-delay: "3.89645s"
+-                               animation-duration: "8.85638s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "48.64843538494935%"
+-                               left: "9.34624%"
++                               top: "74.13626513127774%"
+-                               top: "38.7331%"
++                               animationDelay: "0.6017218191552711s"
++                               animationDuration: "15.449219204525056s"
++                               width: 18.08996928850968
+-                               width: "11.6561px"
++                               height: 18.08996928850968
+-                               height: "11.6561px"
++                               color: "#c9995a"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-28.512877349318472px"
+-                               --drift: "-27.815476062898156px"
+-                               animation-delay: "3.98687s"
+-                               animation-duration: "11.2222s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "24.192124863261398%"
+-                               left: "75.8278%"
++                               top: "51.69465036236039%"
+-                               top: "27.0423%"
++                               animationDelay: "6.147758734965984s"
++                               animationDuration: "6.069982460671203s"
++                               width: 20.947317437732774
+-                               width: "16.5845px"
++                               height: 20.947317437732774
+-                               height: "16.5845px"
++                               color: "#f2c4b8"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "1.5434498417490197px"
+-                               --drift: "17.95562564062184px"
+-                               animation-delay: "0.471512s"
+-                               animation-duration: "6.49578s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "17.028532720154445%"
+-                               left: "84.2182%"
++                               top: "62.86287564950733%"
+-                               top: "74.0535%"
++                               animationDelay: "5.4052324370963465s"
++                               animationDuration: "13.430076287894808s"
++                               width: 22.770850802213886
+-                               width: "21.4401px"
++                               height: 22.770850802213886
+-                               height: "21.4401px"
++                               color: "#c0463c"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "23.497582589504766px"
+-                               --drift: "16.75117173405674px"
+-                               animation-delay: "1.10545s"
+-                               animation-duration: "13.005s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "28.23499984157004%"
+-                               left: "17.7431%"
++                               top: "60.46930252040793%"
+-                               top: "62.86%"
++                               animationDelay: "2.7189825173727202s"
++                               animationDuration: "8.547719765514971s"
++                               width: 10.011054927512431
+-                               width: "21.4065px"
++                               height: 10.011054927512431
+-                               height: "21.4065px"
++                               color: "#f2c4b8"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "-11.142330980405767px"
+-                               --drift: "-20.6565325369113px"
+-                               animation-delay: "1.36424s"
+-                               animation-duration: "6.37501s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "75.47505458931927%"
+-                               left: "37.3696%"
++                               top: "76.61896532295084%"
+-                               top: "45.9273%"
++                               animationDelay: "1.4665126558856203s"
++                               animationDuration: "13.026092103181837s"
++                               width: 21.735222003721166
+-                               width: "20.8833px"
++                               height: 21.735222003721166
+-                               height: "20.8833px"
++                               color: "#e8c98a"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "-24.04086126854068px"
+-                               --drift: "-5.206932409226056px"
+-                               animation-delay: "0.397114s"
+-                               animation-duration: "6.94098s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "16.688424348711994%"
+-                               left: "19.8489%"
++                               top: "31.219566897370466%"
+-                               top: "81.4565%"
++                               animationDelay: "5.557945917496505s"
++                               animationDuration: "12.631770284920492s"
++                               width: 10.815182291198091
+-                               width: "21.9277px"
++                               height: 10.815182291198091
+-                               height: "21.9277px"
++                               color: "#f2c4b8"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "10.66563467315433px"
+-                               --drift: "-9.827672833111816px"
+-                               animation-delay: "7.89239s"
+-                               animation-duration: "8.00058s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "76.87113722197624%"
+-                               left: "86.9616%"
++                               top: "9.657663998597421%"
+-                               top: "55.9962%"
++                               animationDelay: "1.2056501012593488s"
++                               animationDuration: "9.407432778883031s"
++                               width: 11.969188799599113
+-                               width: "13.7892px"
++                               height: 11.969188799599113
+-                               height: "13.7892px"
++                               color: "#e8897a"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "17.47039067813347px"
+-                               --drift: "-5.695777852044273px"
+-                               animation-delay: "6.5815s"
+-                               animation-duration: "15.2171s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "76.10003337642726%"
+-                               left: "82.5217%"
++                               top: "72.69998015134296%"
+-                               top: "55.5026%"
++                               animationDelay: "1.4887995415392519s"
++                               animationDuration: "11.281239777683888s"
++                               width: 11.253764088378977
+-                               width: "12.6942px"
++                               height: 11.253764088378977
+-                               height: "12.6942px"
++                               color: "#e8897a"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "7.335087390187731px"
+-                               --drift: "-7.274211507567145px"
+-                               animation-delay: "3.49253s"
+-                               animation-duration: "7.74997s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "63.45774495945473%"
+-                               left: "14.5146%"
++                               top: "98.02227435989305%"
+-                               top: "0.669533%"
++                               animationDelay: "3.5475455939604332s"
++                               animationDuration: "6.408485809359336s"
++                               width: 16.436173463752745
+-                               width: "20.3333px"
++                               height: 16.436173463752745
+-                               height: "20.3333px"
++                               color: "#e8c98a"
+-                               color: "rgb(242, 196, 184)"
++                               --drift: "-26.25074526216484px"
+-                               --drift: "-27.72075345538277px"
+-                               animation-delay: "1.61402s"
+-                               animation-duration: "9.81928s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "27.267177735286175%"
+-                               left: "36.0282%"
++                               top: "63.79241095872171%"
+-                               top: "65.8548%"
++                               animationDelay: "7.8485791212038825s"
++                               animationDuration: "15.38082067653365s"
++                               width: 19.765712901466692
+-                               width: "13.4247px"
++                               height: 19.765712901466692
+-                               height: "13.4247px"
++                               color: "#f2c4b8"
+-                               color: "rgb(192, 70, 60)"
++                               --drift: "0.10411710559240461px"
+-                               --drift: "24.273962000056848px"
+-                               animation-delay: "1.51756s"
+-                               animation-duration: "15.6372s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "24.22653002581876%"
+-                               left: "74.8715%"
++                               top: "8.206994887834362%"
+-                               top: "40.3311%"
++                               animationDelay: "4.5699287225080125s"
++                               animationDuration: "7.627522756147756s"
++                               width: 22.18320550164099
+-                               width: "20.1857px"
++                               height: 22.18320550164099
+-                               height: "20.1857px"
++                               color: "#e8897a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "17.935231640239508px"
+-                               --drift: "-12.877887911338973px"
+-                               animation-delay: "3.77387s"
+-                               animation-duration: "11.5503s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "0.4319004112107394%"
+-                               left: "70.5498%"
++                               top: "71.96084094020286%"
+-                               top: "42.8346%"
++                               animationDelay: "3.1006369995895025s"
++                               animationDuration: "11.772709923996533s"
++                               width: 16.449553109119663
+-                               width: "20.2026px"
++                               height: 16.449553109119663
+-                               height: "20.2026px"
++                               color: "#e8897a"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "-11.692889637285685px"
+-                               --drift: "20.887723049771935px"
+-                               animation-delay: "3.18079s"
+-                               animation-duration: "10.2844s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "88.996250431068%"
+-                               left: "6.66811%"
++                               top: "32.5587595000482%"
+-                               top: "10.4224%"
++                               animationDelay: "4.240812167178432s"
++                               animationDuration: "10.125072035360361s"
++                               width: 22.38244959119679
+-                               width: "21.5027px"
++                               height: 22.38244959119679
+-                               height: "21.5027px"
++                               color: "#e8c98a"
+-                               color: "rgb(232, 201, 138)"
++                               --drift: "2.4757470035113656px"
+-                               --drift: "-17.582960126161584px"
+-                               animation-delay: "0.624895s"
+-                               animation-duration: "13.4492s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "85.85427510544172%"
+-                               left: "91.3713%"
++                               top: "6.506606977681029%"
+-                               top: "54.0875%"
++                               animationDelay: "0.20925856478091465s"
++                               animationDuration: "8.566589074516331s"
++                               width: 23.756594470086547
+-                               width: "16.5734px"
++                               height: 23.756594470086547
+-                               height: "16.5734px"
++                               color: "#c0463c"
+-                               color: "rgb(232, 137, 122)"
++                               --drift: "26.369647447808866px"
+-                               --drift: "-29.452827660869055px"
+-                               animation-delay: "1.49151s"
+-                               animation-duration: "6.5049s"
+                              }}
+                            >
+                            <div
+                              className="fp fp-heart"
+                              style={{
++                               left: "28.127504504726385%"
+-                               left: "5.62409%"
++                               top: "90.822213106092%"
+-                               top: "68.6124%"
++                               animationDelay: "3.1111805580061533s"
++                               animationDuration: "8.640814892033662s"
++                               width: 22.24189567673057
+-                               width: "12.5016px"
++                               height: 22.24189567673057
+-                               height: "12.5016px"
++                               color: "#c9995a"
+-                               color: "rgb(201, 153, 90)"
++                               --drift: "-19.774258939115743px"
+-                               --drift: "4.640200651437723px"
+-                               animation-delay: "7.9913s"
+-                               animation-duration: "6.26055s"
+                              }}
+                            >
+                        <div>
+                        <div>
+                        <div>
+                        ...
+                          <div className="sealed-reveal" onClick={function AnimatedSection.useCallback[handleReveal]} ...>
+                            <motion.div>
+                            ...
+                              <div className="sealed-rin..." style={{}} ref={function useMotionRef.useCallback}>
+                                <svg viewBox="0 0 320 320" className="sealed-rin...">
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle>
+                                  <circle
+                                    cx={104.99999999999994}
++                                   cy={64.73720558371178}
+-                                   cy="64.73720558371177"
+                                    r="1.5"
+                                    fill="rgba(201,153,90,0.18)"
+                                  >
+                                  ...
+                            <motion.div>
+                            <div className="sealed-min...">
+                              <motion.span className="sealed-mini-p" style={{--angle:"0deg", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "0deg"
+-                                   --angle: "0deg"
++                                   --distance: "86.08934085664066px"
+-                                   --distance: "99.72886685590129px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🎉
+                              <motion.span className="sealed-mini-p" style={{--angle:"7...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "72deg"
+-                                   --angle: "72deg"
++                                   --distance: "94.60414535939603px"
+-                                   --distance: "108.25936782328372px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🎊
+                              <motion.span className="sealed-mini-p" style={{--angle:"1...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "144deg"
+-                                   --angle: "144deg"
++                                   --distance: "94.57860259290146px"
+-                                   --distance: "117.20332683220165px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🎈
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "216deg"
+-                                   --angle: "216deg"
++                                   --distance: "107.2803290629469px"
+-                                   --distance: "100.99962182983305px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 ✨
+                              <motion.span className="sealed-mini-p" style={{--angle:"2...", ...}} ...>
+                                <span
+                                  className="sealed-mini-p"
+                                  style={{
++                                   --angle: "288deg"
+-                                   --angle: "288deg"
++                                   --distance: "98.86502540906777px"
+-                                   --distance: "103.12899923485942px"
++                                   color: "#e8897a"
+-                                   color: "rgb(232, 137, 122)"
+                                  }}
+                                  ref={function useMotionRef.useCallback}
+                                >
++                                 🥂
+                            ...
+                        ...
+                  ...
+          ...
+        ...
+src/app/page.tsx (236:9) @ <unknown>
+
+
+  234 |     <div className="floating-particles">
+  235 |       {particles.current.map((p) => (
+> 236 |         <div
+      |         ^
+  237 |           key={p.id}
+  238 |           className={`fp fp-${type}`}
+  239 |           style={{
+Call Stack
+23
+
+Show 17 ignore-listed frame(s)
+div
+<anonymous>
+<unknown>
+src/app/page.tsx (236:9)
+Array.map
+<anonymous>
+FloatingParticles
+src/app/page.tsx (235:26)
+AnimatedSection
+src/app/page.tsx (395:7)
+Home
+src/app/page.tsx (1154:9)
