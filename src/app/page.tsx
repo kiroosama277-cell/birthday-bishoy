@@ -1276,7 +1276,7 @@ export default function Home() {
   useEffect(() => {
     if (stage !== 'facecake') return
     const t1 = setTimeout(() => setFaceCakeVisible(true), 200)
-    const t2 = setTimeout(() => setStage('date'), 4500)
+    const t2 = setTimeout(() => setStage('date'), 5500)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [stage])
 
@@ -1372,132 +1372,282 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ══ STAGE 3.5: FACE IN CAKE ══ */}
+      {/* ══ STAGE 3.5: HEAD POPPING OUT OF CAKE ══ */}
       <div className={`stage ${['music', 'gift', 'cake', 'text'].includes(stage) ? 'hidden' : stage === 'facecake' ? 'entering' : 'gone'}`} id="stFaceCake" style={{ zIndex: 500 }}>
         <motion.div
           className="facecake-scene"
           initial={{ opacity: 0 }}
           animate={faceCakeVisible ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.5 }}
         >
-          <svg className="facecake-svg" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Cake */}
-            <rect x="80" y="260" width="240" height="100" rx="12" fill="#7a1f1f" />
-            <rect x="80" y="260" width="240" height="100" rx="12" fill="url(#fcGrad1)" />
-            <rect x="100" y="230" width="200" height="40" rx="8" fill="#c0463c" />
-            <rect x="100" y="230" width="200" height="40" rx="8" fill="url(#fcGrad2)" />
-            {/* Frosting drips */}
-            <ellipse cx="130" cy="270" rx="6" ry="14" fill="#f2c4b8" opacity="0.85" />
-            <ellipse cx="170" cy="275" rx="5" ry="18" fill="#f7e0d0" opacity="0.8" />
-            <ellipse cx="210" cy="268" rx="6" ry="12" fill="#f2c4b8" opacity="0.85" />
-            <ellipse cx="250" cy="273" rx="5" ry="16" fill="#f7e0d0" opacity="0.8" />
-            <ellipse cx="280" cy="267" rx="4" ry="10" fill="#f2c4b8" opacity="0.8" />
-            {/* Frosting strip top */}
-            <rect x="100" y="228" width="200" height="8" rx="4" fill="#f2c4b8" opacity="0.8" />
-            {/* Sprinkles */}
-            <rect x="120" y="290" width="6" height="3" rx="1.5" fill="#e8897a" opacity="0.7" transform="rotate(30 123 291.5)" />
-            <rect x="160" y="310" width="6" height="3" rx="1.5" fill="#c9995a" opacity="0.7" transform="rotate(-20 163 311.5)" />
-            <rect x="200" y="295" width="6" height="3" rx="1.5" fill="#f2c4b8" opacity="0.7" transform="rotate(45 203 296.5)" />
-            <rect x="240" y="320" width="6" height="3" rx="1.5" fill="#e8c98a" opacity="0.7" transform="rotate(-35 243 321.5)" />
-            <rect x="280" y="300" width="6" height="3" rx="1.5" fill="#e8897a" opacity="0.7" transform="rotate(15 283 301.5)" />
-            {/* Cat face sticking out of cake top */}
-            <motion.g
-              initial={{ y: 60, opacity: 0 }}
-              animate={faceCakeVisible ? { y: 0, opacity: 1 } : { y: 60, opacity: 0 }}
-              transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {/* Cat head - cute white cat */}
-              <ellipse cx="200" cy="170" rx="65" ry="58" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="2" />
-              {/* Inner ears */}
-              <ellipse cx="155" cy="125" rx="20" ry="28" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="2" />
-              <ellipse cx="155" cy="128" rx="12" ry="18" fill="#f2c4b8" opacity="0.5" />
-              <ellipse cx="245" cy="125" rx="20" ry="28" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="2" />
-              <ellipse cx="245" cy="128" rx="12" ry="18" fill="#f2c4b8" opacity="0.5" />
-              {/* Eyes - happy closed */}
-              <motion.path
-                d="M172,162 Q180,150 188,162"
-                stroke="#3d1010" strokeWidth="3" strokeLinecap="round" fill="none"
-                animate={faceCakeVisible ? { pathLength: [0, 1] } : {}}
-                transition={{ duration: 0.5, delay: 1.2 }}
-              />
-              <motion.path
-                d="M212,162 Q220,150 228,162"
-                stroke="#3d1010" strokeWidth="3" strokeLinecap="round" fill="none"
-                animate={faceCakeVisible ? { pathLength: [0, 1] } : {}}
-                transition={{ duration: 0.5, delay: 1.3 }}
-              />
-              {/* Blush */}
-              <circle cx="168" cy="175" r="10" fill="#f2c4b8" opacity="0.4" />
-              <circle cx="232" cy="175" r="10" fill="#f2c4b8" opacity="0.4" />
-              {/* Nose */}
-              <ellipse cx="200" cy="178" rx="5" ry="3.5" fill="#e8897a" />
-              {/* Mouth - big happy smile */}
-              <motion.path
-                d="M188,186 Q200,200 212,186"
-                stroke="#3d1010" strokeWidth="2" strokeLinecap="round" fill="none"
-                initial={{ pathLength: 0 }}
-                animate={faceCakeVisible ? { pathLength: 1 } : { pathLength: 0 }}
-                transition={{ duration: 0.4, delay: 1.5 }}
-              />
-              {/* Whiskers */}
-              <line x1="150" y1="175" x2="172" y2="178" stroke="#d4b8b0" strokeWidth="1" />
-              <line x1="148" y1="182" x2="172" y2="183" stroke="#d4b8b0" strokeWidth="1" />
-              <line x1="228" y1="178" x2="250" y2="175" stroke="#d4b8b0" strokeWidth="1" />
-              <line x1="228" y1="183" x2="252" y2="182" stroke="#d4b8b0" strokeWidth="1" />
-              {/* Party hat */}
+          <div className="facecake-wrapper">
+            <svg className="facecake-svg" viewBox="0 0 400 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Cake base - shakes when head pops */}
               <motion.g
-                initial={{ rotate: -15, scale: 0 }}
-                animate={faceCakeVisible ? { rotate: -8, scale: 1 } : { rotate: -15, scale: 0 }}
-                transition={{ duration: 0.6, delay: 1.6, type: 'spring', stiffness: 200 }}
+                animate={faceCakeVisible ? {
+                  x: [0, -6, 6, -4, 4, -2, 2, 0],
+                  y: [0, -3, 2, -1, 1, 0, 0, 0]
+                } : {}}
+                transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
               >
-                <polygon points="200,60 175,120 225,120" fill="#c0463c" />
-                <polygon points="200,60 175,120 225,120" fill="url(#hatGrad)" />
-                {/* Hat stripes */}
-                <line x1="183" y1="108" x2="217" y2="108" stroke="#f2c4b8" strokeWidth="3" opacity="0.6" />
-                <line x1="188" y1="96" x2="212" y2="96" stroke="#e8c98a" strokeWidth="2.5" opacity="0.5" />
-                {/* Pom pom */}
-                <circle cx="200" cy="58" r="8" fill="#e8c98a" />
-                <circle cx="200" cy="56" r="5" fill="#f2c4b8" />
+                {/* Plate */}
+                <ellipse cx="200" cy="430" rx="170" ry="18" fill="#e8d0c5" opacity="0.4" />
+                <ellipse cx="200" cy="428" rx="160" ry="14" fill="#f2e0d8" opacity="0.3" />
+                {/* Bottom tier */}
+                <rect x="75" y="340" width="250" height="90" rx="14" fill="#7a1f1f" />
+                <rect x="75" y="340" width="250" height="90" rx="14" fill="url(#fcGrad1)" />
+                {/* Middle tier */}
+                <rect x="100" y="280" width="200" height="65" rx="10" fill="#c0463c" />
+                <rect x="100" y="280" width="200" height="65" rx="10" fill="url(#fcGrad2)" />
+                {/* Top tier (the one the head breaks through) */}
+                <motion.g
+                  animate={faceCakeVisible ? {
+                    y: [0, -4, 3, -2, 1, 0]
+                  } : {}}
+                  transition={{ duration: 0.5, delay: 0.5, ease: "easeOut" }}
+                >
+                  <rect x="125" y="230" width="150" height="55" rx="10" fill="#d4584e" />
+                  <rect x="125" y="230" width="150" height="55" rx="10" fill="url(#fcGrad3)" />
+                  {/* Frosting drips on top tier */}
+                  <rect x="125" y="226" width="150" height="8" rx="4" fill="#f2c4b8" opacity="0.85" />
+                  <ellipse cx="145" cy="280" rx="5" ry="14" fill="#f2c4b8" opacity="0.8" />
+                  <ellipse cx="175" cy="283" rx="4" ry="18" fill="#f7e0d0" opacity="0.75" />
+                  <ellipse cx="205" cy="278" rx="5" ry="12" fill="#f2c4b8" opacity="0.8" />
+                  <ellipse cx="235" cy="281" rx="4" ry="16" fill="#f7e0d0" opacity="0.75" />
+                  <ellipse cx="260" cy="277" rx="3" ry="10" fill="#f2c4b8" opacity="0.8" />
+                  {/* Hole/crack in top tier where head pops out */}
+                  <ellipse cx="200" cy="240" rx="55" ry="20" fill="#5a1515" opacity="0.6" />
+                  {/* Broken cake pieces around hole */}
+                  <motion.path
+                    d="M155,235 L148,222 L160,228 Z" fill="#d4584e" opacity="0.8"
+                    animate={faceCakeVisible ? { y: [0, -15, -25], x: [0, -20, -30], rotate: [0, -25, -40], opacity: [0.8, 0.6, 0] } : {}}
+                    transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
+                  />
+                  <motion.path
+                    d="M240,232 L248,218 L252,230 Z" fill="#c0463c" opacity="0.8"
+                    animate={faceCakeVisible ? { y: [0, -18, -28], x: [0, 22, 35], rotate: [0, 30, 50], opacity: [0.8, 0.6, 0] } : {}}
+                    transition={{ duration: 1, delay: 0.45, ease: "easeOut" }}
+                  />
+                  <motion.path
+                    d="M185,228 L182,215 L192,220 Z" fill="#d4584e" opacity="0.7"
+                    animate={faceCakeVisible ? { y: [0, -22, -35], x: [0, -10, -18], rotate: [0, -15, -30], opacity: [0.7, 0.4, 0] } : {}}
+                    transition={{ duration: 1, delay: 0.42, ease: "easeOut" }}
+                  />
+                </motion.g>
+                {/* Frosting drips on middle tier */}
+                <ellipse cx="130" cy="340" rx="5" ry="14" fill="#f2c4b8" opacity="0.85" />
+                <ellipse cx="165" cy="343" rx="4" ry="18" fill="#f7e0d0" opacity="0.8" />
+                <ellipse cx="200" cy="338" rx="5" ry="12" fill="#f2c4b8" opacity="0.85" />
+                <ellipse cx="235" cy="341" rx="4" ry="16" fill="#f7e0d0" opacity="0.8" />
+                <ellipse cx="270" cy="337" rx="3" ry="10" fill="#f2c4b8" opacity="0.8" />
+                {/* Frosting strip on middle */}
+                <rect x="100" y="276" width="200" height="8" rx="4" fill="#f2c4b8" opacity="0.8" />
+                {/* Sprinkles on bottom tier */}
+                <rect x="110" y="370" width="6" height="3" rx="1.5" fill="#e8897a" opacity="0.7" transform="rotate(30 113 371.5)" />
+                <rect x="155" y="395" width="6" height="3" rx="1.5" fill="#c9995a" opacity="0.7" transform="rotate(-20 158 396.5)" />
+                <rect x="200" y="375" width="6" height="3" rx="1.5" fill="#f2c4b8" opacity="0.7" transform="rotate(45 203 376.5)" />
+                <rect x="250" y="400" width="6" height="3" rx="1.5" fill="#e8c98a" opacity="0.7" transform="rotate(-35 253 401.5)" />
+                <rect x="290" y="380" width="6" height="3" rx="1.5" fill="#e8897a" opacity="0.7" transform="rotate(15 293 381.5)" />
+                {/* Heart decorations on bottom tier */}
+                <text x="130" y="388" fontSize="14" fill="#e8897a" opacity="0.5" textAnchor="middle">♥</text>
+                <text x="200" y="405" fontSize="16" fill="#c0463c" opacity="0.4" textAnchor="middle">♥</text>
+                <text x="270" y="390" fontSize="14" fill="#e8897a" opacity="0.5" textAnchor="middle">♥</text>
               </motion.g>
-            </motion.g>
-            {/* Confetti pieces around */}
-            <motion.g
-              initial={{ opacity: 0, scale: 0 }}
-              animate={faceCakeVisible ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.5, delay: 2 }}
-            >
-              <rect x="90" y="100" width="5" height="12" rx="2" fill="#c9995a" opacity="0.7" transform="rotate(25 92.5 106)" />
-              <rect x="300" y="90" width="5" height="12" rx="2" fill="#e8897a" opacity="0.7" transform="rotate(-15 302.5 96)" />
-              <rect x="70" y="180" width="4" height="10" rx="2" fill="#f2c4b8" opacity="0.6" transform="rotate(40 72 185)" />
-              <rect x="320" y="170" width="4" height="10" rx="2" fill="#c0463c" opacity="0.6" transform="rotate(-30 322 175)" />
-              <circle cx="110" cy="70" r="4" fill="#e8c98a" opacity="0.6" />
-              <circle cx="290" cy="60" r="3" fill="#f2c4b8" opacity="0.6" />
-              <rect x="140" y="50" width="4" height="8" rx="2" fill="#c0463c" opacity="0.5" transform="rotate(60 142 54)" />
-              <rect x="260" y="45" width="4" height="8" rx="2" fill="#c9995a" opacity="0.5" transform="rotate(-50 262 49)" />
-            </motion.g>
-            <defs>
-              <linearGradient id="fcGrad1" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#fff" stopOpacity="0.08" />
-                <stop offset="100%" stopColor="#000" stopOpacity="0.2" />
-              </linearGradient>
-              <linearGradient id="fcGrad2" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#fff" stopOpacity="0.15" />
-                <stop offset="100%" stopColor="#000" stopOpacity="0.1" />
-              </linearGradient>
-              <linearGradient id="hatGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#fff" stopOpacity="0.15" />
-                <stop offset="100%" stopColor="#000" stopOpacity="0.1" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <motion.p
-            className="facecake-text"
-            initial={{ opacity: 0, y: 20 }}
-            animate={faceCakeVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 2.2 }}
-          >
-            Happy Birthday, Bishoy! 🎂
-          </motion.p>
+
+              {/* Character head popping out - energetic bounce */}
+              <motion.g
+                initial={{ y: 120, scaleY: 0.6, scaleX: 1.2, opacity: 0 }}
+                animate={faceCakeVisible ? {
+                  y: [120, -30, 10, -10, 5, -3, 0],
+                  scaleY: [0.6, 1.15, 0.9, 1.05, 0.97, 1.01, 1],
+                  scaleX: [1.2, 0.85, 1.1, 0.95, 1.03, 0.99, 1],
+                  opacity: [0, 1, 1, 1, 1, 1, 1]
+                } : { y: 120, scaleY: 0.6, scaleX: 1.2, opacity: 0 }}
+                transition={{ duration: 1.4, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {/* Cute character head - cartoon style */}
+                {/* Head shape */}
+                <ellipse cx="200" cy="165" rx="58" ry="52" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="1.5" />
+                {/* Hair tuft */}
+                <motion.g
+                  animate={faceCakeVisible ? { rotate: [0, -8, 8, -5, 3, 0], y: [0, -2, 1, -1, 0, 0] } : {}}
+                  transition={{ duration: 2, delay: 1.2, repeat: 1, ease: "easeInOut" }}
+                >
+                  <ellipse cx="200" cy="110" rx="18" ry="22" fill="#4a2828" />
+                  <ellipse cx="185" cy="115" rx="14" ry="18" fill="#3d2020" />
+                  <ellipse cx="215" cy="115" rx="14" ry="18" fill="#3d2020" />
+                  <ellipse cx="200" cy="108" rx="12" ry="16" fill="#5a3535" />
+                </motion.g>
+                {/* Ears */}
+                <ellipse cx="148" cy="135" rx="16" ry="22" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="1.5" />
+                <ellipse cx="148" cy="138" rx="10" ry="14" fill="#f2c4b8" opacity="0.5" />
+                <ellipse cx="252" cy="135" rx="16" ry="22" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="1.5" />
+                <ellipse cx="252" cy="138" rx="10" ry="14" fill="#f2c4b8" opacity="0.5" />
+                {/* Eyes - big excited eyes */}
+                <motion.g
+                  initial={{ scaleY: 0 }}
+                  animate={faceCakeVisible ? { scaleY: [0, 0, 1, 0.1, 1] } : { scaleY: 0 }}
+                  transition={{ duration: 0.6, delay: 0.9, times: [0, 0.4, 0.6, 0.8, 1], ease: "easeOut" }}
+                >
+                  {/* Left eye */}
+                  <ellipse cx="178" cy="160" rx="14" ry="16" fill="#fff" stroke="#e8d0c5" strokeWidth="0.5" />
+                  <motion.ellipse
+                    cx="180" cy="160" rx="9" ry="11" fill="#3d1010"
+                    animate={faceCakeVisible ? { ry: [11, 2, 11] } : {}}
+                    transition={{ duration: 0.3, delay: 2.5, ease: "easeInOut" }}
+                  />
+                  <circle cx="184" cy="155" r="4" fill="#fff" opacity="0.9" />
+                  <circle cx="176" cy="163" r="2" fill="#fff" opacity="0.5" />
+                  {/* Right eye */}
+                  <ellipse cx="222" cy="160" rx="14" ry="16" fill="#fff" stroke="#e8d0c5" strokeWidth="0.5" />
+                  <motion.ellipse
+                    cx="220" cy="160" rx="9" ry="11" fill="#3d1010"
+                    animate={faceCakeVisible ? { ry: [11, 2, 11] } : {}}
+                    transition={{ duration: 0.3, delay: 2.5, ease: "easeInOut" }}
+                  />
+                  <circle cx="224" cy="155" r="4" fill="#fff" opacity="0.9" />
+                  <circle cx="216" cy="163" r="2" fill="#fff" opacity="0.5" />
+                </motion.g>
+                {/* Blush cheeks */}
+                <motion.ellipse
+                  cx="160" cy="180" rx="14" ry="9" fill="#f2a0a0" opacity="0"
+                  animate={faceCakeVisible ? { opacity: [0, 0, 0.5] } : { opacity: 0 }}
+                  transition={{ duration: 0.5, delay: 1.3 }}
+                />
+                <motion.ellipse
+                  cx="240" cy="180" rx="14" ry="9" fill="#f2a0a0" opacity="0"
+                  animate={faceCakeVisible ? { opacity: [0, 0, 0.5] } : { opacity: 0 }}
+                  transition={{ duration: 0.5, delay: 1.3 }}
+                />
+                {/* Nose */}
+                <motion.ellipse
+                  cx="200" cy="178" rx="6" ry="4" fill="#e8897a"
+                  animate={faceCakeVisible ? { scale: [1, 1.3, 1] } : {}}
+                  transition={{ duration: 0.3, delay: 1.5 }}
+                />
+                {/* Mouth - big excited grin */}
+                <motion.path
+                  d="M180,192 Q190,206 200,204 Q210,206 220,192"
+                  stroke="#3d1010" strokeWidth="2.5" strokeLinecap="round" fill="none"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={faceCakeVisible ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+                  transition={{ duration: 0.4, delay: 1.5 }}
+                />
+                {/* Tongue */}
+                <motion.ellipse
+                  cx="200" cy="204" rx="8" ry="5" fill="#e8897a" opacity="0"
+                  animate={faceCakeVisible ? { opacity: [0, 0, 0.7], ry: [3, 3, 6] } : { opacity: 0 }}
+                  transition={{ duration: 0.4, delay: 1.8 }}
+                />
+                {/* Whiskers */}
+                <motion.g
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={faceCakeVisible ? { opacity: 0.6, x: 0 } : { opacity: 0, x: -10 }}
+                  transition={{ duration: 0.3, delay: 1.4 }}
+                >
+                  <line x1="140" y1="175" x2="168" y2="178" stroke="#d4b8b0" strokeWidth="1" />
+                  <line x1="138" y1="183" x2="168" y2="184" stroke="#d4b8b0" strokeWidth="1" />
+                  <line x1="232" y1="178" x2="260" y2="175" stroke="#d4b8b0" strokeWidth="1" />
+                  <line x1="232" y1="184" x2="262" y2="183" stroke="#d4b8b0" strokeWidth="1" />
+                </motion.g>
+                {/* Party hat */}
+                <motion.g
+                  initial={{ rotate: -15, scale: 0, y: 20 }}
+                  animate={faceCakeVisible ? { rotate: -10, scale: 1, y: 0 } : { rotate: -15, scale: 0, y: 20 }}
+                  transition={{ duration: 0.7, delay: 1.0, type: 'spring', stiffness: 180, damping: 12 }}
+                >
+                  <polygon points="200,55 178,120 222,120" fill="#c0463c" />
+                  <polygon points="200,55 178,120 222,120" fill="url(#hatGrad)" />
+                  <line x1="185" y1="107" x2="215" y2="107" stroke="#f2c4b8" strokeWidth="3" opacity="0.6" />
+                  <line x1="189" y1="94" x2="211" y2="94" stroke="#e8c98a" strokeWidth="2.5" opacity="0.5" />
+                  <line x1="193" y1="81" x2="207" y2="81" stroke="#f2c4b8" strokeWidth="2" opacity="0.4" />
+                  <circle cx="200" cy="52" r="9" fill="#e8c98a" />
+                  <circle cx="200" cy="50" r="6" fill="#f2c4b8" />
+                  <circle cx="198" cy="48" r="2.5" fill="#fff" opacity="0.5" />
+                </motion.g>
+              </motion.g>
+
+              {/* Flying confetti/sparkles when head pops */}
+              {faceCakeVisible && (
+                <>
+                  <motion.rect x="100" y="140" width="6" height="14" rx="2" fill="#c9995a"
+                    animate={{ y: [140, 40, -20], x: [100, 70, 50], rotate: [0, 120, 240], opacity: [0, 1, 0] }}
+                    transition={{ duration: 1.8, delay: 0.5, ease: "easeOut" }}
+                  />
+                  <motion.rect x="290" y="130" width="5" height="12" rx="2" fill="#e8897a"
+                    animate={{ y: [130, 30, -30], x: [290, 320, 340], rotate: [0, -100, -220], opacity: [0, 1, 0] }}
+                    transition={{ duration: 1.8, delay: 0.55, ease: "easeOut" }}
+                  />
+                  <motion.rect x="150" y="160" width="4" height="10" rx="2" fill="#f2c4b8"
+                    animate={{ y: [160, 60, 10], x: [150, 110, 90], rotate: [0, 80, 180], opacity: [0, 1, 0] }}
+                    transition={{ duration: 1.6, delay: 0.6, ease: "easeOut" }}
+                  />
+                  <motion.rect x="250" y="155" width="5" height="11" rx="2" fill="#c0463c"
+                    animate={{ y: [155, 55, -5], x: [250, 290, 310], rotate: [0, -90, -200], opacity: [0, 1, 0] }}
+                    transition={{ duration: 1.6, delay: 0.58, ease: "easeOut" }}
+                  />
+                  <motion.circle cx="120" cy="150" r="4" fill="#e8c98a"
+                    animate={{ y: [150, 50, 0], x: [120, 80, 60], opacity: [0, 0.8, 0] }}
+                    transition={{ duration: 1.5, delay: 0.65, ease: "easeOut" }}
+                  />
+                  <motion.circle cx="280" cy="145" r="3" fill="#f2c4b8"
+                    animate={{ y: [145, 45, -5], x: [280, 310, 330], opacity: [0, 0.8, 0] }}
+                    transition={{ duration: 1.5, delay: 0.62, ease: "easeOut" }}
+                  />
+                  <motion.rect x="170" y="100" width="5" height="12" rx="2" fill="#c0463c"
+                    animate={{ y: [100, 0, -50], x: [170, 140, 120], rotate: [0, 150, 300], opacity: [0, 1, 0] }}
+                    transition={{ duration: 2, delay: 0.7, ease: "easeOut" }}
+                  />
+                  <motion.rect x="230" y="95" width="4" height="10" rx="2" fill="#c9995a"
+                    animate={{ y: [95, -5, -55], x: [230, 260, 280], rotate: [0, -130, -280], opacity: [0, 1, 0] }}
+                    transition={{ duration: 2, delay: 0.68, ease: "easeOut" }}
+                  />
+                  {/* Star sparkles */}
+                  <motion.text x="80" y="100" fontSize="18" fill="#e8c98a"
+                    animate={{ y: [100, 30, -20], opacity: [0, 1, 0], scale: [0.5, 1.2, 0.8] }}
+                    transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
+                  >✦</motion.text>
+                  <motion.text x="310" y="90" fontSize="16" fill="#f2c4b8"
+                    animate={{ y: [90, 20, -30], opacity: [0, 1, 0], scale: [0.5, 1.2, 0.8] }}
+                    transition={{ duration: 1.5, delay: 0.85, ease: "easeOut" }}
+                  >✦</motion.text>
+                  <motion.text x="200" y="50" fontSize="20" fill="#e8c98a"
+                    animate={{ y: [50, -20, -60], opacity: [0, 1, 0], scale: [0.3, 1.5, 1] }}
+                    transition={{ duration: 1.8, delay: 0.9, ease: "easeOut" }}
+                  >✨</motion.text>
+                </>
+              )}
+
+              {/* "HAPPY BIRTHDAY" text that appears with the head */}
+              <motion.g
+                initial={{ opacity: 0, y: 15 }}
+                animate={faceCakeVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+                transition={{ duration: 0.8, delay: 2 }}
+              >
+                <text x="200" y="480" textAnchor="middle" fill="#e8897a" fontSize="32" fontFamily="serif" fontStyle="italic" opacity="0.9">Happy Birthday!</text>
+                <text x="200" y="510" textAnchor="middle" fill="#f2c4b8" fontSize="18" fontFamily="serif" fontStyle="italic" opacity="0.6">Bishoy 🎂</text>
+              </motion.g>
+
+              <defs>
+                <linearGradient id="fcGrad1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#fff" stopOpacity="0.1" />
+                  <stop offset="100%" stopColor="#000" stopOpacity="0.25" />
+                </linearGradient>
+                <linearGradient id="fcGrad2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#fff" stopOpacity="0.15" />
+                  <stop offset="100%" stopColor="#000" stopOpacity="0.15" />
+                </linearGradient>
+                <linearGradient id="fcGrad3" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#fff" stopOpacity="0.18" />
+                  <stop offset="100%" stopColor="#000" stopOpacity="0.12" />
+                </linearGradient>
+                <linearGradient id="hatGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#fff" stopOpacity="0.2" />
+                  <stop offset="100%" stopColor="#000" stopOpacity="0.12" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
         </motion.div>
       </div>
 

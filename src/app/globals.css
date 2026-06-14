@@ -379,12 +379,12 @@ body {
 }
 
 /* backgrounds — each section has its own atmosphere */
-.sec-1 { background: radial-gradient(ellipse 120% 100% at 30% 70%, rgba(122, 31, 31, 0.22) 0%, rgba(14, 4, 4, 0.95) 70%); }
-.sec-2 { background: linear-gradient(170deg, rgba(242, 196, 184, 0.12) 0%, rgba(20, 8, 8, 0.95) 40%, rgba(14, 4, 4, 0.97) 100%); }
-.sec-3 { background: radial-gradient(ellipse 100% 120% at 70% 50%, rgba(201, 153, 90, 0.12) 0%, rgba(14, 4, 4, 0.95) 65%); }
-.sec-4 { background: radial-gradient(ellipse 110% 100% at 40% 60%, rgba(232, 201, 138, 0.1) 0%, rgba(14, 4, 4, 0.95) 70%); }
-.sec-5 { background: radial-gradient(ellipse 100% 110% at 55% 45%, rgba(160, 144, 184, 0.15) 0%, rgba(10, 5, 15, 0.95) 60%, rgba(14, 4, 4, 0.97) 100%); }
-.sec-6 { background: radial-gradient(ellipse 130% 100% at 50% 55%, rgba(192, 70, 60, 0.18) 0%, rgba(14, 4, 4, 0.95) 65%); }
+.sec-1 { background: linear-gradient(145deg, #1a0a0a 0%, #2d0f0f 30%, #140606 70%, #0e0404 100%); }
+.sec-2 { background: linear-gradient(160deg, #1c0808 0%, #2a1212 35%, #1a0a0a 65%, #0e0404 100%); }
+.sec-3 { background: linear-gradient(135deg, #0e0404 0%, #1f100a 30%, #160a06 60%, #0e0404 100%); }
+.sec-4 { background: linear-gradient(155deg, #0e0404 0%, #1a1308 30%, #120e06 65%, #0e0404 100%); }
+.sec-5 { background: linear-gradient(140deg, #0a0515 0%, #150c20 35%, #100818 65%, #0e0404 100%); }
+.sec-6 { background: linear-gradient(150deg, #0e0404 0%, #2d0f0f 30%, #1a0808 60%, #0e0404 100%); }
 
 /* ════════════════════════════
    ANIMATED STARFIELD BACKGROUND
@@ -591,12 +591,12 @@ body {
   animation: glowPulse 6s ease-in-out infinite;
 }
 
-.sec-1 .sec-glow { background: radial-gradient(circle, rgba(192, 70, 60, 0.06) 0%, transparent 70%); }
-.sec-2 .sec-glow { background: radial-gradient(circle, rgba(232, 137, 122, 0.08) 0%, transparent 70%); }
-.sec-3 .sec-glow { background: radial-gradient(circle, rgba(139, 42, 42, 0.06) 0%, transparent 70%); }
-.sec-4 .sec-glow { background: radial-gradient(circle, rgba(201, 153, 90, 0.06) 0%, transparent 70%); }
-.sec-5 .sec-glow { background: radial-gradient(circle, rgba(112, 112, 160, 0.08) 0%, transparent 70%); }
-.sec-6 .sec-glow { background: radial-gradient(circle, rgba(192, 70, 60, 0.08) 0%, transparent 70%); }
+.sec-1 .sec-glow { background: radial-gradient(circle, rgba(192, 70, 60, 0.1) 0%, transparent 70%); }
+.sec-2 .sec-glow { background: radial-gradient(circle, rgba(232, 137, 122, 0.12) 0%, transparent 70%); }
+.sec-3 .sec-glow { background: radial-gradient(circle, rgba(201, 153, 90, 0.1) 0%, transparent 70%); }
+.sec-4 .sec-glow { background: radial-gradient(circle, rgba(232, 201, 138, 0.08) 0%, transparent 70%); }
+.sec-5 .sec-glow { background: radial-gradient(circle, rgba(160, 144, 184, 0.12) 0%, transparent 70%); }
+.sec-6 .sec-glow { background: radial-gradient(circle, rgba(192, 70, 60, 0.12) 0%, transparent 70%); }
 
 @keyframes glowPulse {
   0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
@@ -1123,11 +1123,13 @@ body {
 .letter-content {
   text-align: center;
   padding: 40px 30px;
-  max-width: 400px;
+  max-width: 420px;
   margin-top: 30px;
-  background: rgba(242, 196, 184, 0.06);
-  border: 1px solid rgba(232, 137, 122, 0.15);
-  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(122, 31, 31, 0.15) 0%, rgba(14, 4, 4, 0.8) 50%, rgba(192, 70, 60, 0.08) 100%);
+  border: 1px solid rgba(232, 137, 122, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 40px rgba(192, 70, 60, 0.08), inset 0 0 30px rgba(232, 137, 122, 0.03);
 }
 
 .letter-content p {
@@ -1144,20 +1146,27 @@ body {
 }
 
 /* ════════════════════════════
-   FACE IN CAKE ANIMATION
+   HEAD POPPING OUT OF CAKE ANIMATION
 ════════════════════════════ */
 .facecake-scene {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0;
+}
+
+.facecake-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .facecake-svg {
-  width: min(70vw, 320px);
+  width: min(80vw, 360px);
   height: auto;
-  filter: drop-shadow(0 0 30px rgba(232, 137, 122, 0.15));
+  filter: drop-shadow(0 0 40px rgba(232, 137, 122, 0.2));
 }
 
 .facecake-text {

@@ -1,0 +1,1638 @@
+     1→'use client'
+     2→
+     3→import { useEffect, useRef, useState, useCallback } from 'react'
+     4→import { motion, AnimatePresence } from 'framer-motion'
+     5→import Lenis from 'lenis'
+     6→
+     7→/* ════════════════════════════
+     8→   SVG ROSE BUILDER
+     9→════════════════════════════ */
+    10→function roseSVG(cx: number, cy: number, sz: number, petalColor: string, centerColor: string, opacity = 1) {
+    11→  const r = sz / 2
+    12→  const numP = 5
+    13→  let paths = ''
+    14→  for (let i = 0; i < numP; i++) {
+    15→    const angle = (i / numP) * 360
+    16→    const rad = angle * Math.PI / 180
+    17→    const px = cx + Math.cos(rad) * r * 0.55
+    18→    const py = cy + Math.sin(rad) * r * 0.55
+    19→    paths += `<ellipse cx="${px}" cy="${py}" rx="${r * 0.7}" ry="${r * 0.42}" fill="${petalColor}" opacity="${opacity * 0.85}" transform="rotate(${angle + 20} ${px} ${py})"/>`
+    20→  }
+    21→  const numO = 8
+    22→  for (let i = 0; i < numO; i++) {
+    23→    const angle = (i / numO) * 360 + 22
+    24→    const rad = angle * Math.PI / 180
+    25→    const px = cx + Math.cos(rad) * r * 0.88
+    26→    const py = cy + Math.sin(rad) * r * 0.88
+    27→    paths += `<ellipse cx="${px}" cy="${py}" rx="${r * 0.55}" ry="${r * 0.32}" fill="${petalColor}" opacity="${opacity * 0.6}" transform="rotate(${angle} ${px} ${py})"/>`
+    28→  }
+    29→  paths += `<circle cx="${cx}" cy="${cy}" r="${r * 0.38}" fill="${centerColor}" opacity="${opacity * 0.9}"/>`
+    30→  paths += `<circle cx="${cx}" cy="${cy}" r="${r * 0.18}" fill="#fff" opacity="${opacity * 0.2}"/>`
+    31→  return paths
+    32→}
+    33→
+    34→/* ════════════════════════════
+    35→   GIFT BOX SVG
+    36→════════════════════════════ */
+    37→function GiftBoxSVG() {
+    38→  return (
+    39→    <svg width="200" height="220" viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ cursor: 'none' }}>
+    40→      <ellipse cx="100" cy="210" rx="70" ry="8" fill="#000" opacity=".3" />
+    41→      <rect x="18" y="98" width="164" height="112" rx="5" fill="#7a1f1f" />
+    42→      <rect x="18" y="98" width="164" height="112" rx="5" fill="url(#bGrad)" />
+    43→      <rect x="8" y="70" width="184" height="36" rx="5" fill="#b03030" />
+    44→      <rect x="8" y="70" width="184" height="36" rx="5" fill="url(#lGrad)" />
+    45→      <rect x="90" y="70" width="20" height="140" fill="#f2c4b8" opacity=".8" />
+    46→      <rect x="8" y="80" width="184" height="14" fill="#f2c4b8" opacity=".8" />
+    47→      <ellipse cx="72" cy="60" rx="32" ry="20" fill="#e8897a" transform="rotate(-22 72 60)" />
+    48→      <ellipse cx="72" cy="60" rx="22" ry="13" fill="#7a1f1f" transform="rotate(-22 72 60)" />
+    49→      <ellipse cx="128" cy="60" rx="32" ry="20" fill="#e8897a" transform="rotate(22 128 60)" />
+    50→      <ellipse cx="128" cy="60" rx="22" ry="13" fill="#7a1f1f" transform="rotate(22 128 60)" />
+    51→      <ellipse cx="100" cy="68" rx="16" ry="11" fill="#f2c4b8" />
+    52→      <ellipse cx="100" cy="65" rx="7" ry="5" fill="#fff" opacity=".25" />
+    53→      <rect x="20" y="74" width="50" height="7" rx="3.5" fill="#fff" opacity=".12" />
+    54→      <circle cx="55" cy="135" r="5" fill="#f2c4b8" opacity=".35" />
+    55→      <circle cx="100" cy="152" r="5" fill="#f2c4b8" opacity=".35" />
+    56→      <circle cx="145" cy="133" r="5" fill="#f2c4b8" opacity=".35" />
+    57→      <circle cx="42" cy="168" r="4" fill="#f2c4b8" opacity=".25" />
+    58→      <circle cx="155" cy="165" r="4" fill="#f2c4b8" opacity=".25" />
+    59→      <defs>
+    60→        <linearGradient id="bGrad" x1="0" y1="0" x2="0" y2="1">
+    61→          <stop offset="0%" stopColor="#fff" stopOpacity=".08" />
+    62→          <stop offset="100%" stopColor="#000" stopOpacity=".28" />
+    63→        </linearGradient>
+    64→        <linearGradient id="lGrad" x1="0" y1="0" x2="0" y2="1">
+    65→          <stop offset="0%" stopColor="#fff" stopOpacity=".2" />
+    66→          <stop offset="100%" stopColor="#000" stopOpacity=".1" />
+    67→        </linearGradient>
+    68→      </defs>
+    69→    </svg>
+    70→  )
+    71→}
+    72→
+    73→/* ════════════════════════════
+    74→   CURSOR SVG
+    75→════════════════════════════ */
+    76→function CursorSVG() {
+    77→  return (
+    78→    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    79→      <path d="M10,17 C4,12 1,8 1,5 C1,2.5 3,1 5.5,2.5 C7.2,3.5 9,5.8 10,7.5 C11,5.8 12.8,3.5 14.5,2.5 C17,1 19,2.5 19,5 C19,8 16,12 10,17Z" fill="#e8897a" opacity=".85" />
+    80→    </svg>
+    81→  )
+    82→}
+    83→
+    84→/* ════════════════════════════
+    85→   DOM EFFECT HELPERS
+    86→════════════════════════════ */
+    87→function spawnEl(html: string, x: number, y: number, cls: string) {
+    88→  const el = document.createElement('div')
+    89→  el.className = cls
+    90→  el.innerHTML = html
+    91→  el.style.left = x + 'px'
+    92→  el.style.top = y + 'px'
+    93→  document.body.appendChild(el)
+    94→  setTimeout(() => el.remove(), 3200)
+    95→}
+    96→
+    97→function boom(e: React.MouseEvent, type: string) {
+    98→  const x = e.clientX, y = e.clientY
+    99→  if (type === 'teddy') {
+   100→    ;['🐻', '💋', '🐻', '💝', '🤍'].forEach((s, i) =>
+   101→      setTimeout(() => spawnEl(s, x + (Math.random() - .5) * 180, y + (Math.random() - .5) * 110, 'pop'), i * 130)
+   102→    )
+   103→  }
+   104→  if (type === 'heart') {
+   105→    ;['❤️', '🤍', '💕', '💗', '💓', '💞'].forEach((s, i) =>
+   106→      setTimeout(() => spawnEl(s, x + (Math.random() - .5) * 200, y + (Math.random() - .5) * 130, 'pop'), i * 110)
+   107→    )
+   108→  }
+   109→  if (type === 'rose') {
+   110→    for (let i = 0; i < 6; i++) setTimeout(() => {
+   111→      const d = document.createElement('div')
+   112→      d.className = 'pop'
+   113→      const [pc, cc] = [['#c0463c', '#6b1a1a'], ['#e8897a', '#b03030'], ['#f2c4b8', '#c0463c']][i % 3]
+   114→      d.innerHTML = `<svg width="48" height="48" viewBox="0 0 48 48">${roseSVG(24, 24, 40, pc, cc)}</svg>`
+   115→      d.style.left = (x + (Math.random() - .5) * 200) + 'px'
+   116→      d.style.top = (y + (Math.random() - .5) * 130) + 'px'
+   117→      document.body.appendChild(d)
+   118→      setTimeout(() => d.remove(), 3200)
+   119→    }, i * 110)
+   120→  }
+   121→  if (type === 'stars') {
+   122→    for (let i = 0; i < 22; i++) {
+   123→      const s = document.createElement('div')
+   124→      s.className = 'star-p'
+   125→      const angle = (i / 22) * Math.PI * 2, dist = 80 + Math.random() * 170
+   126→      s.style.cssText = `left:${x}px;top:${y}px;--dx:${Math.cos(angle) * dist}px;--dy:${Math.sin(angle) * dist}px;
+   127→        background:${['#c9995a', '#f2c4b8', '#fff9f6', '#e8897a'][i % 4]};
+   128→        width:${2 + Math.random() * 5}px;height:${2 + Math.random() * 5}px;
+   129→        animation-delay:${Math.random() * .35}s;`
+   130→      document.body.appendChild(s)
+   131→      setTimeout(() => s.remove(), 2000)
+   132→    }
+   133→  }
+   134→  if (type === 'moon') {
+   135→    const m = document.createElement('div')
+   136→    m.className = 'moon-p'
+   137→    m.textContent = '🌙'
+   138→    m.style.left = (x - 45) + 'px'
+   139→    m.style.top = (y - 55) + 'px'
+   140→    document.body.appendChild(m)
+   141→    setTimeout(() => m.remove(), 3500)
+   142→    ;['⭐', '🌟', '✨', '💫'].forEach((s, i) =>
+   143→      setTimeout(() => spawnEl(s, x + (Math.random() - .5) * 220, y + (Math.random() - .5) * 140, 'pop'), i * 210)
+   144→    )
+   145→  }
+   146→  if (type === 'cake') {
+   147→    spawnEl('🎂', x - 30, y - 40, 'pop')
+   148→    ;['🎉', '🎊', '💕', '✨', '🎈', '🌹'].forEach((s, i) =>
+   149→      setTimeout(() => spawnEl(s, x + (Math.random() - .5) * 280, y + (Math.random() - .5) * 170, 'pop'), i * 95)
+   150→    )
+   151→  }
+   152→}
+   153→
+   154→function createExplosion(x: number, y: number, colors: string[], count = 55) {
+   155→  for (let i = 0; i < count; i++) {
+   156→    const el = document.createElement('div')
+   157→    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.8
+   158→    const velocity = 120 + Math.random() * 320
+   159→    const dx = Math.cos(angle) * velocity
+   160→    const dy = Math.sin(angle) * velocity - Math.random() * 80
+   161→    const color = colors[Math.floor(Math.random() * colors.length)]
+   162→    const size = 3 + Math.random() * 9
+   163→    const isRect = Math.random() > 0.4
+   164→    el.className = 'confetti-p'
+   165→    el.style.cssText = `
+   166→      left:${x}px;top:${y}px;
+   167→      width:${size}px;height:${isRect ? size * 2.5 : size}px;
+   168→      background:${color};
+   169→      border-radius:${isRect ? '2px' : '50%'};
+   170→      --dx:${dx}px;--dy:${dy}px;--rot:${(Math.random() - .5) * 1080}deg;
+   171→      animation-delay:${Math.random() * .12}s;
+   172→    `
+   173→    document.body.appendChild(el)
+   174→    setTimeout(() => el.remove(), 2200)
+   175→  }
+   176→}
+   177→
+   178→function createFlash(color: string) {
+   179→  const el = document.createElement('div')
+   180→  el.className = 'reveal-flash'
+   181→  el.style.background = color
+   182→  document.body.appendChild(el)
+   183→  requestAnimationFrame(() => {
+   184→    el.classList.add('active')
+   185→    setTimeout(() => {
+   186→      el.classList.remove('active')
+   187→      setTimeout(() => el.remove(), 600)
+   188→    }, 250)
+   189→  })
+   190→}
+   191→
+   192→function triggerShake() {
+   193→  const main = document.getElementById('main')
+   194→  if (main) {
+   195→    main.classList.add('screen-shake')
+   196→    setTimeout(() => main.classList.remove('screen-shake'), 600)
+   197→  }
+   198→}
+   199→
+   200→function buildBgRosesHTML(id: string, n: number, colors: string[][]) {
+   201→  if (typeof document === 'undefined') return
+   202→  const el = document.getElementById(id)
+   203→  if (!el) return
+   204→  const W = el.offsetWidth || 1200
+   205→  const H = el.offsetHeight || 900
+   206→  let svg = `<svg width="100%" height="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`
+   207→  for (let i = 0; i < n; i++) {
+   208→    const [pc, cc] = colors[Math.floor(Math.random() * colors.length)]
+   209→    const x = Math.random() * W, y = Math.random() * H
+   210→    const sz = 60 + Math.random() * 100
+   211→    svg += roseSVG(x, y, sz, pc, cc, 0.7 + Math.random() * .3)
+   212→  }
+   213→  svg += '</svg>'
+   214→  el.innerHTML = svg
+   215→}
+   216→
+   217→/* ════════════════════════════
+   218→   FLOATING PARTICLES
+   219→════════════════════════════ */
+   220→function FloatingParticles({ count = 15, colors = ['#e8897a', '#f2c4b8', '#c9995a'], type = 'petal' }: { count?: number; colors?: string[]; type?: 'petal' | 'star' | 'heart' | 'sparkle' }) {
+   221→  const [mounted, setMounted] = useState(false)
+   222→  const particles = useRef<any[]>([])
+   223→
+   224→  useEffect(() => {
+   225→    particles.current = Array.from({ length: count }, (_, i) => ({
+   226→      id: i,
+   227→      x: Math.random() * 100,
+   228→      delay: Math.random() * 8,
+   229→      duration: 6 + Math.random() * 10,
+   230→      size: type === 'heart' ? 10 + Math.random() * 14 : type === 'sparkle' ? 6 + Math.random() * 10 : 4 + Math.random() * 8,
+   231→      color: colors[Math.floor(Math.random() * colors.length)],
+   232→      drift: -30 + Math.random() * 60,
+   233→      startY: Math.random() * 100,
+   234→    }))
+   235→    setMounted(true)
+   236→  }, [count, type, colors])
+   237→
+   238→  if (!mounted) return <div className="floating-particles" />
+   239→
+   240→  return (
+   241→    <div className="floating-particles">
+   242→      {particles.current.map((p: any) => (
+   243→        <div
+   244→          key={p.id}
+   245→          className={`fp fp-${type}`}
+   246→          style={{
+   247→            left: `${p.x}%`, top: `${p.startY}%`,
+   248→            animationDelay: `${p.delay}s`, animationDuration: `${p.duration}s`,
+   249→            width: p.size, height: p.size, color: p.color, '--drift': `${p.drift}px`,
+   250→          } as React.CSSProperties}
+   251→        >
+   252→          {type === 'heart' && '♥'}
+   253→          {type === 'sparkle' && '✦'}
+   254→          {type === 'star' && '⋆'}
+   255→        </div>
+   256→      ))}
+   257→    </div>
+   258→  )
+   259→}
+   260→
+   261→/* ════════════════════════════
+   262→   SEALED REVEAL CONFIG
+   263→════════════════════════════ */
+   264→const SEAL_CONFIG: Record<string, {
+   265→  icon: string; color: string; boomType: string
+   266→  ringColor1: string; ringColor2: string
+   267→  glowGradient: string; flashColor: string
+   268→  confettiColors: string[]; particles: string[]
+   269→}> = {
+   270→  gift: { icon: '🎁', color: '#e8897a', boomType: 'teddy', ringColor1: 'rgba(232,137,122,0.25)', ringColor2: 'rgba(201,153,90,0.15)', glowGradient: 'radial-gradient(circle, rgba(232,137,122,0.18) 0%, rgba(192,70,60,0.06) 40%, transparent 65%)', flashColor: 'rgba(232,137,122,0.35)', confettiColors: ['#e8897a', '#f2c4b8', '#c0463c', '#fff9f6', '#c9995a'], particles: ['🎀', '✨', '💝', '🤍', '✦'] },
+   271→  heart: { icon: '♥', color: '#c0463c', boomType: 'heart', ringColor1: 'rgba(192,70,60,0.3)', ringColor2: 'rgba(232,137,122,0.18)', glowGradient: 'radial-gradient(circle, rgba(192,70,60,0.2) 0%, rgba(139,42,42,0.06) 40%, transparent 65%)', flashColor: 'rgba(192,70,60,0.3)', confettiColors: ['#c0463c', '#e8897a', '#f2c4b8', '#8b2a2a', '#fff9f6'], particles: ['💗', '💕', '❤️', '🤍', '♥'] },
+   272→  rose: { icon: '🌹', color: '#e8897a', boomType: 'rose', ringColor1: 'rgba(232,137,122,0.25)', ringColor2: 'rgba(139,42,42,0.15)', glowGradient: 'radial-gradient(circle, rgba(139,42,42,0.2) 0%, rgba(107,26,26,0.06) 40%, transparent 65%)', flashColor: 'rgba(232,137,122,0.3)', confettiColors: ['#8b2a2a', '#c0463c', '#e8897a', '#f2c4b8'], particles: ['🌸', '🌺', '🌷', '✿', '❀'] },
+   273→  star: { icon: '✦', color: '#c9995a', boomType: 'stars', ringColor1: 'rgba(201,153,90,0.3)', ringColor2: 'rgba(232,201,138,0.18)', glowGradient: 'radial-gradient(circle, rgba(201,153,90,0.22) 0%, rgba(201,153,90,0.06) 40%, transparent 65%)', flashColor: 'rgba(201,153,90,0.35)', confettiColors: ['#c9995a', '#e8c98a', '#f2c4b8', '#fff9f6', '#e8897a'], particles: ['⭐', '🌟', '✨', '💫', '✦'] },
+   274→  moon: { icon: '🌙', color: '#a090b8', boomType: 'moon', ringColor1: 'rgba(160,144,184,0.25)', ringColor2: 'rgba(201,153,90,0.12)', glowGradient: 'radial-gradient(circle, rgba(160,144,184,0.18) 0%, rgba(112,112,160,0.06) 40%, transparent 65%)', flashColor: 'rgba(160,144,184,0.3)', confettiColors: ['#7070a0', '#a090b8', '#c9995a', '#e8c98a', '#fff9f6'], particles: ['⭐', '🌟', '✨', '💫', '🌙'] },
+   275→  cake: { icon: '🎂', color: '#e8897a', boomType: 'cake', ringColor1: 'rgba(232,137,122,0.25)', ringColor2: 'rgba(201,153,90,0.18)', glowGradient: 'radial-gradient(circle, rgba(192,70,60,0.2) 0%, rgba(201,153,90,0.06) 40%, transparent 65%)', flashColor: 'rgba(232,137,122,0.35)', confettiColors: ['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a'], particles: ['🎉', '🎊', '🎈', '✨', '🥂'] },
+   276→}
+   277→
+   278→/* ════════════════════════════
+   279→   SEALED REVEAL COMPONENT
+   280→════════════════════════════ */
+   281→function SealedReveal({ type, revealed, onReveal }: { type: string; revealed: boolean; onReveal: (e: React.MouseEvent) => void }) {
+   282→  const config = SEAL_CONFIG[type]
+   283→  const ref = useRef<HTMLDivElement>(null)
+   284→  // Pre-compute random values to avoid hydration mismatch
+   285→  const particleMeta = useRef(
+   286→    config.particles.map((_, i) => ({
+   287→      distance: 80 + ((i * 17 + 13) % 40),
+   288→      duration: 3 + ((i * 7 + 5) % 20) / 10,
+   289→    }))
+   290→  )
+   291→  return (
+   292→    <AnimatePresence>
+   293→      {!revealed && (
+   294→        <motion.div ref={ref} className="sealed-reveal" onClick={onReveal}
+   295→          initial={{ scale: 0, opacity: 0 }}
+   296→          animate={{ scale: 1, opacity: 1 }}
+   297→          exit={{ scale: [1, 1.4, 0], opacity: [1, 1, 0], filter: ['blur(0px)', 'blur(0px)', 'blur(25px)'] }}
+   298→          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+   299→        >
+   300→          <motion.div className="sealed-ring-container ring-outer" animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }}>
+   301→            <svg viewBox="0 0 320 320" className="sealed-ring-svg">
+   302→              <circle cx="160" cy="160" r="150" fill="none" stroke={config.ringColor1} strokeWidth="1" strokeDasharray="12 8" />
+   303→              <circle cx="160" cy="160" r="140" fill="none" stroke={config.ringColor2} strokeWidth="0.5" strokeDasharray="3 10" />
+   304→              {[[310,160],[266.07,266.07],[160,310],[53.93,266.07],[10,160],[53.93,53.93],[160,10],[266.07,53.93]].map(([cx,cy], i) => (
+   305→                <circle key={i} cx={cx} cy={cy} r="2" fill={config.ringColor1} />
+   306→              ))}
+   307→            </svg>
+   308→          </motion.div>
+   309→          <motion.div className="sealed-ring-container ring-inner" animate={{ rotate: -360 }} transition={{ duration: 22, repeat: Infinity, ease: "linear" }}>
+   310→            <svg viewBox="0 0 320 320" className="sealed-ring-svg">
+   311→              <circle cx="160" cy="160" r="110" fill="none" stroke={config.ringColor2} strokeWidth="0.8" strokeDasharray="6 12" />
+   312→              <circle cx="160" cy="160" r="100" fill="none" stroke={config.ringColor1} strokeWidth="0.4" strokeDasharray="2 8" />
+   313→              {[[270,160],[215,255.26],[105,255.26],[50,160],[105,64.74],[215,64.74]].map(([cx,cy], i) => (
+   314→                <circle key={i} cx={cx} cy={cy} r="1.5" fill={config.ringColor2} />
+   315→              ))}
+   316→            </svg>
+   317→          </motion.div>
+   318→          <motion.div className="sealed-icon" style={{ color: config.color }} animate={{ y: [0, -12, 0], scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
+   319→            {config.icon}
+   320→          </motion.div>
+   321→          <div className="sealed-mini-particles">
+   322→            {config.particles.map((p, i) => (
+   323→              <motion.span key={i} className="sealed-mini-p" style={{ '--angle': `${(i / config.particles.length) * 360}deg`, '--distance': `${particleMeta.current[i].distance}px`, color: config.color } as React.CSSProperties}
+   324→                animate={{ opacity: [0, 0.7, 0], scale: [0.5, 1, 0.5], rotate: [0, 180] }}
+   325→                transition={{ duration: particleMeta.current[i].duration, repeat: Infinity, delay: i * 0.6, ease: "easeInOut" }}
+   326→              >{p}</motion.span>
+   327→            ))}
+   328→          </div>
+   329→          <motion.div className="sealed-label" animate={{ opacity: [0.3, 0.8, 0.3] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}>
+   330→            <span className="sealed-label-line" />
+   331→            <span className="sealed-label-text">اضغط بلطف ✦</span>
+   332→            <span className="sealed-label-line" />
+   333→          </motion.div>
+   334→          <div className="sealed-glow" style={{ background: config.glowGradient }} />
+   335→          <motion.div className="sealed-aura" style={{ borderColor: config.color }} animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0, 0.15] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }} />
+   336→          <motion.div className="sealed-aura sealed-aura-2" style={{ borderColor: config.color }} animate={{ scale: [1, 1.35, 1], opacity: [0.08, 0, 0.08] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+   337→        </motion.div>
+   338→      )}
+   339→    </AnimatePresence>
+   340→  )
+   341→}
+   342→
+   343→/* ════════════════════════════
+   344→   ANIMATED TEXT
+   345→════════════════════════════ */
+   346→function AnimatedText({ children, className = '', delay = 0, extraStyle, revealed = true, variant = 'slideUp' }: {
+   347→  children: React.ReactNode; className?: string; delay?: number; extraStyle?: React.CSSProperties; revealed?: boolean
+   348→  variant?: 'slideUp' | 'scaleIn' | 'blurIn' | 'slideLeft' | 'slideRight' | 'zoomIn'
+   349→}) {
+   350→  const variants = {
+   351→    slideUp: { hidden: { opacity: 0, y: 50, filter: 'blur(6px)' }, visible: { opacity: extraStyle?.opacity ?? 1, y: 0, filter: 'blur(0px)' } },
+   352→    scaleIn: { hidden: { opacity: 0, scale: 0.5, filter: 'blur(4px)' }, visible: { opacity: extraStyle?.opacity ?? 1, scale: 1, filter: 'blur(0px)' } },
+   353→    blurIn: { hidden: { opacity: 0, filter: 'blur(16px)' }, visible: { opacity: extraStyle?.opacity ?? 1, filter: 'blur(0px)' } },
+   354→    slideLeft: { hidden: { opacity: 0, x: 60, filter: 'blur(4px)' }, visible: { opacity: extraStyle?.opacity ?? 1, x: 0, filter: 'blur(0px)' } },
+   355→    slideRight: { hidden: { opacity: 0, x: -60, filter: 'blur(4px)' }, visible: { opacity: extraStyle?.opacity ?? 1, x: 0, filter: 'blur(0px)' } },
+   356→    zoomIn: { hidden: { opacity: 0, scale: 2, filter: 'blur(10px)' }, visible: { opacity: extraStyle?.opacity ?? 1, scale: 1, filter: 'blur(0px)' } },
+   357→  }
+   358→  const v = variants[variant]
+   359→  return (
+   360→    <motion.span className={`ln ${className}`} style={extraStyle} initial={v.hidden} animate={revealed ? v.visible : v.hidden}
+   361→      transition={{ duration: 1, delay, ease: [0.16, 1, 0.3, 1] }}
+   362→    >{children}</motion.span>
+   363→  )
+   364→}
+   365→
+   366→function ShimmerText({ children, className = '', extraStyle, revealed = true, delay = 0 }: {
+   367→  children: React.ReactNode; className?: string; extraStyle?: React.CSSProperties; revealed?: boolean; delay?: number
+   368→}) {
+   369→  return (
+   370→    <motion.span className={`ln shimmer-text ${className}`} style={extraStyle}
+   371→      initial={{ opacity: 0, y: 50, scale: 0.85 }}
+   372→      animate={revealed ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.85 }}
+   373→      transition={{ duration: 1.4, delay, ease: [0.16, 1, 0.3, 1] }}
+   374→    >{children}</motion.span>
+   375→  )
+   376→}
+   377→
+   378→function RevealDivider({ revealed = true, delay = 0, className = '' }: { revealed?: boolean; delay?: number; className?: string }) {
+   379→  return (
+   380→    <motion.div className={`div ${className}`} initial={{ opacity: 0, scale: 0.3 }}
+   381→      animate={revealed ? { opacity: 0.4, scale: 1 } : { opacity: 0, scale: 0.3 }}
+   382→      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+   383→    >✦</motion.div>
+   384→  )
+   385→}
+   386→
+   387→/* ════════════════════════════
+   388→   ANIMATED SECTION WRAPPER
+   389→════════════════════════════ */
+   390→function AnimatedSection({ children, className, id, bgId, onClick, particleType = 'petal', particleCount = 12, particleColors, sealType, revealed, onReveal }: {
+   391→  children: React.ReactNode; className: string; id: string; bgId: string; onClick?: (e: React.MouseEvent) => void
+   392→  particleType?: 'petal' | 'star' | 'heart' | 'sparkle'; particleCount?: number; particleColors?: string[]
+   393→  sealType: string; revealed: boolean; onReveal: (e: React.MouseEvent) => void
+   394→}) {
+   395→  const config = SEAL_CONFIG[sealType]
+   396→  const handleReveal = useCallback((e: React.MouseEvent) => {
+   397→    createExplosion(e.clientX, e.clientY, config.confettiColors, 60)
+   398→    createFlash(config.flashColor)
+   399→    boom(e, config.boomType)
+   400→    triggerShake()
+   401→    onReveal(e)
+   402→  }, [config, onReveal])
+   403→
+   404→  return (
+   405→    <motion.section className={`sec ${className}`} id={id}>
+   406→      <div className="bg-roses" id={bgId} />
+   407→      <FloatingParticles count={particleCount} type={particleType} colors={particleColors} />
+   408→      <div className="deco deco-1" /><div className="deco deco-2" />
+   409→      <div className="sec-glow" />
+   410→      {onClick && revealed && <div className="czone" onClick={onClick} />}
+   411→      <SealedReveal type={sealType} revealed={revealed} onReveal={handleReveal} />
+   412→      <div className="sec-inner">{children}</div>
+   413→    </motion.section>
+   414→  )
+   415→}
+   416→
+   417→function WaveDivider({ flip = false, color = '#0e0404' }: { flip?: boolean; color?: string }) {
+   418→  return (
+   419→    <div className={`wave-divider ${flip ? 'flip' : ''}`}>
+   420→      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+   421→        <path d="M0,60 C240,120 480,0 720,60 C960,120 1200,0 1440,60 L1440,120 L0,120 Z" fill={color} />
+   422→      </svg>
+   423→    </div>
+   424→  )
+   425→}
+   426→
+   427→function NavDots() {
+   428→  const [active, setActive] = useState(0)
+   429→  useEffect(() => {
+   430→    const sections = document.querySelectorAll('.sec')
+   431→    const observer = new IntersectionObserver((entries) => {
+   432→      entries.forEach((entry) => { if (entry.isIntersecting) { const idx = Array.from(sections).indexOf(entry.target); if (idx >= 0) setActive(idx) } })
+   433→    }, { threshold: 0.5 })
+   434→    sections.forEach((s) => observer.observe(s))
+   435→    return () => observer.disconnect()
+   436→  }, [])
+   437→  const scrollTo = (idx: number) => { document.querySelectorAll('.sec')[idx]?.scrollIntoView({ behavior: 'smooth' }) }
+   438→  return (
+   439→    <div className="nav-dots">
+   440→      {[0, 1, 2, 3, 4, 5].map((i) => (
+   441→        <button key={i} className={`nav-dot ${active === i ? 'active' : ''}`} onClick={() => scrollTo(i)} aria-label={`Go to section ${i + 1}`} />
+   442→      ))}
+   443→    </div>
+   444→  )
+   445→}
+   446→
+   447→/* ════════════════════════════
+   448→   CAKE CANVAS
+   449→   3-layer birthday cake with candle, blow-out animation
+   450→════════════════════════════ */
+   451→function CakeCanvas({ active, onComplete }: { active: boolean; onComplete: () => void }) {
+   452→  const canvasRef = useRef<HTMLCanvasElement>(null)
+   453→  const completedRef = useRef(false)
+   454→  const onCompleteRef = useRef(onComplete)
+   455→  onCompleteRef.current = onComplete
+   456→
+   457→  useEffect(() => {
+   458→    if (!active) return
+   459→    completedRef.current = false
+   460→
+   461→    const canvas = canvasRef.current
+   462→    if (!canvas) return
+   463→
+   464→    const W = window.innerWidth
+   465→    const H = window.innerHeight
+   466→    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+   467→    canvas.width = W * dpr
+   468→    canvas.height = H * dpr
+   469→    canvas.style.width = W + 'px'
+   470→    canvas.style.height = H + 'px'
+   471→
+   472→    const ctx = canvas.getContext('2d')
+   473→    if (!ctx) return
+   474→    ctx.scale(dpr, dpr)
+   475→
+   476→    // ── Cake dimensions ──
+   477→    const cakeCx = W / 2
+   478→    const cakeCy = H / 2 + 30
+   479→    const scale = Math.min(W, H) / 600
+   480→
+   481→    // Layer definitions: { w, h, color, yOffset from cakeCy }
+   482→    const layers = [
+   483→      { w: 220 * scale, h: 70 * scale, color: '#7a1f1f', yOffset: 0, label: 'bottom' },
+   484→      { w: 170 * scale, h: 60 * scale, color: '#c0463c', yOffset: -70 * scale, label: 'middle' },
+   485→      { w: 120 * scale, h: 50 * scale, color: '#f2c4b8', yOffset: -130 * scale, label: 'top' },
+   486→    ]
+   487→
+   488→    // Frosting drip data per layer
+   489→    type Drip = { x: number; w: number; h: number; layerIdx: number }
+   490→    const drips: Drip[] = []
+   491→    layers.forEach((layer, li) => {
+   492→      const numDrips = 5 + Math.floor(Math.random() * 4)
+   493→      for (let i = 0; i < numDrips; i++) {
+   494→        drips.push({
+   495→          x: cakeCx - layer.w / 2 + (i + 0.5) * (layer.w / numDrips) + (Math.random() - 0.5) * 10 * scale,
+   496→          w: (4 + Math.random() * 6) * scale,
+   497→          h: (8 + Math.random() * 18) * scale,
+   498→          layerIdx: li,
+   499→        })
+   500→      }
+   501→    })
+   502→
+   503→    // Sprinkles per layer
+   504→    type Sprinkle = { x: number; y: number; w: number; h: number; color: string; angle: number; layerIdx: number }
+   505→    const sprinkleColors = ['#e8897a', '#c9995a', '#e8c98a', '#f7e0d0', '#fff9f6', '#c0463c']
+   506→    const sprinkles: Sprinkle[] = []
+   507→    layers.forEach((layer, li) => {
+   508→      const numSprinkles = 10 + Math.floor(Math.random() * 6)
+   509→      for (let i = 0; i < numSprinkles; i++) {
+   510→        sprinkles.push({
+   511→          x: cakeCx - layer.w / 2 + Math.random() * layer.w,
+   512→          y: cakeCy + layer.yOffset - layer.h / 2 + Math.random() * layer.h,
+   513→          w: (2 + Math.random() * 4) * scale,
+   514→          h: (1 + Math.random() * 2) * scale,
+   515→          color: sprinkleColors[Math.floor(Math.random() * sprinkleColors.length)],
+   516→          angle: Math.random() * Math.PI,
+   517→          layerIdx: li,
+   518→        })
+   519→      }
+   520→    })
+   521→
+   522→    // Smoke particles
+   523→    type SmokeP = { x: number; y: number; vx: number; vy: number; size: number; alpha: number; life: number }
+   524→    const smokeParticles: SmokeP[] = []
+   525→
+   526→    // Confetti trigger flag
+   527→    let confettiTriggered = false
+   528→
+   529→    // ── Phase timing (ms) ──
+   530→    const P1_START = 0       // Cake assembly
+   531→    const P1_END = 3500
+   532→    const P2_START = 3500    // Candle + flame
+   533→    const P2_END = 4500
+   534→    const P3_START = 4500    // "Blow!" + countdown
+   535→    const P3_END = 7500
+   536→    const P4_START = 7500    // Blow out
+   537→    const P4_END = 8500
+   538→    const P5_START = 8500    // Fade out
+   539→    const P5_END = 9500
+   540→    const TOTAL = P5_END
+   541→
+   542→    function easeOutCubic(t: number) { return 1 - Math.pow(1 - t, 3) }
+   543→    function easeInQuad(t: number) { return t * t }
+   544→    function easeOutQuad(t: number) { return 1 - (1 - t) * (1 - t) }
+   545→
+   546→    // ── Animation loop ──
+   547→    let animId = 0
+   548→    let startTime = 0
+   549→
+   550→    function animate(now: number) {
+   551→      if (!startTime) startTime = now
+   552→      const elapsed = now - startTime
+   553→
+   554→      ctx.clearRect(0, 0, W, H)
+   555→
+   556→      // ── Global alpha for fade out ──
+   557→      let globalAlpha = 1
+   558→      if (elapsed >= P5_START) {
+   559→        globalAlpha = Math.max(0, 1 - (elapsed - P5_START) / (P5_END - P5_START))
+   560→      }
+   561→      if (globalAlpha <= 0.001) {
+   562→        if (!completedRef.current) {
+   563→          completedRef.current = true
+   564→          onCompleteRef.current()
+   565→        }
+   566→        return
+   567→      }
+   568→
+   569→      ctx.save()
+   570→      ctx.globalAlpha = globalAlpha
+   571→
+   572→      // ── Background ──
+   573→      const bgAlpha = Math.min(1, elapsed / 800)
+   574→      if (bgAlpha > 0.001) {
+   575→        const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7)
+   576→        bgGrad.addColorStop(0, `rgba(20, 8, 8, ${bgAlpha * 0.8})`)
+   577→        bgGrad.addColorStop(1, `rgba(8, 2, 2, ${bgAlpha})`)
+   578→        ctx.fillStyle = bgGrad
+   579→        ctx.fillRect(0, 0, W, H)
+   580→      }
+   581→
+   582→      // ── Phase 1: Cake Assembly ──
+   583→      // Each layer slides in from the sides with staggered timing
+   584→      const layerAnimDuration = 700
+   585→      const layerDelays = [200, 1000, 1800] // when each layer starts sliding in
+   586→
+   587→      for (let li = 0; li < layers.length; li++) {
+   588→        const layer = layers[li]
+   589→        const layerElapsed = elapsed - layerDelays[li]
+   590→        if (layerElapsed < 0) continue
+   591→
+   592→        const progress = Math.min(1, layerElapsed / layerAnimDuration)
+   593→        const eased = easeOutCubic(progress)
+   594→
+   595→        // Slide from side: bottom from left, middle from right, top from left
+   596→        const slideDir = li % 2 === 0 ? -1 : 1
+   597→        const slideDist = 300 * scale
+   598→        const offsetX = slideDir * slideDist * (1 - eased)
+   599→
+   600→        const lx = cakeCx + offsetX
+   601→        const ly = cakeCy + layer.yOffset
+   602→        const lw = layer.w
+   603→        const lh = layer.h
+   604→        const radius = 8 * scale
+   605→
+   606→        // Draw layer body
+   607→        ctx.save()
+   608→        ctx.globalAlpha = globalAlpha * Math.min(1, progress * 2)
+   609→        ctx.fillStyle = layer.color
+   610→        ctx.beginPath()
+   611→        ctx.moveTo(lx - lw / 2 + radius, ly - lh / 2)
+   612→        ctx.lineTo(lx + lw / 2 - radius, ly - lh / 2)
+   613→        ctx.quadraticCurveTo(lx + lw / 2, ly - lh / 2, lx + lw / 2, ly - lh / 2 + radius)
+   614→        ctx.lineTo(lx + lw / 2, ly + lh / 2 - radius)
+   615→        ctx.quadraticCurveTo(lx + lw / 2, ly + lh / 2, lx + lw / 2 - radius, ly + lh / 2)
+   616→        ctx.lineTo(lx - lw / 2 + radius, ly + lh / 2)
+   617→        ctx.quadraticCurveTo(lx - lw / 2, ly + lh / 2, lx - lw / 2, ly + lh / 2 - radius)
+   618→        ctx.lineTo(lx - lw / 2, ly - lh / 2 + radius)
+   619→        ctx.quadraticCurveTo(lx - lw / 2, ly - lh / 2, lx - lw / 2 + radius, ly - lh / 2)
+   620→        ctx.closePath()
+   621→        ctx.fill()
+   622→
+   623→        // Highlight on top edge
+   624→        ctx.fillStyle = 'rgba(255,255,255,0.08)'
+   625→        ctx.fillRect(lx - lw / 2, ly - lh / 2, lw, lh * 0.15)
+   626→
+   627→        ctx.restore()
+   628→
+   629→        // Frosting drips — appear after layer lands
+   630→        if (progress > 0.8) {
+   631→          const dripProgress = Math.min(1, (progress - 0.8) / 0.2)
+   632→          const layerTopY = ly - lh / 2
+   633→          const frostingColor = li === 0 ? '#f2c4b8' : li === 1 ? '#f7e0d0' : '#fff9f6'
+   634→
+   635→          drips.filter(d => d.layerIdx === li).forEach((drip, di) => {
+   636→            const dp = Math.min(1, (dripProgress - di * 0.05))
+   637→            if (dp <= 0) return
+   638→            const dEased = easeOutCubic(Math.max(0, dp))
+   639→            ctx.save()
+   640→            ctx.globalAlpha = globalAlpha * dEased * 0.9
+   641→            ctx.fillStyle = frostingColor
+   642→            // Frosting strip on top
+   643→            ctx.fillRect(lx - lw / 2, layerTopY - 3 * scale, lw, 5 * scale)
+   644→            // Drip
+   645→            const dripH = drip.h * dEased
+   646→            ctx.beginPath()
+   647→            ctx.ellipse(drip.x + offsetX, layerTopY + dripH / 2, drip.w / 2, dripH / 2, 0, 0, Math.PI * 2)
+   648→            ctx.fill()
+   649→            ctx.restore()
+   650→          })
+   651→        }
+   652→
+   653→        // Sprinkles — appear after frosting
+   654→        if (progress >= 1) {
+   655→          sprinkles.filter(s => s.layerIdx === li).forEach((sp, si) => {
+   656→            const spDelay = layerDelays[li] + layerAnimDuration + si * 15
+   657→            const spElapsed = elapsed - spDelay
+   658→            if (spElapsed < 0) return
+   659→            const spProgress = Math.min(1, spElapsed / 200)
+   660→            ctx.save()
+   661→            ctx.globalAlpha = globalAlpha * spProgress * 0.8
+   662→            ctx.fillStyle = sp.color
+   663→            ctx.translate(sp.x + offsetX, sp.y)
+   664→            ctx.rotate(sp.angle)
+   665→            ctx.fillRect(-sp.w / 2, -sp.h / 2, sp.w, sp.h)
+   666→            ctx.restore()
+   667→          })
+   668→        }
+   669→      }
+   670→
+   671→      // ── Candle ──
+   672→      const candleVisible = elapsed >= P2_START
+   673→      const candleProgress = candleVisible ? Math.min(1, (elapsed - P2_START) / (P2_END - P2_START)) : 0
+   674→
+   675→      if (candleVisible) {
+   676→        const topLayer = layers[2]
+   677→        const candleX = cakeCx
+   678→        const candleBaseY = cakeCy + topLayer.yOffset - topLayer.h / 2
+   679→        const candleW = 8 * scale
+   680→        const candleH = 40 * scale
+   681→        const cEased = easeOutCubic(candleProgress)
+   682→        const candleAlpha = Math.min(1, cEased * 2)
+   683→
+   684→        // Candle body
+   685→        ctx.save()
+   686→        ctx.globalAlpha = globalAlpha * candleAlpha
+   687→        ctx.fillStyle = '#f7e0d0'
+   688→        ctx.fillRect(candleX - candleW / 2, candleBaseY - candleH * cEased, candleW, candleH * cEased)
+   689→        // Stripe
+   690→        ctx.fillStyle = '#e8897a'
+   691→        ctx.fillRect(candleX - candleW / 2, candleBaseY - candleH * cEased, candleW, 3 * scale)
+   692→        ctx.fillRect(candleX - candleW / 2, candleBaseY - candleH * cEased * 0.5, candleW, 3 * scale)
+   693→        // Wick
+   694→        ctx.fillStyle = '#3d1010'
+   695→        ctx.fillRect(candleX - 1.5 * scale, candleBaseY - candleH * cEased - 6 * scale, 3 * scale, 6 * scale)
+   696→        ctx.restore()
+   697→
+   698→        // ── Flame ──
+   699→        const flameBaseY = candleBaseY - candleH - 6 * scale
+   700→        const isBlownOut = elapsed >= P4_START
+   701→        const blowProgress = isBlownOut ? Math.min(1, (elapsed - P4_START) / (P4_END - P4_START)) : 0
+   702→        const flameScale = isBlownOut ? Math.max(0, 1 - easeInQuad(blowProgress)) : 1
+   703→        const flameAlpha = flameScale
+   704→
+   705→        // Trigger confetti celebration on first blow-out frame
+   706→        if (isBlownOut && blowProgress < 0.05 && blowProgress > 0 && !confettiTriggered) {
+   707→          confettiTriggered = true
+   708→          createExplosion(W / 2, H / 2, ['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a', '#fff9f6'], 80)
+   709→          createFlash('rgba(232,137,122,0.3)')
+   710→        }
+   711→
+   712→        // More intense flicker during countdown (Phase 3)
+   713→        const isCountdown = elapsed >= P3_START && elapsed < P4_START
+   714→        const flickerIntensity = isCountdown ? 0.2 : 0.08
+   715→        const flickerSpeed = isCountdown ? 0.02 : 0.008
+   716→
+   717→        if (flameAlpha > 0.01 && candleProgress > 0.5) {
+   718→          const flicker = Math.sin(elapsed * flickerSpeed) * flickerIntensity + Math.sin(elapsed * 0.013) * 0.04
+   719→          const fScale = (1 + flicker) * flameScale
+   720→
+   721→          // Glow around flame
+   722→          const glowRadius = 60 * scale * fScale
+   723→          const glowGrad = ctx.createRadialGradient(candleX, flameBaseY - 10 * scale, 0, candleX, flameBaseY - 10 * scale, glowRadius)
+   724→          glowGrad.addColorStop(0, `rgba(255, 200, 80, ${0.25 * flameAlpha})`)
+   725→          glowGrad.addColorStop(0.3, `rgba(255, 160, 50, ${0.12 * flameAlpha})`)
+   726→          glowGrad.addColorStop(0.6, `rgba(232, 137, 122, ${0.05 * flameAlpha})`)
+   727→          glowGrad.addColorStop(1, 'rgba(232, 137, 122, 0)')
+   728→          ctx.fillStyle = glowGrad
+   729→          ctx.fillRect(candleX - glowRadius, flameBaseY - 10 * scale - glowRadius, glowRadius * 2, glowRadius * 2)
+   730→
+   731→          // Outer flame
+   732→          ctx.save()
+   733→          ctx.globalAlpha = globalAlpha * flameAlpha * 0.6
+   734→          ctx.fillStyle = '#ff9933'
+   735→          ctx.beginPath()
+   736→          ctx.ellipse(candleX, flameBaseY - 14 * scale * fScale, 8 * scale * fScale, 18 * scale * fScale, 0, 0, Math.PI * 2)
+   737→          ctx.fill()
+   738→          ctx.restore()
+   739→
+   740→          // Inner flame
+   741→          ctx.save()
+   742→          ctx.globalAlpha = globalAlpha * flameAlpha * 0.9
+   743→          ctx.fillStyle = '#ffe066'
+   744→          ctx.beginPath()
+   745→          ctx.ellipse(candleX, flameBaseY - 12 * scale * fScale, 4 * scale * fScale, 12 * scale * fScale, 0, 0, Math.PI * 2)
+   746→          ctx.fill()
+   747→          ctx.restore()
+   748→
+   749→          // Core
+   750→          ctx.save()
+   751→          ctx.globalAlpha = globalAlpha * flameAlpha
+   752→          ctx.fillStyle = '#fffbe6'
+   753→          ctx.beginPath()
+   754→          ctx.ellipse(candleX, flameBaseY - 8 * scale * fScale, 2 * scale * fScale, 5 * scale * fScale, 0, 0, Math.PI * 2)
+   755→          ctx.fill()
+   756→          ctx.restore()
+   757→        }
+   758→
+   759→        // ── Phase 4: Smoke particles ──
+   760→        if (isBlownOut && blowProgress < 1) {
+   761→          // Spawn new smoke
+   762→          if (Math.random() < 0.3 && smokeParticles.length < 30) {
+   763→            smokeParticles.push({
+   764→              x: candleX + (Math.random() - 0.5) * 6 * scale,
+   765→              y: flameBaseY - 10 * scale * flameScale,
+   766→              vx: (Math.random() - 0.5) * 0.5 * scale,
+   767→              vy: -0.8 * scale - Math.random() * 0.5 * scale,
+   768→              size: (3 + Math.random() * 5) * scale,
+   769→              alpha: 0.5,
+   770→              life: 0,
+   771→            })
+   772→          }
+   773→        }
+   774→
+   775→        // Update and draw smoke
+   776→        for (let i = smokeParticles.length - 1; i >= 0; i--) {
+   777→          const sp = smokeParticles[i]
+   778→          sp.life++
+   779→          sp.x += sp.vx
+   780→          sp.y += sp.vy
+   781→          sp.vy -= 0.01 * scale
+   782→          sp.size += 0.08 * scale
+   783→          sp.alpha -= 0.008
+   784→          if (sp.alpha <= 0) {
+   785→            smokeParticles.splice(i, 1)
+   786→            continue
+   787→          }
+   788→          ctx.save()
+   789→          ctx.globalAlpha = globalAlpha * sp.alpha
+   790→          ctx.fillStyle = '#c9995a'
+   791→          ctx.beginPath()
+   792→          ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2)
+   793→          ctx.fill()
+   794→          ctx.restore()
+   795→        }
+   796→      }
+   797→
+   798→      // ── Phase 3: "Blow!" text + countdown timer ──
+   799→      // Position: BELOW the cake so it doesn't overlap the candle/flame
+   800→      if (elapsed >= P3_START && elapsed < P4_START) {
+   801→        const textProgress = Math.min(1, (elapsed - P3_START) / 500)
+   802→        const textAlpha = easeOutCubic(textProgress)
+   803→        const countdownElapsed = elapsed - P3_START
+   804→        const countdownDuration = P3_END - P3_START // 3000ms
+   805→        const countdownProgress = Math.min(1, countdownElapsed / countdownDuration)
+   806→
+   807→        ctx.save()
+   808→        ctx.textAlign = 'center'
+   809→        ctx.textBaseline = 'middle'
+   810→
+   811→        // Position below the cake
+   812→        const bottomLayerBottom = cakeCy + layers[0].h / 2
+   813→        const sectionY = bottomLayerBottom + 80 * scale
+   814→
+   815→        // ── "Blow!" text ──
+   816→        const blowY = sectionY - 20 * scale
+   817→        const shimmer = 0.85 + 0.15 * Math.sin(elapsed * 0.005)
+   818→
+   819→        // Soft glow behind "Blow!"
+   820→        const textGlow = ctx.createRadialGradient(cakeCx, blowY, 0, cakeCx, blowY, 60 * scale)
+   821→        textGlow.addColorStop(0, `rgba(201, 153, 90, ${0.12 * textAlpha * shimmer})`)
+   822→        textGlow.addColorStop(1, 'rgba(201, 153, 90, 0)')
+   823→        ctx.fillStyle = textGlow
+   824→        ctx.globalAlpha = globalAlpha * textAlpha
+   825→        ctx.fillRect(cakeCx - 60 * scale, blowY - 60 * scale, 120 * scale, 120 * scale)
+   826→
+   827→        // "Blow!" text with gradient
+   828→        ctx.font = `300 ${Math.round(32 * scale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
+   829→        const grad = ctx.createLinearGradient(cakeCx - 50 * scale, blowY, cakeCx + 50 * scale, blowY)
+   830→        grad.addColorStop(0, '#c9995a')
+   831→        grad.addColorStop(0.5, '#fff9f6')
+   832→        grad.addColorStop(1, '#c9995a')
+   833→        ctx.fillStyle = grad
+   834→        ctx.globalAlpha = globalAlpha * textAlpha * shimmer
+   835→        ctx.fillText('Blow!', cakeCx, blowY)
+   836→
+   837→        // ── Circular countdown timer ──
+   838→        const timerCx = cakeCx
+   839→        const timerCy = sectionY + 65 * scale
+   840→        const timerRadius = 44 * scale
+   841→
+   842→        // Outer soft glow
+   843→        const outerGlow = ctx.createRadialGradient(timerCx, timerCy, timerRadius * 0.8, timerCx, timerCy, timerRadius * 1.8)
+   844→        outerGlow.addColorStop(0, `rgba(201, 153, 90, ${0.06 * textAlpha})`)
+   845→        outerGlow.addColorStop(1, 'rgba(201, 153, 90, 0)')
+   846→        ctx.fillStyle = outerGlow
+   847→        ctx.globalAlpha = globalAlpha * textAlpha
+   848→        ctx.fillRect(timerCx - timerRadius * 2, timerCy - timerRadius * 2, timerRadius * 4, timerRadius * 4)
+   849→
+   850→        // Background circle (dark glass)
+   851→        ctx.save()
+   852→        ctx.globalAlpha = globalAlpha * textAlpha * 0.12
+   853→        ctx.fillStyle = '#1a0808'
+   854→        ctx.beginPath()
+   855→        ctx.arc(timerCx, timerCy, timerRadius + 8 * scale, 0, Math.PI * 2)
+   856→        ctx.fill()
+   857→        ctx.restore()
+   858→
+   859→        // Progress ring background (dark track)
+   860→        ctx.save()
+   861→        ctx.globalAlpha = globalAlpha * textAlpha * 0.2
+   862→        ctx.strokeStyle = '#3d1010'
+   863→        ctx.lineWidth = 5 * scale
+   864→        ctx.beginPath()
+   865→        ctx.arc(timerCx, timerCy, timerRadius, 0, Math.PI * 2)
+   866→        ctx.stroke()
+   867→        ctx.restore()
+   868→
+   869→        // Progress ring (animated) - goes from full to empty over 3 seconds
+   870→        const ringProgress = 1 - countdownProgress // goes from 1 → 0
+   871→        const startAngle = -Math.PI / 2
+   872→        const endAngle = startAngle + ringProgress * Math.PI * 2
+   873→
+   874→        ctx.save()
+   875→        ctx.globalAlpha = globalAlpha * textAlpha * 0.85
+   876→        ctx.strokeStyle = '#c9995a'
+   877→        ctx.lineWidth = 5 * scale
+   878→        ctx.lineCap = 'round'
+   879→        ctx.beginPath()
+   880→        ctx.arc(timerCx, timerCy, timerRadius, startAngle, endAngle)
+   881→        ctx.stroke()
+   882→        ctx.restore()
+   883→
+   884→        // Glow on the progress ring tip
+   885→        if (ringProgress > 0.01) {
+   886→          const tipX = timerCx + Math.cos(endAngle) * timerRadius
+   887→          const tipY = timerCy + Math.sin(endAngle) * timerRadius
+   888→          ctx.save()
+   889→          ctx.globalAlpha = globalAlpha * textAlpha * 0.7
+   890→          const tipGlow = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, 12 * scale)
+   891→          tipGlow.addColorStop(0, 'rgba(201, 153, 90, 0.6)')
+   892→          tipGlow.addColorStop(1, 'rgba(201, 153, 90, 0)')
+   893→          ctx.fillStyle = tipGlow
+   894→          ctx.fillRect(tipX - 12 * scale, tipY - 12 * scale, 24 * scale, 24 * scale)
+   895→          ctx.restore()
+   896→        }
+   897→
+   898→        // Countdown number: 3, 2, 1
+   899→        let countNum = 3
+   900→        if (countdownElapsed > 2000) countNum = 1
+   901→        else if (countdownElapsed > 1000) countNum = 2
+   902→
+   903→        // Pulse effect when number changes
+   904→        const countAge = countdownElapsed % 1000
+   905→        const pulseScale = 1 + 0.25 * Math.sin((countAge / 1000) * Math.PI)
+   906→
+   907→        ctx.font = `300 ${Math.round(48 * scale * pulseScale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
+   908→        const numGrad = ctx.createRadialGradient(timerCx, timerCy, 0, timerCx, timerCy, timerRadius * 0.6)
+   909→        numGrad.addColorStop(0, '#fff9f6')
+   910→        numGrad.addColorStop(1, '#c9995a')
+   911→        ctx.fillStyle = numGrad
+   912→        ctx.globalAlpha = globalAlpha * textAlpha * 0.95
+   913→        ctx.fillText(countNum.toString(), timerCx, timerCy + 2 * scale)
+   914→
+   915→        // "seconds" label below
+   916→        ctx.font = `300 ${Math.round(13 * scale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
+   917→        ctx.fillStyle = '#f2c4b8'
+   918→        ctx.globalAlpha = globalAlpha * textAlpha * 0.4
+   919→        ctx.fillText('seconds', timerCx, timerCy + timerRadius + 22 * scale)
+   920→
+   921→        ctx.restore()
+   922→      }
+   923→
+   924→      // ── Transition ──
+   925→      if (elapsed >= TOTAL - 200 && !completedRef.current) {
+   926→        completedRef.current = true
+   927→        onCompleteRef.current()
+   928→      }
+   929→
+   930→      ctx.restore() // restore globalAlpha
+   931→
+   932→      if (elapsed < TOTAL) {
+   933→        animId = requestAnimationFrame(animate)
+   934→      }
+   935→    }
+   936→
+   937→    animId = requestAnimationFrame(animate)
+   938→
+   939→    return () => {
+   940→      cancelAnimationFrame(animId)
+   941→    }
+   942→  }, [active])
+   943→
+   944→  return (
+   945→    <canvas
+   946→      ref={canvasRef}
+   947→      style={{
+   948→        position: 'absolute',
+   949→        inset: 0,
+   950→        width: '100%',
+   951→        height: '100%',
+   952→        pointerEvents: 'none',
+   953→      }}
+   954→    />
+   955→  )
+   956→}
+   957→
+   958→/* ════════════════════════════
+   959→   LETTER ENVELOPE COMPONENT
+   960→════════════════════════════ */
+   961→function LetterEnvelope({ onOpen }: { onOpen: () => void }) {
+   962→  const [opened, setOpened] = useState(false)
+   963→
+   964→  const handleOpen = useCallback(() => {
+   965→    if (opened) return
+   966→    setOpened(true)
+   967→    onOpen()
+   968→  }, [opened, onOpen])
+   969→
+   970→  return (
+   971→    <div className="letter-section">
+   972→      <motion.div
+   973→        className="letter-envelope"
+   974→        onClick={handleOpen}
+   975→        initial={{ opacity: 0, y: 30 }}
+   976→        animate={{ opacity: 1, y: 0 }}
+   977→        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+   978→      >
+   979→        <svg width="80" height="60" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+   980→          {/* Envelope body */}
+   981→          <rect x="2" y="12" width="76" height="46" rx="4" fill="#7a1f1f" stroke="#c0463c" strokeWidth="1" />
+   982→          {/* Envelope flap (lid) */}
+   983→          <motion.path
+   984→            d="M2 14 L40 36 L78 14"
+   985→            fill="#c0463c"
+   986→            stroke="#e8897a"
+   987→            strokeWidth="0.8"
+   988→            animate={opened ? { d: 'M2 14 L40 -8 L78 14', opacity: 0.6 } : { d: 'M2 14 L40 36 L78 14', opacity: 1 }}
+   989→            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+   990→          />
+   991→          {/* Heart seal */}
+   992→          {!opened && (
+   993→            <motion.circle
+   994→              cx="40" cy="30" r="7"
+   995→              fill="#e8897a"
+   996→              animate={{ scale: [1, 1.1, 1] }}
+   997→              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+   998→            />
+   999→          )}
+  1000→          {!opened && (
+  1001→            <text x="40" y="34" textAnchor="middle" fill="#7a1f1f" fontSize="10" fontWeight="bold">♥</text>
+  1002→          )}
+  1003→        </svg>
+  1004→      </motion.div>
+  1005→
+  1006→      <AnimatePresence>
+  1007→        {opened && (
+  1008→          <motion.div
+  1009→            className="letter-content"
+  1010→            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+  1011→            animate={{ opacity: 1, y: 0, scale: 1 }}
+  1012→            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+  1013→          >
+  1014→            <p>I didn&apos;t mean the things I said when I was angry. I&apos;m sorry.</p>
+  1015→            <p className="missed-you">I missed you. 🤍</p>
+  1016→          </motion.div>
+  1017→        )}
+  1018→      </AnimatePresence>
+  1019→    </div>
+  1020→  )
+  1021→}
+  1022→
+  1023→/* ════════════════════════════
+  1024→   MAIN PAGE COMPONENT
+  1025→════════════════════════════ */
+  1026→/* ════════════════════════════
+  1027→   ANIMATED STARFIELD BACKGROUND
+  1028→════════════════════════════ */
+  1029→function StarfieldBG() {
+  1030→  const canvasRef = useRef<HTMLCanvasElement>(null)
+  1031→
+  1032→  useEffect(() => {
+  1033→    const canvas = canvasRef.current
+  1034→    if (!canvas) return
+  1035→    const W = window.innerWidth
+  1036→    const H = window.innerHeight
+  1037→    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+  1038→    canvas.width = W * dpr
+  1039→    canvas.height = H * dpr
+  1040→    canvas.style.width = W + 'px'
+  1041→    canvas.style.height = H + 'px'
+  1042→    const ctx = canvas.getContext('2d')
+  1043→    if (!ctx) return
+  1044→    ctx.scale(dpr, dpr)
+  1045→
+  1046→    // Generate stars
+  1047→    const starColors = ['#e8897a', '#f2c4b8', '#c9995a', '#fff9f6', '#e8c98a', '#ffffff']
+  1048→    const stars = Array.from({ length: 80 }, () => ({
+  1049→      x: Math.random() * W,
+  1050→      y: Math.random() * H,
+  1051→      size: 0.5 + Math.random() * 2,
+  1052→      color: starColors[Math.floor(Math.random() * starColors.length)],
+  1053→      twinkleSpeed: 0.001 + Math.random() * 0.003,
+  1054→      twinkleOffset: Math.random() * Math.PI * 2,
+  1055→      baseAlpha: 0.2 + Math.random() * 0.5,
+  1056→      drift: (Math.random() - 0.5) * 0.02,
+  1057→    }))
+  1058→
+  1059→    // Shooting stars
+  1060→    const shootingStars: { x: number; y: number; vx: number; vy: number; life: number; maxLife: number; size: number }[] = []
+  1061→    let lastShootTime = 0
+  1062→
+  1063→    // Non-null assertion — we already checked ctx above
+  1064→    const c = ctx!
+  1065→    
+  1066→    let animId = 0
+  1067→    function animate(now: number) {
+  1068→      c.clearRect(0, 0, W, H)
+  1069→
+  1070→      // Draw stars
+  1071→      for (const star of stars) {
+  1072→        const alpha = star.baseAlpha * (0.4 + 0.6 * Math.abs(Math.sin(now * star.twinkleSpeed + star.twinkleOffset)))
+  1073→        c.save()
+  1074→        c.globalAlpha = alpha
+  1075→        c.fillStyle = star.color
+  1076→        c.beginPath()
+  1077→        c.arc(star.x, star.y, star.size, 0, Math.PI * 2)
+  1078→        c.fill()
+  1079→        // Glow for bigger stars
+  1080→        if (star.size > 1.2) {
+  1081→          c.globalAlpha = alpha * 0.15
+  1082→          c.beginPath()
+  1083→          c.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2)
+  1084→          c.fill()
+  1085→        }
+  1086→        c.restore()
+  1087→        // Slow drift
+  1088→        star.y += star.drift * 0.3
+  1089→        star.x += star.drift * 0.1
+  1090→        if (star.y < -5) star.y = H + 5
+  1091→        if (star.y > H + 5) star.y = -5
+  1092→        if (star.x < -5) star.x = W + 5
+  1093→        if (star.x > W + 5) star.x = -5
+  1094→      }
+  1095→
+  1096→      // Shooting stars - spawn occasionally
+  1097→      if (now - lastShootTime > 3000 + Math.random() * 8000) {
+  1098→        lastShootTime = now
+  1099→        const angle = Math.PI * 0.2 + Math.random() * Math.PI * 0.3
+  1100→        shootingStars.push({
+  1101→          x: Math.random() * W * 0.8,
+  1102→          y: Math.random() * H * 0.4,
+  1103→          vx: Math.cos(angle) * (4 + Math.random() * 4),
+  1104→          vy: Math.sin(angle) * (4 + Math.random() * 4),
+  1105→          life: 0,
+  1106→          maxLife: 30 + Math.random() * 30,
+  1107→          size: 1 + Math.random() * 1.5,
+  1108→        })
+  1109→      }
+  1110→
+  1111→      // Draw shooting stars
+  1112→      for (let i = shootingStars.length - 1; i >= 0; i--) {
+  1113→        const ss = shootingStars[i]
+  1114→        ss.life++
+  1115→        ss.x += ss.vx
+  1116→        ss.y += ss.vy
+  1117→        const progress = ss.life / ss.maxLife
+  1118→        const alpha = progress < 0.2 ? progress / 0.2 : 1 - (progress - 0.2) / 0.8
+  1119→        c.save()
+  1120→        c.globalAlpha = Math.max(0, alpha * 0.7)
+  1121→        c.strokeStyle = '#fff9f6'
+  1122→        c.lineWidth = ss.size
+  1123→        c.lineCap = 'round'
+  1124→        c.beginPath()
+  1125→        c.moveTo(ss.x, ss.y)
+  1126→        c.lineTo(ss.x - ss.vx * 6, ss.y - ss.vy * 6)
+  1127→        c.stroke()
+  1128→        // Head glow
+  1129→        c.globalAlpha = Math.max(0, alpha * 0.4)
+  1130→        c.fillStyle = '#fff9f6'
+  1131→        c.beginPath()
+  1132→        c.arc(ss.x, ss.y, ss.size * 2, 0, Math.PI * 2)
+  1133→        c.fill()
+  1134→        c.restore()
+  1135→        if (ss.life >= ss.maxLife) shootingStars.splice(i, 1)
+  1136→      }
+  1137→
+  1138→      animId = requestAnimationFrame(animate)
+  1139→    }
+  1140→    animId = requestAnimationFrame(animate)
+  1141→
+  1142→    return () => cancelAnimationFrame(animId)
+  1143→  }, [])
+  1144→
+  1145→  return (
+  1146→    <canvas
+  1147→      ref={canvasRef}
+  1148→      className="starfield-bg"
+  1149→      style={{
+  1150→        position: 'fixed',
+  1151→        inset: 0,
+  1152→        zIndex: 0,
+  1153→        pointerEvents: 'none',
+  1154→        opacity: 0.6,
+  1155→      }}
+  1156→    />
+  1157→  )
+  1158→}
+  1159→
+  1160→export default function Home() {
+  1161→  const [stage, setStage] = useState<'music' | 'gift' | 'cake' | 'text' | 'facecake' | 'date' | 'main'>('music')
+  1162→  const [giftShaking, setGiftShaking] = useState(false)
+  1163→  const [giftOpened, setGiftOpened] = useState(false)
+  1164→  const [wordVisible, setWordVisible] = useState({ w1: false, w2: false, myb: false })
+  1165→  const [faceCakeVisible, setFaceCakeVisible] = useState(false)
+  1166→  const [dateVisible, setDateVisible] = useState(false)
+  1167→  const [dateSubVisible, setDateSubVisible] = useState(false)
+  1168→  const [mainVisible, setMainVisible] = useState(false)
+  1169→  const [scrollHintVisible, setScrollHintVisible] = useState(false)
+  1170→  const [musicAccepted, setMusicAccepted] = useState(false)
+  1171→  const [letterOpened, setLetterOpened] = useState(false)
+  1172→
+  1173→  const [revealed, setRevealed] = useState({ s1: false, s2: false, s3: false, s4: false, s5: false, s6: false })
+  1174→
+  1175→  const cursorRef = useRef<HTMLDivElement>(null)
+  1176→  const audioRef = useRef<HTMLAudioElement | null>(null)
+  1177→  const [musicPlaying, setMusicPlaying] = useState(false)
+  1178→  const lenisRef = useRef<Lenis | null>(null)
+  1179→
+  1180→
+  1181→  const handleReveal = useCallback((sectionKey: string, e: React.MouseEvent) => {
+  1182→    setRevealed(prev => ({ ...prev, [sectionKey]: true }))
+  1183→  }, [])
+  1184→
+  1185→  const handleCakeComplete = useCallback(() => {
+  1186→    setStage('text')
+  1187→  }, [])
+  1188→
+  1189→  // ═══ MUSIC CONSENT ═══
+  1190→  const acceptMusic = useCallback(() => {
+  1191→    setMusicAccepted(true)
+  1192→    setMusicPlaying(true)
+  1193→    setStage('gift')
+  1194→  }, [])
+  1195→
+  1196→  const declineMusic = useCallback(() => {
+  1197→    setMusicAccepted(false)
+  1198→    setStage('gift')
+  1199→  }, [])
+  1200→
+  1201→  // ═══ HTML5 AUDIO ═══
+  1202→  useEffect(() => {
+  1203→    if (!musicAccepted || typeof window === 'undefined') return
+  1204→    const audio = new Audio('/song.mp3')
+  1205→    audio.loop = true
+  1206→    audio.volume = 0.5
+  1207→    audio.play().then(() => {
+  1208→      setMusicPlaying(true)
+  1209→    }).catch(() => {
+  1210→      // Autoplay blocked — user needs to interact first
+  1211→      setMusicPlaying(false)
+  1212→    })
+  1213→    audioRef.current = audio
+  1214→    return () => { audio.pause(); audioRef.current = null }
+  1215→  }, [musicAccepted])
+  1216→
+  1217→  const toggleMusic = useCallback(() => {
+  1218→    if (!audioRef.current) return
+  1219→    if (musicPlaying) { audioRef.current.pause(); setMusicPlaying(false) }
+  1220→    else { audioRef.current.play().then(() => setMusicPlaying(true)).catch(() => {}) }
+  1221→  }, [musicPlaying])
+  1222→
+  1223→  // ═══ LENIS SMOOTH SCROLL ═══
+  1224→  useEffect(() => {
+  1225→    if (!mainVisible) return
+  1226→    const lenis = new Lenis({ duration: 1.8, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), touchMultiplier: 2, infinite: false })
+  1227→    lenisRef.current = lenis
+  1228→    function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf) }
+  1229→    requestAnimationFrame(raf)
+  1230→    return () => { lenis.destroy(); lenisRef.current = null }
+  1231→  }, [mainVisible])
+  1232→
+  1233→  // ═══ CUSTOM CURSOR ═══
+  1234→  useEffect(() => {
+  1235→    const handleMouseMove = (e: MouseEvent) => {
+  1236→      if (cursorRef.current) { cursorRef.current.style.left = (e.clientX - 9) + 'px'; cursorRef.current.style.top = (e.clientY - 9) + 'px' }
+  1237→    }
+  1238→    document.addEventListener('mousemove', handleMouseMove)
+  1239→    return () => document.removeEventListener('mousemove', handleMouseMove)
+  1240→  }, [])
+  1241→
+  1242→  // ═══ GIFT OPEN ═══
+  1243→  const openGift = useCallback(() => {
+  1244→    if (stage !== 'gift') return
+  1245→    let s = 0
+  1246→    const doShake = () => {
+  1247→      setGiftShaking(true)
+  1248→      setTimeout(() => {
+  1249→        setGiftShaking(false)
+  1250→        s++
+  1251→        if (s < 3) {
+  1252→          setTimeout(doShake, 220)
+  1253→        } else {
+  1254→          // Gift opens — lid flies off, then roses burst
+  1255→          setGiftOpened(true)
+  1256→          setTimeout(() => setStage('cake'), 900)
+  1257→        }
+  1258→      }, 550)
+  1259→    }
+  1260→    doShake()
+  1261→  }, [stage])
+  1262→
+  1263→  // ═══ CAKE ANIMATION — handled by CakeCanvas component ═══
+  1264→
+  1265→  // ═══ STAGGER TEXT ═══
+  1266→  useEffect(() => {
+  1267→    if (stage !== 'text') return
+  1268→    const t1 = setTimeout(() => setWordVisible(v => ({ ...v, w1: true })), 150)
+  1269→    const t2 = setTimeout(() => setWordVisible(v => ({ ...v, w2: true })), 850)
+  1270→    const t3 = setTimeout(() => { setWordVisible(v => ({ ...v, myb: true })) }, 1650)
+  1271→    const t4 = setTimeout(() => setStage('facecake'), 3800)
+  1272→    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
+  1273→  }, [stage])
+  1274→
+  1275→  // ═══ FACE IN CAKE ═══
+  1276→  useEffect(() => {
+  1277→    if (stage !== 'facecake') return
+  1278→    const t1 = setTimeout(() => setFaceCakeVisible(true), 200)
+  1279→    const t2 = setTimeout(() => setStage('date'), 4500)
+  1280→    return () => { clearTimeout(t1); clearTimeout(t2) }
+  1281→  }, [stage])
+  1282→
+  1283→  // ═══ DATE ═══
+  1284→  useEffect(() => {
+  1285→    if (stage !== 'date') return
+  1286→    const t1 = setTimeout(() => { setDateVisible(true); setDateSubVisible(true) }, 200)
+  1287→    const t2 = setTimeout(() => setStage('main'), 2800)
+  1288→    return () => { clearTimeout(t1); clearTimeout(t2) }
+  1289→  }, [stage])
+  1290→
+  1291→  // ═══ MAIN ═══
+  1292→  useEffect(() => {
+  1293→    if (stage !== 'main') return
+  1294→    setMainVisible(true)
+  1295→    setScrollHintVisible(true)
+  1296→    const t = setTimeout(() => setScrollHintVisible(false), 7000)
+  1297→    setTimeout(() => {
+  1298→      buildBgRosesHTML('bgr1', 12, [['#c0463c', '#6b1a1a'], ['#e8897a', '#b03030']])
+  1299→      buildBgRosesHTML('bgr2', 10, [['#e8897a', '#c0463c'], ['#f2c4b8', '#e8897a']])
+  1300→      buildBgRosesHTML('bgr3', 14, [['#8b2a2a', '#3d1010'], ['#c0463c', '#6b1a1a']])
+  1301→      buildBgRosesHTML('bgr4', 10, [['#c9995a', '#6b3a1a'], ['#e8c98a', '#c0463c']])
+  1302→      buildBgRosesHTML('bgr5', 12, [['#7070a0', '#2a2a50'], ['#a090b8', '#4a3060']])
+  1303→      buildBgRosesHTML('bgr6', 16, [['#c0463c', '#6b1a1a'], ['#e8897a', '#b03030'], ['#c9995a', '#6b3a1a']])
+  1304→    }, 100)
+  1305→    return () => clearTimeout(t)
+  1306→  }, [stage])
+  1307→
+  1308→  // ════════════════════════════
+  1309→  // RENDER STAGES
+  1310→  // ════════════════════════════
+  1311→
+  1312→  return (
+  1313→    <>
+  1314→      <StarfieldBG />
+  1315→      <div id="cursor" ref={cursorRef}><CursorSVG /></div>
+  1316→
+  1317→      {/* ══ STAGE 0: MUSIC CONSENT ══ */}
+  1318→      <div className={`stage ${stage !== 'music' ? 'gone' : 'entering'}`} id="stMusic">
+  1319→        <motion.div
+  1320→          className="music-consent"
+  1321→          initial={{ scale: 0.8, opacity: 0 }}
+  1322→          animate={{ scale: 1, opacity: 1 }}
+  1323→          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+  1324→        >
+  1325→          <motion.div className="music-consent-icon"
+  1326→            animate={{ y: [0, -8, 0], scale: [1, 1.05, 1] }}
+  1327→            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+  1328→          >
+  1329→            🎵
+  1330→          </motion.div>
+  1331→          <h2 className="music-consent-title">Allow Music?</h2>
+  1332→          <p className="music-consent-desc">This experience is better with music</p>
+  1333→          <div className="music-consent-buttons">
+  1334→            <button className="music-btn music-accept" onClick={acceptMusic}>
+  1335→              <span className="music-btn-icon">🎶</span> Yes, play music
+  1336→            </button>
+  1337→            <button className="music-btn music-decline" onClick={declineMusic}>
+  1338→              No, silence
+  1339→            </button>
+  1340→          </div>
+  1341→        </motion.div>
+  1342→      </div>
+  1343→
+  1344→      {/* ══ STAGE 1: GIFT ══ */}
+  1345→      <div className={`stage ${stage === 'gift' ? 'entering' : 'gone'}`} id="stGift" style={{ zIndex: 500 }}>
+  1346→        <div className={`gift-scene ${giftShaking ? 'shake-it' : ''} ${giftOpened ? 'gift-opened' : ''}`} onClick={!giftOpened ? openGift : undefined}>
+  1347→          <div className="gift-box-wrapper">
+  1348→            <GiftBoxSVG />
+  1349→            {/* Lid flies off when opened */}
+  1350→            {giftOpened && <div className="gift-lid-fly">🎁</div>}
+  1351→          </div>
+  1352→          {/* Glow burst from inside */}
+  1353→          {giftOpened && <div className="gift-glow-burst" />}
+  1354→          {!giftOpened && <p className="gift-label">tap to open ✦</p>}
+  1355→        </div>
+  1356→      </div>
+  1357→
+  1358→      {/* ══ STAGE 2: CAKE ══ — birthday cake with candle animation */}
+  1359→      <div className={`stage ${stage === 'music' || stage === 'gift' ? 'hidden' : stage === 'cake' ? 'entering' : 'gone'}`} id="stCake" style={{ zIndex: 500 }}>
+  1360→        <CakeCanvas active={stage === 'cake'} onComplete={handleCakeComplete} />
+  1361→      </div>
+  1362→
+  1363→      {/* ══ STAGE 3: TEXT ══ */}
+  1364→      <div className={`stage ${['music', 'gift', 'cake'].includes(stage) ? 'hidden' : stage === 'text' ? 'entering' : 'gone'}`} id="stText" style={{ zIndex: 500 }}>
+  1365→        <div className={`wrd ${wordVisible.w1 ? 'in' : ''}`}>Happy</div>
+  1366→        <div className={`wrd ${wordVisible.w2 ? 'in' : ''}`}>Birthday</div>
+  1367→        <div className={`myb-row ${wordVisible.myb ? 'in' : ''}`}>
+  1368→          <svg className="heart-svg-draw" viewBox="0 0 380 130" preserveAspectRatio="xMidYMid meet">
+  1369→            <path className={`h-path ${wordVisible.myb ? 'draw' : ''}`} d="M190,112 C100,82 16,54 16,30 C16,9 42,-4 78,14 C108,28 155,58 190,80 C225,58 272,28 302,14 C338,-4 364,9 364,30 C364,54 280,82 190,112 Z" />
+  1370→          </svg>
+  1371→          <span className="myb-txt">My B</span>
+  1372→        </div>
+  1373→      </div>
+  1374→
+  1375→      {/* ══ STAGE 3.5: FACE IN CAKE ══ */}
+  1376→      <div className={`stage ${['music', 'gift', 'cake', 'text'].includes(stage) ? 'hidden' : stage === 'facecake' ? 'entering' : 'gone'}`} id="stFaceCake" style={{ zIndex: 500 }}>
+  1377→        <motion.div
+  1378→          className="facecake-scene"
+  1379→          initial={{ opacity: 0 }}
+  1380→          animate={faceCakeVisible ? { opacity: 1 } : { opacity: 0 }}
+  1381→          transition={{ duration: 0.8 }}
+  1382→        >
+  1383→          <svg className="facecake-svg" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  1384→            {/* Cake */}
+  1385→            <rect x="80" y="260" width="240" height="100" rx="12" fill="#7a1f1f" />
+  1386→            <rect x="80" y="260" width="240" height="100" rx="12" fill="url(#fcGrad1)" />
+  1387→            <rect x="100" y="230" width="200" height="40" rx="8" fill="#c0463c" />
+  1388→            <rect x="100" y="230" width="200" height="40" rx="8" fill="url(#fcGrad2)" />
+  1389→            {/* Frosting drips */}
+  1390→            <ellipse cx="130" cy="270" rx="6" ry="14" fill="#f2c4b8" opacity="0.85" />
+  1391→            <ellipse cx="170" cy="275" rx="5" ry="18" fill="#f7e0d0" opacity="0.8" />
+  1392→            <ellipse cx="210" cy="268" rx="6" ry="12" fill="#f2c4b8" opacity="0.85" />
+  1393→            <ellipse cx="250" cy="273" rx="5" ry="16" fill="#f7e0d0" opacity="0.8" />
+  1394→            <ellipse cx="280" cy="267" rx="4" ry="10" fill="#f2c4b8" opacity="0.8" />
+  1395→            {/* Frosting strip top */}
+  1396→            <rect x="100" y="228" width="200" height="8" rx="4" fill="#f2c4b8" opacity="0.8" />
+  1397→            {/* Sprinkles */}
+  1398→            <rect x="120" y="290" width="6" height="3" rx="1.5" fill="#e8897a" opacity="0.7" transform="rotate(30 123 291.5)" />
+  1399→            <rect x="160" y="310" width="6" height="3" rx="1.5" fill="#c9995a" opacity="0.7" transform="rotate(-20 163 311.5)" />
+  1400→            <rect x="200" y="295" width="6" height="3" rx="1.5" fill="#f2c4b8" opacity="0.7" transform="rotate(45 203 296.5)" />
+  1401→            <rect x="240" y="320" width="6" height="3" rx="1.5" fill="#e8c98a" opacity="0.7" transform="rotate(-35 243 321.5)" />
+  1402→            <rect x="280" y="300" width="6" height="3" rx="1.5" fill="#e8897a" opacity="0.7" transform="rotate(15 283 301.5)" />
+  1403→            {/* Cat face sticking out of cake top */}
+  1404→            <motion.g
+  1405→              initial={{ y: 60, opacity: 0 }}
+  1406→              animate={faceCakeVisible ? { y: 0, opacity: 1 } : { y: 60, opacity: 0 }}
+  1407→              transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+  1408→            >
+  1409→              {/* Cat head - cute white cat */}
+  1410→              <ellipse cx="200" cy="170" rx="65" ry="58" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="2" />
+  1411→              {/* Inner ears */}
+  1412→              <ellipse cx="155" cy="125" rx="20" ry="28" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="2" />
+  1413→              <ellipse cx="155" cy="128" rx="12" ry="18" fill="#f2c4b8" opacity="0.5" />
+  1414→              <ellipse cx="245" cy="125" rx="20" ry="28" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="2" />
+  1415→              <ellipse cx="245" cy="128" rx="12" ry="18" fill="#f2c4b8" opacity="0.5" />
+  1416→              {/* Eyes - happy closed */}
+  1417→              <motion.path
+  1418→                d="M172,162 Q180,150 188,162"
+  1419→                stroke="#3d1010" strokeWidth="3" strokeLinecap="round" fill="none"
+  1420→                animate={faceCakeVisible ? { pathLength: [0, 1] } : {}}
+  1421→                transition={{ duration: 0.5, delay: 1.2 }}
+  1422→              />
+  1423→              <motion.path
+  1424→                d="M212,162 Q220,150 228,162"
+  1425→                stroke="#3d1010" strokeWidth="3" strokeLinecap="round" fill="none"
+  1426→                animate={faceCakeVisible ? { pathLength: [0, 1] } : {}}
+  1427→                transition={{ duration: 0.5, delay: 1.3 }}
+  1428→              />
+  1429→              {/* Blush */}
+  1430→              <circle cx="168" cy="175" r="10" fill="#f2c4b8" opacity="0.4" />
+  1431→              <circle cx="232" cy="175" r="10" fill="#f2c4b8" opacity="0.4" />
+  1432→              {/* Nose */}
+  1433→              <ellipse cx="200" cy="178" rx="5" ry="3.5" fill="#e8897a" />
+  1434→              {/* Mouth - big happy smile */}
+  1435→              <motion.path
+  1436→                d="M188,186 Q200,200 212,186"
+  1437→                stroke="#3d1010" strokeWidth="2" strokeLinecap="round" fill="none"
+  1438→                initial={{ pathLength: 0 }}
+  1439→                animate={faceCakeVisible ? { pathLength: 1 } : { pathLength: 0 }}
+  1440→                transition={{ duration: 0.4, delay: 1.5 }}
+  1441→              />
+  1442→              {/* Whiskers */}
+  1443→              <line x1="150" y1="175" x2="172" y2="178" stroke="#d4b8b0" strokeWidth="1" />
+  1444→              <line x1="148" y1="182" x2="172" y2="183" stroke="#d4b8b0" strokeWidth="1" />
+  1445→              <line x1="228" y1="178" x2="250" y2="175" stroke="#d4b8b0" strokeWidth="1" />
+  1446→              <line x1="228" y1="183" x2="252" y2="182" stroke="#d4b8b0" strokeWidth="1" />
+  1447→              {/* Party hat */}
+  1448→              <motion.g
+  1449→                initial={{ rotate: -15, scale: 0 }}
+  1450→                animate={faceCakeVisible ? { rotate: -8, scale: 1 } : { rotate: -15, scale: 0 }}
+  1451→                transition={{ duration: 0.6, delay: 1.6, type: 'spring', stiffness: 200 }}
+  1452→              >
+  1453→                <polygon points="200,60 175,120 225,120" fill="#c0463c" />
+  1454→                <polygon points="200,60 175,120 225,120" fill="url(#hatGrad)" />
+  1455→                {/* Hat stripes */}
+  1456→                <line x1="183" y1="108" x2="217" y2="108" stroke="#f2c4b8" strokeWidth="3" opacity="0.6" />
+  1457→                <line x1="188" y1="96" x2="212" y2="96" stroke="#e8c98a" strokeWidth="2.5" opacity="0.5" />
+  1458→                {/* Pom pom */}
+  1459→                <circle cx="200" cy="58" r="8" fill="#e8c98a" />
+  1460→                <circle cx="200" cy="56" r="5" fill="#f2c4b8" />
+  1461→              </motion.g>
+  1462→            </motion.g>
+  1463→            {/* Confetti pieces around */}
+  1464→            <motion.g
+  1465→              initial={{ opacity: 0, scale: 0 }}
+  1466→              animate={faceCakeVisible ? { opacity: 1, scale: 1 } : {}}
+  1467→              transition={{ duration: 0.5, delay: 2 }}
+  1468→            >
+  1469→              <rect x="90" y="100" width="5" height="12" rx="2" fill="#c9995a" opacity="0.7" transform="rotate(25 92.5 106)" />
+  1470→              <rect x="300" y="90" width="5" height="12" rx="2" fill="#e8897a" opacity="0.7" transform="rotate(-15 302.5 96)" />
+  1471→              <rect x="70" y="180" width="4" height="10" rx="2" fill="#f2c4b8" opacity="0.6" transform="rotate(40 72 185)" />
+  1472→              <rect x="320" y="170" width="4" height="10" rx="2" fill="#c0463c" opacity="0.6" transform="rotate(-30 322 175)" />
+  1473→              <circle cx="110" cy="70" r="4" fill="#e8c98a" opacity="0.6" />
+  1474→              <circle cx="290" cy="60" r="3" fill="#f2c4b8" opacity="0.6" />
+  1475→              <rect x="140" y="50" width="4" height="8" rx="2" fill="#c0463c" opacity="0.5" transform="rotate(60 142 54)" />
+  1476→              <rect x="260" y="45" width="4" height="8" rx="2" fill="#c9995a" opacity="0.5" transform="rotate(-50 262 49)" />
+  1477→            </motion.g>
+  1478→            <defs>
+  1479→              <linearGradient id="fcGrad1" x1="0" y1="0" x2="0" y2="1">
+  1480→                <stop offset="0%" stopColor="#fff" stopOpacity="0.08" />
+  1481→                <stop offset="100%" stopColor="#000" stopOpacity="0.2" />
+  1482→              </linearGradient>
+  1483→              <linearGradient id="fcGrad2" x1="0" y1="0" x2="0" y2="1">
+  1484→                <stop offset="0%" stopColor="#fff" stopOpacity="0.15" />
+  1485→                <stop offset="100%" stopColor="#000" stopOpacity="0.1" />
+  1486→              </linearGradient>
+  1487→              <linearGradient id="hatGrad" x1="0" y1="0" x2="0" y2="1">
+  1488→                <stop offset="0%" stopColor="#fff" stopOpacity="0.15" />
+  1489→                <stop offset="100%" stopColor="#000" stopOpacity="0.1" />
+  1490→              </linearGradient>
+  1491→            </defs>
+  1492→          </svg>
+  1493→          <motion.p
+  1494→            className="facecake-text"
+  1495→            initial={{ opacity: 0, y: 20 }}
+  1496→            animate={faceCakeVisible ? { opacity: 1, y: 0 } : {}}
+  1497→            transition={{ duration: 0.8, delay: 2.2 }}
+  1498→          >
+  1499→            Happy Birthday, Bishoy! 🎂
+  1500→          </motion.p>
+  1501→        </motion.div>
+  1502→      </div>
+  1503→
+  1504→      {/* ══ STAGE 4: DATE ══ */}
+  1505→      <div className={`stage ${['music', 'gift', 'cake', 'text', 'facecake'].includes(stage) ? 'hidden' : stage === 'date' ? 'entering' : 'gone'}`} id="stDate" style={{ zIndex: 500 }}>
+  1506→        <div className={`date-num ${dateVisible ? 'in' : ''}`}>June 19</div>
+  1507→        <div className={`date-sub ${dateSubVisible ? 'in' : ''}`}>his special day</div>
+  1508→      </div>
+  1509→
+  1510→      <div id="shint" className={scrollHintVisible ? 'in' : ''}>scroll ↓</div>
+  1511→
+  1512→      {mainVisible && (
+  1513→        <button className={`music-toggle ${musicPlaying ? 'playing' : ''}`} onClick={toggleMusic} aria-label={musicPlaying ? 'Pause music' : 'Play music'}>
+  1514→          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+  1515→            {musicPlaying ? (<><rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" /></>) : (<polygon points="5 3 19 12 5 21 5 3" fill="currentColor" />)}
+  1516→          </svg>
+  1517→        </button>
+  1518→      )}
+  1519→
+  1520→      {mainVisible && <NavDots />}
+  1521→
+  1522→      {/* ══ MAIN CONTENT ══ */}
+  1523→      <div id="main" className={mainVisible ? 'in' : ''}>
+  1524→
+  1525→        {/* S1 */}
+  1526→        <AnimatedSection className="sec-1" id="s1" bgId="bgr1" onClick={(e) => boom(e, 'teddy')}
+  1527→          particleType="petal" particleCount={18} particleColors={['#e8897a', '#f2c4b8', '#c0463c', '#fff9f6']}
+  1528→          sealType="gift" revealed={revealed.s1} onReveal={(e) => handleReveal('s1', e)}
+  1529→        >
+  1530→          <AnimatedText className="hero" delay={0} revealed={revealed.s1} variant="slideUp">&ldquo;Happy Birthday, Bishoy&rdquo;</AnimatedText>
+  1531→          <AnimatedText delay={0.2} revealed={revealed.s1} variant="slideUp">&ldquo;Today the world celebrates you — and so do I&rdquo;</AnimatedText>
+  1532→          <AnimatedText delay={0.35} revealed={revealed.s1} variant="slideUp">&ldquo;But honestly? Every single day feels like your birthday to me&rdquo;</AnimatedText>
+  1533→          <AnimatedText delay={0.5} revealed={revealed.s1} variant="slideUp">&ldquo;Because every day with you is a gift I never want to return&rdquo;</AnimatedText>
+  1534→          <RevealDivider revealed={revealed.s1} delay={0.65} />
+  1535→          <AnimatedText delay={0.8} revealed={revealed.s1} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap gently</AnimatedText>
+  1536→        </AnimatedSection>
+  1537→
+  1538→        <WaveDivider color="#f5ebe4" />
+  1539→
+  1540→        {/* S2 */}
+  1541→        <AnimatedSection className="sec-2" id="s2" bgId="bgr2" onClick={(e) => boom(e, 'heart')}
+  1542→          particleType="heart" particleCount={14} particleColors={['#c0463c', '#e8897a', '#f2c4b8', '#8b2a2a']}
+  1543→          sealType="heart" revealed={revealed.s2} onReveal={(e) => handleReveal('s2', e)}
+  1544→        >
+  1545→          <AnimatedText className="hero sec2-text" delay={0} revealed={revealed.s2} variant="scaleIn">&ldquo;You didn&rsquo;t just walk into my life… you became it&rdquo;</AnimatedText>
+  1546→          <AnimatedText delay={0.2} revealed={revealed.s2} variant="scaleIn" className="sec2-text">&ldquo;Before you, I didn&rsquo;t know that someone could feel like home&rdquo;</AnimatedText>
+  1547→          <AnimatedText delay={0.35} revealed={revealed.s2} variant="scaleIn" className="sec2-text">&ldquo;Now I can&rsquo;t imagine a single day without your voice, your laugh, your presence&rdquo;</AnimatedText>
+  1548→          <AnimatedText delay={0.5} revealed={revealed.s2} variant="scaleIn" className="sec2-text">&ldquo;You changed everything — quietly, deeply, forever&rdquo;</AnimatedText>
+  1549→          <RevealDivider revealed={revealed.s2} delay={0.65} className="sec2-div" />
+  1550→          <AnimatedText delay={0.8} revealed={revealed.s2} variant="blurIn" className="sec2-text" extraStyle={{ fontSize: '.78rem', opacity: .35, letterSpacing: '.2em' }}>tap gently</AnimatedText>
+  1551→        </AnimatedSection>
+  1552→
+  1553→        <WaveDivider flip color="#0e0404" />
+  1554→
+  1555→        {/* S3 */}
+  1556→        <AnimatedSection className="sec-3" id="s3" bgId="bgr3" onClick={(e) => boom(e, 'rose')}
+  1557→          particleType="petal" particleCount={16} particleColors={['#8b2a2a', '#c0463c', '#e8897a', '#f2c4b8']}
+  1558→          sealType="rose" revealed={revealed.s3} onReveal={(e) => handleReveal('s3', e)}
+  1559→        >
+  1560→          <AnimatedText className="hero" delay={0} revealed={revealed.s3} variant="blurIn">&ldquo;Every moment with you feels like home&rdquo;</AnimatedText>
+  1561→          <AnimatedText delay={0.2} revealed={revealed.s3} variant="blurIn">&ldquo;The small moments, the silly ones, the ones no one else would understand&rdquo;</AnimatedText>
+  1562→          <AnimatedText delay={0.35} revealed={revealed.s3} variant="blurIn">&ldquo;Those are my favorite chapters of my life&rdquo;</AnimatedText>
+  1563→          <AnimatedText delay={0.5} revealed={revealed.s3} variant="blurIn">&ldquo;And you&rsquo;re the reason I love the story&rdquo;</AnimatedText>
+  1564→          <RevealDivider revealed={revealed.s3} delay={0.65} />
+  1565→          <AnimatedText delay={0.8} revealed={revealed.s3} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap gently</AnimatedText>
+  1566→        </AnimatedSection>
+  1567→
+  1568→        {/* S4 */}
+  1569→        <AnimatedSection className="sec-4" id="s4" bgId="bgr4" onClick={(e) => boom(e, 'stars')}
+  1570→          particleType="sparkle" particleCount={20} particleColors={['#c9995a', '#e8c98a', '#f2c4b8', '#fff9f6', '#e8897a']}
+  1571→          sealType="star" revealed={revealed.s4} onReveal={(e) => handleReveal('s4', e)}
+  1572→        >
+  1573→          <AnimatedText className="hero" delay={0} revealed={revealed.s4} variant="slideLeft">&ldquo;You are my favorite person in every version of every story&rdquo;</AnimatedText>
+  1574→          <AnimatedText delay={0.2} revealed={revealed.s4} variant="slideLeft">&ldquo;In every timeline, every lifetime, every universe —&rdquo;</AnimatedText>
+  1575→          <AnimatedText delay={0.35} revealed={revealed.s4} variant="slideLeft">&ldquo;I&rsquo;d find you. I&rsquo;d choose you.&rdquo;</AnimatedText>
+  1576→          <ShimmerText delay={0.5} revealed={revealed.s4} extraStyle={{ fontSize: 'clamp(1.6rem, 4.2vw, 2.6rem)' }}>&ldquo;Again and again and again.&rdquo;</ShimmerText>
+  1577→          <RevealDivider revealed={revealed.s4} delay={0.65} />
+  1578→          <AnimatedText delay={0.8} revealed={revealed.s4} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap gently</AnimatedText>
+  1579→        </AnimatedSection>
+  1580→
+  1581→        {/* S5 — Arabic poetry section */}
+  1582→        <AnimatedSection className="sec-5" id="s5" bgId="bgr5" onClick={(e) => boom(e, 'moon')}
+  1583→          particleType="star" particleCount={25} particleColors={['#7070a0', '#a090b8', '#c9995a', '#e8c98a', '#fff9f6']}
+  1584→          sealType="moon" revealed={revealed.s5} onReveal={(e) => handleReveal('s5', e)}
+  1585→        >
+  1586→          <motion.div className="moon-deco" initial={{ opacity: 0, scale: 0 }} animate={revealed.s5 ? { opacity: 0.15, scale: 1 } : { opacity: 0, scale: 0 }} transition={{ duration: 1.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>🌙</motion.div>
+  1587→
+  1588→          <AnimatedText className="hero arabic" delay={0} revealed={revealed.s5} variant="slideRight">انت قمري والقاف عين وإذا غابت العين ابدلنا الميم بالدال ♥</AnimatedText>
+  1589→          <RevealDivider revealed={revealed.s5} delay={0.2} />
+  1590→
+  1591→          <AnimatedText className="arabic" delay={0.35} revealed={revealed.s5} variant="slideRight">الماضى اية الماضى مين نسيت ف حضنك إلى شوفتة من السنين ♥</AnimatedText>
+  1592→          <RevealDivider revealed={revealed.s5} delay={0.45} />
+  1593→
+  1594→          <AnimatedText className="arabic" delay={0.55} revealed={revealed.s5} variant="slideRight">ويكفينى من هذا العمر انى حظيت بك ♥</AnimatedText>
+  1595→          <RevealDivider revealed={revealed.s5} delay={0.65} />
+  1596→
+  1597→          <AnimatedText className="arabic" delay={0.8} revealed={revealed.s5} variant="slideRight">متى أذنت دهرك باللقاءِ.. كأنّي لم أوطّئ ماءَ مزنِ ♥</AnimatedText>
+  1598→          <RevealDivider revealed={revealed.s5} delay={0.9} />
+  1599→
+  1600→          <AnimatedText className="arabic" delay={1.05} revealed={revealed.s5} variant="slideRight">ليس في الأرض كلّها مكانٌ.. يسعني غير المكانِ الذي أنت فيه ♥</AnimatedText>
+  1601→          <RevealDivider revealed={revealed.s5} delay={1.15} />
+  1602→
+  1603→          <AnimatedText className="arabic" delay={1.3} revealed={revealed.s5} variant="slideRight">يا مَن أحبّك قد كفاني.. من الدّهور وجودُ عينِك ♥</AnimatedText>
+  1604→          <RevealDivider revealed={revealed.s5} delay={1.25} />
+  1605→
+  1606→          <AnimatedText delay={1.4} revealed={revealed.s5} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: .4, letterSpacing: '.2em' }}>tap gently</AnimatedText>
+  1607→        </AnimatedSection>
+  1608→
+  1609→        {/* S6 */}
+  1610→        <AnimatedSection className="sec-6" id="s6" bgId="bgr6" onClick={(e) => boom(e, 'cake')}
+  1611→          particleType="heart" particleCount={22} particleColors={['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a']}
+  1612→          sealType="cake" revealed={revealed.s6} onReveal={(e) => handleReveal('s6', e)}
+  1613→        >
+  1614→          <ShimmerText delay={0} revealed={revealed.s6} extraStyle={{ fontSize: 'clamp(2.2rem, 5.5vw, 4rem)', fontStyle: 'italic' }}>&ldquo;Here&rsquo;s to you, here&rsquo;s to us&rdquo;</ShimmerText>
+  1615→          <RevealDivider revealed={revealed.s6} delay={0.2} />
+  1616→          <AnimatedText delay={0.35} revealed={revealed.s6} variant="zoomIn">&ldquo;To every laugh we shared, every moment we lived&rdquo;</AnimatedText>
+  1617→          <AnimatedText delay={0.5} revealed={revealed.s6} variant="zoomIn">&ldquo;To all the birthdays yet to come —&rdquo;</AnimatedText>
+  1618→          <AnimatedText delay={0.65} revealed={revealed.s6} variant="zoomIn">&ldquo;may I spend every single one by your side&rdquo;</AnimatedText>
+  1619→          <RevealDivider revealed={revealed.s6} delay={0.75} />
+  1620→          <ShimmerText delay={0.85} revealed={revealed.s6} extraStyle={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)', fontStyle: 'italic' }}>&ldquo;Happy Birthday, my love&rdquo;</ShimmerText>
+  1621→          <AnimatedText delay={1.1} revealed={revealed.s6} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: '.4', letterSpacing: '.2em', marginTop: '.8rem' }}>tap gently</AnimatedText>
+  1622→        </AnimatedSection>
+  1623→
+  1624→        {mainVisible && (
+  1625→          <div className="letter-section">
+  1626→            <LetterEnvelope onOpen={() => setLetterOpened(true)} />
+  1627→          </div>
+  1628→        )}
+  1629→
+  1630→        <footer className="site-footer">
+  1631→          <div className="roses">🌹 🌸 🌹</div>
+  1632→          <p>Made with love</p>
+  1633→        </footer>
+  1634→      </div>
+  1635→    </>
+  1636→  )
+  1637→}
+  1638→
