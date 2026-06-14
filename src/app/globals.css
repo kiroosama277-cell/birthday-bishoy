@@ -379,12 +379,22 @@ body {
 }
 
 /* backgrounds — each section has its own atmosphere */
-.sec-1 { background: radial-gradient(ellipse 120% 100% at 25% 60%, #3d1010 0%, #0e0404 70%); }
+.sec-1 { background: radial-gradient(ellipse 120% 100% at 25% 60%, rgba(61, 16, 16, 0.88) 0%, rgba(14, 4, 4, 0.92) 70%); }
 .sec-2 { background: linear-gradient(160deg, #f5ebe4 0%, #e8d0c5 50%, #d4b8b0 100%); }
-.sec-3 { background: radial-gradient(ellipse 100% 120% at 75% 40%, #4a1212 0%, #0e0404 65%); }
-.sec-4 { background: radial-gradient(ellipse 110% 100% at 30% 70%, #2a1508 0%, #0e0404 70%); }
-.sec-5 { background: radial-gradient(ellipse 100% 110% at 60% 45%, #0d0d22 0%, #1a0707 70%); }
-.sec-6 { background: radial-gradient(ellipse 130% 100% at 50% 55%, #4a1010 0%, #0e0404 65%); }
+.sec-3 { background: radial-gradient(ellipse 100% 120% at 75% 40%, rgba(74, 18, 18, 0.88) 0%, rgba(14, 4, 4, 0.92) 65%); }
+.sec-4 { background: radial-gradient(ellipse 110% 100% at 30% 70%, rgba(42, 21, 8, 0.88) 0%, rgba(14, 4, 4, 0.92) 70%); }
+.sec-5 { background: radial-gradient(ellipse 100% 110% at 60% 45%, rgba(13, 13, 34, 0.88) 0%, rgba(26, 7, 7, 0.92) 70%); }
+.sec-6 { background: radial-gradient(ellipse 130% 100% at 50% 55%, rgba(74, 16, 16, 0.88) 0%, rgba(14, 4, 4, 0.92) 65%); }
+
+/* ════════════════════════════
+   ANIMATED STARFIELD BACKGROUND
+════════════════════════════ */
+.starfield-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
 
 /* ════════════════════════════
    BACKGROUND ROSES — PARALLAX

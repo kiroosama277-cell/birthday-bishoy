@@ -301,24 +301,18 @@ function SealedReveal({ type, revealed, onReveal }: { type: string; revealed: bo
             <svg viewBox="0 0 320 320" className="sealed-ring-svg">
               <circle cx="160" cy="160" r="150" fill="none" stroke={config.ringColor1} strokeWidth="1" strokeDasharray="12 8" />
               <circle cx="160" cy="160" r="140" fill="none" stroke={config.ringColor2} strokeWidth="0.5" strokeDasharray="3 10" />
-              {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => {
-                const rad = (angle * Math.PI) / 180
-                const cx = Math.round((160 + Math.cos(rad) * 150) * 100) / 100
-                const cy = Math.round((160 + Math.sin(rad) * 150) * 100) / 100
-                return <circle key={i} cx={cx} cy={cy} r="2" fill={config.ringColor1} />
-              })}
+              {[[310,160],[266.07,266.07],[160,310],[53.93,266.07],[10,160],[53.93,53.93],[160,10],[266.07,53.93]].map(([cx,cy], i) => (
+                <circle key={i} cx={cx} cy={cy} r="2" fill={config.ringColor1} />
+              ))}
             </svg>
           </motion.div>
           <motion.div className="sealed-ring-container ring-inner" animate={{ rotate: -360 }} transition={{ duration: 22, repeat: Infinity, ease: "linear" }}>
             <svg viewBox="0 0 320 320" className="sealed-ring-svg">
               <circle cx="160" cy="160" r="110" fill="none" stroke={config.ringColor2} strokeWidth="0.8" strokeDasharray="6 12" />
               <circle cx="160" cy="160" r="100" fill="none" stroke={config.ringColor1} strokeWidth="0.4" strokeDasharray="2 8" />
-              {[0, 60, 120, 180, 240, 300].map((angle, i) => {
-                const rad = (angle * Math.PI) / 180
-                const cx = Math.round((160 + Math.cos(rad) * 110) * 100) / 100
-                const cy = Math.round((160 + Math.sin(rad) * 110) * 100) / 100
-                return <circle key={i} cx={cx} cy={cy} r="1.5" fill={config.ringColor2} />
-              })}
+              {[[270,160],[215,255.26],[105,255.26],[50,160],[105,64.74],[215,64.74]].map(([cx,cy], i) => (
+                <circle key={i} cx={cx} cy={cy} r="1.5" fill={config.ringColor2} />
+              ))}
             </svg>
           </motion.div>
           <motion.div className="sealed-icon" style={{ color: config.color }} animate={{ y: [0, -12, 0], scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
@@ -529,6 +523,9 @@ function CakeCanvas({ active, onComplete }: { active: boolean; onComplete: () =>
     type SmokeP = { x: number; y: number; vx: number; vy: number; size: number; alpha: number; life: number }
     const smokeParticles: SmokeP[] = []
 
+    // Confetti trigger flag
+    let confettiTriggered = false
+
     // ── Phase timing (ms) ──
     const P1_START = 0       // Cake assembly
     const P1_END = 3500
@@ -704,6 +701,13 @@ function CakeCanvas({ active, onComplete }: { active: boolean; onComplete: () =>
         const blowProgress = isBlownOut ? Math.min(1, (elapsed - P4_START) / (P4_END - P4_START)) : 0
         const flameScale = isBlownOut ? Math.max(0, 1 - easeInQuad(blowProgress)) : 1
         const flameAlpha = flameScale
+
+        // Trigger confetti celebration on first blow-out frame
+        if (isBlownOut && blowProgress < 0.05 && blowProgress > 0 && !confettiTriggered) {
+          confettiTriggered = true
+          createExplosion(W / 2, H / 2, ['#c0463c', '#e8897a', '#f2c4b8', '#c9995a', '#e8c98a', '#fff9f6'], 80)
+          createFlash('rgba(232,137,122,0.3)')
+        }
 
         // More intense flicker during countdown (Phase 3)
         const isCountdown = elapsed >= P3_START && elapsed < P4_START
@@ -1019,6 +1023,140 @@ function LetterEnvelope({ onOpen }: { onOpen: () => void }) {
 /* ════════════════════════════
    MAIN PAGE COMPONENT
 ════════════════════════════ */
+/* ════════════════════════════
+   ANIMATED STARFIELD BACKGROUND
+════════════════════════════ */
+function StarfieldBG() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const W = window.innerWidth
+    const H = window.innerHeight
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = W * dpr
+    canvas.height = H * dpr
+    canvas.style.width = W + 'px'
+    canvas.style.height = H + 'px'
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.scale(dpr, dpr)
+
+    // Generate stars
+    const starColors = ['#e8897a', '#f2c4b8', '#c9995a', '#fff9f6', '#e8c98a', '#ffffff']
+    const stars = Array.from({ length: 80 }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      size: 0.5 + Math.random() * 2,
+      color: starColors[Math.floor(Math.random() * starColors.length)],
+      twinkleSpeed: 0.001 + Math.random() * 0.003,
+      twinkleOffset: Math.random() * Math.PI * 2,
+      baseAlpha: 0.2 + Math.random() * 0.5,
+      drift: (Math.random() - 0.5) * 0.02,
+    }))
+
+    // Shooting stars
+    const shootingStars: { x: number; y: number; vx: number; vy: number; life: number; maxLife: number; size: number }[] = []
+    let lastShootTime = 0
+
+    // Non-null assertion — we already checked ctx above
+    const c = ctx!
+    
+    let animId = 0
+    function animate(now: number) {
+      c.clearRect(0, 0, W, H)
+
+      // Draw stars
+      for (const star of stars) {
+        const alpha = star.baseAlpha * (0.4 + 0.6 * Math.abs(Math.sin(now * star.twinkleSpeed + star.twinkleOffset)))
+        c.save()
+        c.globalAlpha = alpha
+        c.fillStyle = star.color
+        c.beginPath()
+        c.arc(star.x, star.y, star.size, 0, Math.PI * 2)
+        c.fill()
+        // Glow for bigger stars
+        if (star.size > 1.2) {
+          c.globalAlpha = alpha * 0.15
+          c.beginPath()
+          c.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2)
+          c.fill()
+        }
+        c.restore()
+        // Slow drift
+        star.y += star.drift * 0.3
+        star.x += star.drift * 0.1
+        if (star.y < -5) star.y = H + 5
+        if (star.y > H + 5) star.y = -5
+        if (star.x < -5) star.x = W + 5
+        if (star.x > W + 5) star.x = -5
+      }
+
+      // Shooting stars - spawn occasionally
+      if (now - lastShootTime > 3000 + Math.random() * 8000) {
+        lastShootTime = now
+        const angle = Math.PI * 0.2 + Math.random() * Math.PI * 0.3
+        shootingStars.push({
+          x: Math.random() * W * 0.8,
+          y: Math.random() * H * 0.4,
+          vx: Math.cos(angle) * (4 + Math.random() * 4),
+          vy: Math.sin(angle) * (4 + Math.random() * 4),
+          life: 0,
+          maxLife: 30 + Math.random() * 30,
+          size: 1 + Math.random() * 1.5,
+        })
+      }
+
+      // Draw shooting stars
+      for (let i = shootingStars.length - 1; i >= 0; i--) {
+        const ss = shootingStars[i]
+        ss.life++
+        ss.x += ss.vx
+        ss.y += ss.vy
+        const progress = ss.life / ss.maxLife
+        const alpha = progress < 0.2 ? progress / 0.2 : 1 - (progress - 0.2) / 0.8
+        c.save()
+        c.globalAlpha = Math.max(0, alpha * 0.7)
+        c.strokeStyle = '#fff9f6'
+        c.lineWidth = ss.size
+        c.lineCap = 'round'
+        c.beginPath()
+        c.moveTo(ss.x, ss.y)
+        c.lineTo(ss.x - ss.vx * 6, ss.y - ss.vy * 6)
+        c.stroke()
+        // Head glow
+        c.globalAlpha = Math.max(0, alpha * 0.4)
+        c.fillStyle = '#fff9f6'
+        c.beginPath()
+        c.arc(ss.x, ss.y, ss.size * 2, 0, Math.PI * 2)
+        c.fill()
+        c.restore()
+        if (ss.life >= ss.maxLife) shootingStars.splice(i, 1)
+      }
+
+      animId = requestAnimationFrame(animate)
+    }
+    animId = requestAnimationFrame(animate)
+
+    return () => cancelAnimationFrame(animId)
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="starfield-bg"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 0,
+        pointerEvents: 'none',
+        opacity: 0.6,
+      }}
+    />
+  )
+}
+
 export default function Home() {
   const [stage, setStage] = useState<'music' | 'gift' | 'cake' | 'text' | 'date' | 'main'>('music')
   const [giftShaking, setGiftShaking] = useState(false)
@@ -1164,6 +1302,7 @@ export default function Home() {
 
   return (
     <>
+      <StarfieldBG />
       <div id="cursor" ref={cursorRef}><CursorSVG /></div>
 
       {/* ══ STAGE 0: MUSIC CONSENT ══ */}
