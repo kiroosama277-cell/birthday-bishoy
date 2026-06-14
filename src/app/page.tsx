@@ -433,10 +433,10 @@ function NavDots() {
 }
 
 /* ════════════════════════════
-   PARTICLE HEART CANVAS
-   Sparkling beads converge to form a big heart
+   CAKE CANVAS
+   3-layer birthday cake with candle, blow-out animation
 ════════════════════════════ */
-function ParticleHeartCanvas({ active, onComplete }: { active: boolean; onComplete: () => void }) {
+function CakeCanvas({ active, onComplete }: { active: boolean; onComplete: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const completedRef = useRef(false)
   const onCompleteRef = useRef(onComplete)
@@ -461,117 +461,72 @@ function ParticleHeartCanvas({ active, onComplete }: { active: boolean; onComple
     if (!ctx) return
     ctx.scale(dpr, dpr)
 
-    // ── Heart parametric curve ──
-    const heartCx = W / 2, heartCy = H / 2 + 10
-    const hScale = Math.min(W, H) / 36
+    // ── Cake dimensions ──
+    const cakeCx = W / 2
+    const cakeCy = H / 2 + 30
+    const scale = Math.min(W, H) / 600
 
-    function heartX(t: number) { return 16 * Math.pow(Math.sin(t), 3) }
-    function heartY(t: number) { return -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) }
-
-    // ── Bead colors — gold, rose-gold, warm white, ruby ──
-    const beadColors = [
-      '#e8c98a', '#c9995a', '#f2c4b8', '#e8897a',
-      '#f7e0d0', '#d4a574', '#ffffff', '#c0463c',
-      '#f0d0a0', '#dbb870',
+    // Layer definitions: { w, h, color, yOffset from cakeCy }
+    const layers = [
+      { w: 220 * scale, h: 70 * scale, color: '#7a1f1f', yOffset: 0, label: 'bottom' },
+      { w: 170 * scale, h: 60 * scale, color: '#c0463c', yOffset: -70 * scale, label: 'middle' },
+      { w: 120 * scale, h: 50 * scale, color: '#f2c4b8', yOffset: -130 * scale, label: 'top' },
     ]
 
-    type Bead = {
-      sx: number; sy: number
-      tx: number; ty: number
-      size: number; color: string
-      baseAlpha: number
-      trail: { x: number; y: number; a: number }[]
-      delay: number
-      driftAngle: number; driftDist: number
-    }
+    // Frosting drip data per layer
+    type Drip = { x: number; w: number; h: number; layerIdx: number }
+    const drips: Drip[] = []
+    layers.forEach((layer, li) => {
+      const numDrips = 5 + Math.floor(Math.random() * 4)
+      for (let i = 0; i < numDrips; i++) {
+        drips.push({
+          x: cakeCx - layer.w / 2 + (i + 0.5) * (layer.w / numDrips) + (Math.random() - 0.5) * 10 * scale,
+          w: (4 + Math.random() * 6) * scale,
+          h: (8 + Math.random() * 18) * scale,
+          layerIdx: li,
+        })
+      }
+    })
 
-    const beads: Bead[] = []
+    // Sprinkles per layer
+    type Sprinkle = { x: number; y: number; w: number; h: number; color: string; angle: number; layerIdx: number }
+    const sprinkleColors = ['#e8897a', '#c9995a', '#e8c98a', '#f7e0d0', '#fff9f6', '#c0463c']
+    const sprinkles: Sprinkle[] = []
+    layers.forEach((layer, li) => {
+      const numSprinkles = 10 + Math.floor(Math.random() * 6)
+      for (let i = 0; i < numSprinkles; i++) {
+        sprinkles.push({
+          x: cakeCx - layer.w / 2 + Math.random() * layer.w,
+          y: cakeCy + layer.yOffset - layer.h / 2 + Math.random() * layer.h,
+          w: (2 + Math.random() * 4) * scale,
+          h: (1 + Math.random() * 2) * scale,
+          color: sprinkleColors[Math.floor(Math.random() * sprinkleColors.length)],
+          angle: Math.random() * Math.PI,
+          layerIdx: li,
+        })
+      }
+    })
 
-    // Outline beads (dense, on the heart curve) — use full circle
-    const outlineCount = 90
-    for (let i = 0; i < outlineCount; i++) {
-      const t = (i / outlineCount) * Math.PI * 2
-      const hx = heartX(t) * hScale + heartCx
-      const hy = heartY(t) * hScale + heartCy
-      const jitter = 4
-      const color = beadColors[Math.floor(Math.random() * beadColors.length)]
-      beads.push({
-        sx: Math.random() * W, sy: Math.random() * H,
-        tx: hx + (Math.random() - .5) * jitter, ty: hy + (Math.random() - .5) * jitter,
-        size: 3 + Math.random() * 4, color,
-        baseAlpha: 0.85 + Math.random() * 0.15,
-        trail: [],
-        delay: i * 12 + Math.random() * 60,
-        driftAngle: Math.random() * Math.PI * 2,
-        driftDist: 80 + Math.random() * 200,
-      })
-    }
+    // Smoke particles
+    type SmokeP = { x: number; y: number; vx: number; vy: number; size: number; alpha: number; life: number }
+    const smokeParticles: SmokeP[] = []
 
-    // Fill beads (inside heart, denser)
-    const fillCount = 150
-    for (let i = 0; i < fillCount; i++) {
-      const t = Math.random() * Math.PI * 2
-      const r = Math.random() * 0.85
-      const hx = heartX(t) * r * hScale + heartCx
-      const hy = heartY(t) * r * hScale + heartCy
-      const jitter = 6
-      const color = beadColors[Math.floor(Math.random() * beadColors.length)]
-      beads.push({
-        sx: Math.random() * W, sy: Math.random() * H,
-        tx: hx + (Math.random() - .5) * jitter, ty: hy + (Math.random() - .5) * jitter,
-        size: 2 + Math.random() * 3.5, color,
-        baseAlpha: 0.6 + Math.random() * 0.35,
-        trail: [],
-        delay: outlineCount * 12 + i * 8 + Math.random() * 40,
-        driftAngle: Math.random() * Math.PI * 2,
-        driftDist: 50 + Math.random() * 180,
-      })
-    }
+    // ── Phase timing (ms) ──
+    const P1_START = 0       // Cake assembly
+    const P1_END = 3500
+    const P2_START = 3500    // Candle + flame
+    const P2_END = 4500
+    const P3_START = 4500    // "Blow!" + countdown
+    const P3_END = 7500
+    const P4_START = 7500    // Blow out
+    const P4_END = 8500
+    const P5_START = 8500    // Fade out
+    const P5_END = 9500
+    const TOTAL = P5_END
 
-    // Sparkle beads (scattered just outside heart)
-    const sparkleCount = 40
-    for (let i = 0; i < sparkleCount; i++) {
-      const t = Math.random() * Math.PI * 2
-      const r = 1.02 + Math.random() * 0.25
-      const hx = heartX(t) * r * hScale + heartCx
-      const hy = heartY(t) * r * hScale + heartCy
-      const color = beadColors[Math.floor(Math.random() * 4)]
-      beads.push({
-        sx: Math.random() * W, sy: Math.random() * H,
-        tx: hx + (Math.random() - .5) * 15, ty: hy + (Math.random() - .5) * 15,
-        size: 1.5 + Math.random() * 2.5, color,
-        baseAlpha: 0.3 + Math.random() * 0.3,
-        trail: [],
-        delay: outlineCount * 12 + fillCount * 8 + i * 15 + Math.random() * 30,
-        driftAngle: Math.random() * Math.PI * 2,
-        driftDist: 100 + Math.random() * 250,
-      })
-    }
-
-    // ── Animation timing ──
-    const gatherDuration = 2200
-    const maxDelay = Math.max(...beads.map(b => b.delay))
-    const convergeEnd = maxDelay + gatherDuration + 300
-    const pulseStart = convergeEnd
-    const pulseDuration = 2400
-    const dissolveStart = pulseStart + pulseDuration
-    const dissolveDuration = 3000
-    const totalDuration = dissolveStart + dissolveDuration
-
-    // ── Easing ──
-    function easeOutQuart(t: number) { return 1 - Math.pow(1 - t, 4) }
+    function easeOutCubic(t: number) { return 1 - Math.pow(1 - t, 3) }
     function easeInQuad(t: number) { return t * t }
-
-    // ── Pulse: 3 heartbeats ──
-    function getHeartScale(elapsed: number): number {
-      if (elapsed < 0) return 1
-      if (elapsed < 300) return 1 + 0.10 * Math.sin((elapsed / 300) * Math.PI)
-      if (elapsed < 650) return 1
-      if (elapsed < 950) return 1 + 0.16 * Math.sin(((elapsed - 650) / 300) * Math.PI)
-      if (elapsed < 1300) return 1
-      if (elapsed < 1550) return 1 + 0.06 * Math.sin(((elapsed - 1300) / 250) * Math.PI)
-      return 1
-    }
+    function easeOutQuad(t: number) { return 1 - (1 - t) * (1 - t) }
 
     // ── Animation loop ──
     let animId = 0
@@ -583,8 +538,24 @@ function ParticleHeartCanvas({ active, onComplete }: { active: boolean; onComple
 
       ctx.clearRect(0, 0, W, H)
 
-      // ── Background: dark vignette ──
-      const bgAlpha = Math.min(1, elapsed / 1200) * Math.max(0, 1 - Math.max(0, (elapsed - dissolveStart) / 1500))
+      // ── Global alpha for fade out ──
+      let globalAlpha = 1
+      if (elapsed >= P5_START) {
+        globalAlpha = Math.max(0, 1 - (elapsed - P5_START) / (P5_END - P5_START))
+      }
+      if (globalAlpha <= 0.001) {
+        if (!completedRef.current) {
+          completedRef.current = true
+          onCompleteRef.current()
+        }
+        return
+      }
+
+      ctx.save()
+      ctx.globalAlpha = globalAlpha
+
+      // ── Background ──
+      const bgAlpha = Math.min(1, elapsed / 800)
       if (bgAlpha > 0.001) {
         const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7)
         bgGrad.addColorStop(0, `rgba(20, 8, 8, ${bgAlpha * 0.8})`)
@@ -593,145 +564,277 @@ function ParticleHeartCanvas({ active, onComplete }: { active: boolean; onComple
         ctx.fillRect(0, 0, W, H)
       }
 
-      // ── Glow behind heart ──
-      const pulseElapsed = elapsed - pulseStart
-      const convergence = Math.min(1, Math.max(0, (elapsed - 500) / convergeEnd))
-      let glowIntensity = convergence * 0.35
-      if (pulseElapsed >= 0 && pulseElapsed < 300) glowIntensity += 0.25
-      else if (pulseElapsed >= 650 && pulseElapsed < 950) glowIntensity += 0.35
-      else if (pulseElapsed >= 1300 && pulseElapsed < 1550) glowIntensity += 0.15
-      const dissolveElapsed = elapsed - dissolveStart
-      if (dissolveElapsed > 0) glowIntensity *= Math.max(0, 1 - dissolveElapsed / 1500)
+      // ── Phase 1: Cake Assembly ──
+      // Each layer slides in from the sides with staggered timing
+      const layerAnimDuration = 700
+      const layerDelays = [200, 1000, 1800] // when each layer starts sliding in
 
-      if (glowIntensity > 0.005) {
-        const glowSize = Math.min(W, H) * 0.45 * convergence
-        if (glowSize > 1) {
-          const glowGrad = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, glowSize)
-          glowGrad.addColorStop(0, `rgba(232, 137, 122, ${glowIntensity})`)
-          glowGrad.addColorStop(0.3, `rgba(201, 153, 90, ${glowIntensity * 0.5})`)
-          glowGrad.addColorStop(0.6, `rgba(192, 70, 60, ${glowIntensity * 0.15})`)
-          glowGrad.addColorStop(1, 'rgba(139, 42, 42, 0)')
-          ctx.fillStyle = glowGrad
-          ctx.fillRect(0, 0, W, H)
+      for (let li = 0; li < layers.length; li++) {
+        const layer = layers[li]
+        const layerElapsed = elapsed - layerDelays[li]
+        if (layerElapsed < 0) continue
+
+        const progress = Math.min(1, layerElapsed / layerAnimDuration)
+        const eased = easeOutCubic(progress)
+
+        // Slide from side: bottom from left, middle from right, top from left
+        const slideDir = li % 2 === 0 ? -1 : 1
+        const slideDist = 300 * scale
+        const offsetX = slideDir * slideDist * (1 - eased)
+
+        const lx = cakeCx + offsetX
+        const ly = cakeCy + layer.yOffset
+        const lw = layer.w
+        const lh = layer.h
+        const radius = 8 * scale
+
+        // Draw layer body
+        ctx.save()
+        ctx.globalAlpha = globalAlpha * Math.min(1, progress * 2)
+        ctx.fillStyle = layer.color
+        ctx.beginPath()
+        ctx.moveTo(lx - lw / 2 + radius, ly - lh / 2)
+        ctx.lineTo(lx + lw / 2 - radius, ly - lh / 2)
+        ctx.quadraticCurveTo(lx + lw / 2, ly - lh / 2, lx + lw / 2, ly - lh / 2 + radius)
+        ctx.lineTo(lx + lw / 2, ly + lh / 2 - radius)
+        ctx.quadraticCurveTo(lx + lw / 2, ly + lh / 2, lx + lw / 2 - radius, ly + lh / 2)
+        ctx.lineTo(lx - lw / 2 + radius, ly + lh / 2)
+        ctx.quadraticCurveTo(lx - lw / 2, ly + lh / 2, lx - lw / 2, ly + lh / 2 - radius)
+        ctx.lineTo(lx - lw / 2, ly - lh / 2 + radius)
+        ctx.quadraticCurveTo(lx - lw / 2, ly - lh / 2, lx - lw / 2 + radius, ly - lh / 2)
+        ctx.closePath()
+        ctx.fill()
+
+        // Highlight on top edge
+        ctx.fillStyle = 'rgba(255,255,255,0.08)'
+        ctx.fillRect(lx - lw / 2, ly - lh / 2, lw, lh * 0.15)
+
+        ctx.restore()
+
+        // Frosting drips — appear after layer lands
+        if (progress > 0.8) {
+          const dripProgress = Math.min(1, (progress - 0.8) / 0.2)
+          const layerTopY = ly - lh / 2
+          const frostingColor = li === 0 ? '#f2c4b8' : li === 1 ? '#f7e0d0' : '#fff9f6'
+
+          drips.filter(d => d.layerIdx === li).forEach((drip, di) => {
+            const dp = Math.min(1, (dripProgress - di * 0.05))
+            if (dp <= 0) return
+            const dEased = easeOutCubic(Math.max(0, dp))
+            ctx.save()
+            ctx.globalAlpha = globalAlpha * dEased * 0.9
+            ctx.fillStyle = frostingColor
+            // Frosting strip on top
+            ctx.fillRect(lx - lw / 2, layerTopY - 3 * scale, lw, 5 * scale)
+            // Drip
+            const dripH = drip.h * dEased
+            ctx.beginPath()
+            ctx.ellipse(drip.x + offsetX, layerTopY + dripH / 2, drip.w / 2, dripH / 2, 0, 0, Math.PI * 2)
+            ctx.fill()
+            ctx.restore()
+          })
+        }
+
+        // Sprinkles — appear after frosting
+        if (progress >= 1) {
+          sprinkles.filter(s => s.layerIdx === li).forEach((sp, si) => {
+            const spDelay = layerDelays[li] + layerAnimDuration + si * 15
+            const spElapsed = elapsed - spDelay
+            if (spElapsed < 0) return
+            const spProgress = Math.min(1, spElapsed / 200)
+            ctx.save()
+            ctx.globalAlpha = globalAlpha * spProgress * 0.8
+            ctx.fillStyle = sp.color
+            ctx.translate(sp.x + offsetX, sp.y)
+            ctx.rotate(sp.angle)
+            ctx.fillRect(-sp.w / 2, -sp.h / 2, sp.w, sp.h)
+            ctx.restore()
+          })
         }
       }
 
-      // ── Heart scale (pulse) ──
-      const heartScale = pulseElapsed >= 0 ? getHeartScale(pulseElapsed) : 1
+      // ── Candle ──
+      const candleVisible = elapsed >= P2_START
+      const candleProgress = candleVisible ? Math.min(1, (elapsed - P2_START) / (P2_END - P2_START)) : 0
 
-      // ── Draw beads ──
-      for (let i = 0; i < beads.length; i++) {
-        const b = beads[i]
-        const beadElapsed = elapsed - b.delay
+      if (candleVisible) {
+        const topLayer = layers[2]
+        const candleX = cakeCx
+        const candleBaseY = cakeCy + topLayer.yOffset - topLayer.h / 2
+        const candleW = 8 * scale
+        const candleH = 40 * scale
+        const cEased = easeOutCubic(candleProgress)
+        const candleAlpha = Math.min(1, cEased * 2)
 
-        if (beadElapsed < 0) {
-          const fadeIn = Math.min(1, elapsed / 800)
-          const alpha = fadeIn * b.baseAlpha * 0.4
-          if (alpha < 0.01) continue
+        // Candle body
+        ctx.save()
+        ctx.globalAlpha = globalAlpha * candleAlpha
+        ctx.fillStyle = '#f7e0d0'
+        ctx.fillRect(candleX - candleW / 2, candleBaseY - candleH * cEased, candleW, candleH * cEased)
+        // Stripe
+        ctx.fillStyle = '#e8897a'
+        ctx.fillRect(candleX - candleW / 2, candleBaseY - candleH * cEased, candleW, 3 * scale)
+        ctx.fillRect(candleX - candleW / 2, candleBaseY - candleH * cEased * 0.5, candleW, 3 * scale)
+        // Wick
+        ctx.fillStyle = '#3d1010'
+        ctx.fillRect(candleX - 1.5 * scale, candleBaseY - candleH * cEased - 6 * scale, 3 * scale, 6 * scale)
+        ctx.restore()
+
+        // ── Flame ──
+        const flameBaseY = candleBaseY - candleH - 6 * scale
+        const isBlownOut = elapsed >= P4_START
+        const blowProgress = isBlownOut ? Math.min(1, (elapsed - P4_START) / (P4_END - P4_START)) : 0
+        const flameScale = isBlownOut ? Math.max(0, 1 - easeInQuad(blowProgress)) : 1
+        const flameAlpha = flameScale
+
+        // More intense flicker during countdown (Phase 3)
+        const isCountdown = elapsed >= P3_START && elapsed < P4_START
+        const flickerIntensity = isCountdown ? 0.2 : 0.08
+        const flickerSpeed = isCountdown ? 0.02 : 0.008
+
+        if (flameAlpha > 0.01 && candleProgress > 0.5) {
+          const flicker = Math.sin(elapsed * flickerSpeed) * flickerIntensity + Math.sin(elapsed * 0.013) * 0.04
+          const fScale = (1 + flicker) * flameScale
+
+          // Glow around flame
+          const glowRadius = 60 * scale * fScale
+          const glowGrad = ctx.createRadialGradient(candleX, flameBaseY - 10 * scale, 0, candleX, flameBaseY - 10 * scale, glowRadius)
+          glowGrad.addColorStop(0, `rgba(255, 200, 80, ${0.25 * flameAlpha})`)
+          glowGrad.addColorStop(0.3, `rgba(255, 160, 50, ${0.12 * flameAlpha})`)
+          glowGrad.addColorStop(0.6, `rgba(232, 137, 122, ${0.05 * flameAlpha})`)
+          glowGrad.addColorStop(1, 'rgba(232, 137, 122, 0)')
+          ctx.fillStyle = glowGrad
+          ctx.fillRect(candleX - glowRadius, flameBaseY - 10 * scale - glowRadius, glowRadius * 2, glowRadius * 2)
+
+          // Outer flame
           ctx.save()
-          ctx.globalAlpha = alpha
-          ctx.fillStyle = b.color
+          ctx.globalAlpha = globalAlpha * flameAlpha * 0.6
+          ctx.fillStyle = '#ff9933'
           ctx.beginPath()
-          ctx.arc(b.sx, b.sy, b.size * 0.6, 0, Math.PI * 2)
+          ctx.ellipse(candleX, flameBaseY - 14 * scale * fScale, 8 * scale * fScale, 18 * scale * fScale, 0, 0, Math.PI * 2)
           ctx.fill()
           ctx.restore()
-          continue
+
+          // Inner flame
+          ctx.save()
+          ctx.globalAlpha = globalAlpha * flameAlpha * 0.9
+          ctx.fillStyle = '#ffe066'
+          ctx.beginPath()
+          ctx.ellipse(candleX, flameBaseY - 12 * scale * fScale, 4 * scale * fScale, 12 * scale * fScale, 0, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.restore()
+
+          // Core
+          ctx.save()
+          ctx.globalAlpha = globalAlpha * flameAlpha
+          ctx.fillStyle = '#fffbe6'
+          ctx.beginPath()
+          ctx.ellipse(candleX, flameBaseY - 8 * scale * fScale, 2 * scale * fScale, 5 * scale * fScale, 0, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.restore()
         }
 
-        const gatherProgress = Math.min(1, beadElapsed / gatherDuration)
-        const easedGather = easeOutQuart(gatherProgress)
-
-        let bx = b.sx + (b.tx - b.sx) * easedGather
-        let by = b.sy + (b.ty - b.sy) * easedGather
-
-        // Pulse after converged
-        if (gatherProgress > 0.9) {
-          const pulseInfluence = Math.min(1, (gatherProgress - 0.9) / 0.1)
-          const px = heartCx + (b.tx - heartCx) * heartScale
-          const py = heartCy + (b.ty - heartCy) * heartScale
-          bx = bx + (px - bx) * pulseInfluence
-          by = by + (py - by) * pulseInfluence
-        }
-
-        // Dissolve
-        let dissolveAlpha = 1
-        if (dissolveElapsed > 0) {
-          const stagger = i * 8
-          const actualDissolve = dissolveElapsed - stagger
-          if (actualDissolve > 0) {
-            const dp = Math.min(1, actualDissolve / dissolveDuration)
-            dissolveAlpha = 1 - easeInQuad(dp)
-            const drift = easeOutQuart(Math.min(1, dp * 1.3))
-            bx += Math.cos(b.driftAngle) * b.driftDist * drift
-            by += Math.sin(b.driftAngle) * b.driftDist * drift - 20 * drift
+        // ── Phase 4: Smoke particles ──
+        if (isBlownOut && blowProgress < 1) {
+          // Spawn new smoke
+          if (Math.random() < 0.3 && smokeParticles.length < 30) {
+            smokeParticles.push({
+              x: candleX + (Math.random() - 0.5) * 6 * scale,
+              y: flameBaseY - 10 * scale * flameScale,
+              vx: (Math.random() - 0.5) * 0.5 * scale,
+              vy: -0.8 * scale - Math.random() * 0.5 * scale,
+              size: (3 + Math.random() * 5) * scale,
+              alpha: 0.5,
+              life: 0,
+            })
           }
         }
 
-        if (dissolveAlpha < 0.01) continue
-        const alpha = b.baseAlpha * dissolveAlpha
-        if (alpha < 0.01) continue
-
-        // Trail during convergence
-        if (gatherProgress < 1 && gatherProgress > 0.05) {
-          b.trail.push({ x: bx, y: by, a: alpha * 0.3 })
-          if (b.trail.length > 3) b.trail.shift()
-          b.trail.forEach((pt, ti) => {
-            const trailAlpha = pt.a * (ti / b.trail.length) * 0.4
-            if (trailAlpha > 0.01) {
-              ctx.save()
-              ctx.globalAlpha = trailAlpha
-              ctx.fillStyle = b.color
-              ctx.beginPath()
-              ctx.arc(pt.x, pt.y, b.size * 0.4, 0, Math.PI * 2)
-              ctx.fill()
-              ctx.restore()
-            }
-          })
-        } else {
-          b.trail = []
+        // Update and draw smoke
+        for (let i = smokeParticles.length - 1; i >= 0; i--) {
+          const sp = smokeParticles[i]
+          sp.life++
+          sp.x += sp.vx
+          sp.y += sp.vy
+          sp.vy -= 0.01 * scale
+          sp.size += 0.08 * scale
+          sp.alpha -= 0.008
+          if (sp.alpha <= 0) {
+            smokeParticles.splice(i, 1)
+            continue
+          }
+          ctx.save()
+          ctx.globalAlpha = globalAlpha * sp.alpha
+          ctx.fillStyle = '#c9995a'
+          ctx.beginPath()
+          ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.restore()
         }
+      }
 
-        // Sparkle twinkle after converged
-        let twinkle = 1
-        if (gatherProgress >= 1 && dissolveElapsed < 0) {
-          twinkle = 0.7 + 0.3 * Math.sin(elapsed * 0.005 + i * 1.7)
-        }
+      // ── Phase 3: "Blow!" text + countdown ──
+      if (elapsed >= P3_START && elapsed < P4_START) {
+        const textProgress = Math.min(1, (elapsed - P3_START) / 500)
+        const textAlpha = easeOutCubic(textProgress)
 
-        // Draw bead: glow → body → highlight
+        // "Blow!" text with shimmer
         ctx.save()
-        // Soft glow
-        ctx.globalAlpha = alpha * twinkle * 0.2
-        ctx.fillStyle = b.color
-        ctx.beginPath()
-        ctx.arc(bx, by, b.size * 2.5, 0, Math.PI * 2)
-        ctx.fill()
-        // Main bead
-        ctx.globalAlpha = alpha * twinkle
-        ctx.fillStyle = b.color
-        ctx.beginPath()
-        ctx.arc(bx, by, b.size, 0, Math.PI * 2)
-        ctx.fill()
-        // Center highlight
-        ctx.fillStyle = '#ffffff'
-        ctx.globalAlpha = alpha * twinkle * 0.6
-        ctx.beginPath()
-        ctx.arc(bx, by, b.size * 0.35, 0, Math.PI * 2)
-        ctx.fill()
+        ctx.globalAlpha = globalAlpha * textAlpha
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+
+        const blowY = cakeCy + layers[2].yOffset - layers[2].h / 2 - 100 * scale
+        const shimmer = 0.85 + 0.15 * Math.sin(elapsed * 0.005)
+
+        // Glow behind text
+        const textGlow = ctx.createRadialGradient(cakeCx, blowY, 0, cakeCx, blowY, 80 * scale)
+        textGlow.addColorStop(0, `rgba(201, 153, 90, ${0.15 * textAlpha * shimmer})`)
+        textGlow.addColorStop(1, 'rgba(201, 153, 90, 0)')
+        ctx.fillStyle = textGlow
+        ctx.fillRect(cakeCx - 80 * scale, blowY - 80 * scale, 160 * scale, 160 * scale)
+
+        // "Blow!" text
+        ctx.font = `300 ${Math.round(36 * scale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
+        const grad = ctx.createLinearGradient(cakeCx - 60 * scale, blowY, cakeCx + 60 * scale, blowY)
+        grad.addColorStop(0, '#c9995a')
+        grad.addColorStop(0.5, '#fff9f6')
+        grad.addColorStop(1, '#c9995a')
+        ctx.fillStyle = grad
+        ctx.globalAlpha = globalAlpha * textAlpha * shimmer
+        ctx.fillText('Blow!', cakeCx, blowY)
+
+        // Countdown: 3, 2, 1
+        const countdownElapsed = elapsed - P3_START
+        const countdownY = blowY + 50 * scale
+        let countNum = 3
+        if (countdownElapsed > 2000) countNum = 1
+        else if (countdownElapsed > 1000) countNum = 2
+
+        const countAge = countdownElapsed % 1000
+        const countScale = 1 + 0.15 * Math.sin((countAge / 1000) * Math.PI)
+
+        ctx.font = `300 ${Math.round(28 * scale * countScale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
+        ctx.fillStyle = '#f2c4b8'
+        ctx.globalAlpha = globalAlpha * textAlpha * 0.8
+        ctx.fillText(countNum.toString(), cakeCx, countdownY)
+
         ctx.restore()
       }
 
-      // Transition to next stage
-      if (elapsed >= totalDuration - 600 && !completedRef.current) {
+      // ── Transition ──
+      if (elapsed >= TOTAL - 200 && !completedRef.current) {
         completedRef.current = true
         onCompleteRef.current()
       }
 
-      if (elapsed < totalDuration) {
+      ctx.restore() // restore globalAlpha
+
+      if (elapsed < TOTAL) {
         animId = requestAnimationFrame(animate)
       }
     }
 
-    // Start animation on next frame to ensure canvas is painted
     animId = requestAnimationFrame(animate)
 
     return () => {
@@ -754,19 +857,84 @@ function ParticleHeartCanvas({ active, onComplete }: { active: boolean; onComple
 }
 
 /* ════════════════════════════
+   LETTER ENVELOPE COMPONENT
+════════════════════════════ */
+function LetterEnvelope({ onOpen }: { onOpen: () => void }) {
+  const [opened, setOpened] = useState(false)
+
+  const handleOpen = useCallback(() => {
+    if (opened) return
+    setOpened(true)
+    onOpen()
+  }, [opened, onOpen])
+
+  return (
+    <div className="letter-section">
+      <motion.div
+        className="letter-envelope"
+        onClick={handleOpen}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <svg width="80" height="60" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Envelope body */}
+          <rect x="2" y="12" width="76" height="46" rx="4" fill="#7a1f1f" stroke="#c0463c" strokeWidth="1" />
+          {/* Envelope flap (lid) */}
+          <motion.path
+            d="M2 14 L40 36 L78 14"
+            fill="#c0463c"
+            stroke="#e8897a"
+            strokeWidth="0.8"
+            animate={opened ? { d: 'M2 14 L40 -8 L78 14', opacity: 0.6 } : { d: 'M2 14 L40 36 L78 14', opacity: 1 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          />
+          {/* Heart seal */}
+          {!opened && (
+            <motion.circle
+              cx="40" cy="30" r="7"
+              fill="#e8897a"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+          )}
+          {!opened && (
+            <text x="40" y="34" textAnchor="middle" fill="#7a1f1f" fontSize="10" fontWeight="bold">♥</text>
+          )}
+        </svg>
+      </motion.div>
+
+      <AnimatePresence>
+        {opened && (
+          <motion.div
+            className="letter-content"
+            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <p>I didn&apos;t mean the things I said when I was angry. I&apos;m sorry.</p>
+            <p className="missed-you">I missed you. <span style={{ color: '#e8897a' }}>♥</span></p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/* ════════════════════════════
    MAIN PAGE COMPONENT
 ════════════════════════════ */
 export default function Home() {
-  const [stage, setStage] = useState<'music' | 'gift' | 'roses' | 'text' | 'date' | 'main'>('music')
+  const [stage, setStage] = useState<'music' | 'gift' | 'cake' | 'text' | 'date' | 'main'>('music')
   const [giftShaking, setGiftShaking] = useState(false)
   const [giftOpened, setGiftOpened] = useState(false)
   const [wordVisible, setWordVisible] = useState({ w1: false, w2: false, myb: false })
-  const [heartDrawn, setHeartDrawn] = useState(false)
   const [dateVisible, setDateVisible] = useState(false)
   const [dateSubVisible, setDateSubVisible] = useState(false)
   const [mainVisible, setMainVisible] = useState(false)
   const [scrollHintVisible, setScrollHintVisible] = useState(false)
   const [musicAccepted, setMusicAccepted] = useState(false)
+  const [letterOpened, setLetterOpened] = useState(false)
 
   const [revealed, setRevealed] = useState({ s1: false, s2: false, s3: false, s4: false, s5: false, s6: false })
 
@@ -780,7 +948,7 @@ export default function Home() {
     setRevealed(prev => ({ ...prev, [sectionKey]: true }))
   }, [])
 
-  const handleHeartComplete = useCallback(() => {
+  const handleCakeComplete = useCallback(() => {
     setStage('text')
   }, [])
 
@@ -851,21 +1019,21 @@ export default function Home() {
         } else {
           // Gift opens — lid flies off, then roses burst
           setGiftOpened(true)
-          setTimeout(() => setStage('roses'), 900)
+          setTimeout(() => setStage('cake'), 900)
         }
       }, 550)
     }
     doShake()
   }, [stage])
 
-  // ═══ PARTICLE HEART — handled by ParticleHeartCanvas component ═══
+  // ═══ CAKE ANIMATION — handled by CakeCanvas component ═══
 
   // ═══ STAGGER TEXT ═══
   useEffect(() => {
     if (stage !== 'text') return
     const t1 = setTimeout(() => setWordVisible(v => ({ ...v, w1: true })), 150)
     const t2 = setTimeout(() => setWordVisible(v => ({ ...v, w2: true })), 850)
-    const t3 = setTimeout(() => { setWordVisible(v => ({ ...v, myb: true })); setTimeout(() => setHeartDrawn(true), 350) }, 1650)
+    const t3 = setTimeout(() => { setWordVisible(v => ({ ...v, myb: true })) }, 1650)
     const t4 = setTimeout(() => setStage('date'), 5800)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, [stage])
@@ -944,25 +1112,25 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ══ STAGE 2: BEAD HEART ══ — sparkling beads converge to form a heart */}
-      <div className={`stage ${stage === 'music' || stage === 'gift' ? 'hidden' : stage === 'roses' ? 'entering' : 'gone'}`} id="stRoses" style={{ zIndex: 500 }}>
-        <ParticleHeartCanvas active={stage === 'roses'} onComplete={handleHeartComplete} />
+      {/* ══ STAGE 2: CAKE ══ — birthday cake with candle animation */}
+      <div className={`stage ${stage === 'music' || stage === 'gift' ? 'hidden' : stage === 'cake' ? 'entering' : 'gone'}`} id="stCake" style={{ zIndex: 500 }}>
+        <CakeCanvas active={stage === 'cake'} onComplete={handleCakeComplete} />
       </div>
 
       {/* ══ STAGE 3: TEXT ══ */}
-      <div className={`stage ${['music', 'gift', 'roses'].includes(stage) ? 'hidden' : stage === 'text' ? 'entering' : 'gone'}`} id="stText" style={{ zIndex: 500 }}>
+      <div className={`stage ${['music', 'gift', 'cake'].includes(stage) ? 'hidden' : stage === 'text' ? 'entering' : 'gone'}`} id="stText" style={{ zIndex: 500 }}>
         <div className={`wrd ${wordVisible.w1 ? 'in' : ''}`}>Happy</div>
         <div className={`wrd ${wordVisible.w2 ? 'in' : ''}`}>Birthday</div>
         <div className={`myb-row ${wordVisible.myb ? 'in' : ''}`}>
           <svg className="heart-svg-draw" viewBox="0 0 380 130" preserveAspectRatio="xMidYMid meet">
-            <path className={`h-path ${heartDrawn ? 'draw' : ''}`} d="M190,112 C100,82 16,54 16,30 C16,9 42,-4 78,14 C108,28 155,58 190,80 C225,58 272,28 302,14 C338,-4 364,9 364,30 C364,54 280,82 190,112 Z" />
+            <path className="h-path draw" d="M190,112 C100,82 16,54 16,30 C16,9 42,-4 78,14 C108,28 155,58 190,80 C225,58 272,28 302,14 C338,-4 364,9 364,30 C364,54 280,82 190,112 Z" />
           </svg>
           <span className="myb-txt">My B</span>
         </div>
       </div>
 
       {/* ══ STAGE 4: DATE ══ */}
-      <div className={`stage ${['music', 'gift', 'roses', 'text'].includes(stage) ? 'hidden' : stage === 'date' ? 'entering' : 'gone'}`} id="stDate" style={{ zIndex: 500 }}>
+      <div className={`stage ${['music', 'gift', 'cake', 'text'].includes(stage) ? 'hidden' : stage === 'date' ? 'entering' : 'gone'}`} id="stDate" style={{ zIndex: 500 }}>
         <div className={`date-num ${dateVisible ? 'in' : ''}`}>June 19</div>
         <div className={`date-sub ${dateSubVisible ? 'in' : ''}`}>his special day</div>
       </div>
@@ -1080,6 +1248,12 @@ export default function Home() {
           <ShimmerText delay={0.85} revealed={revealed.s6} extraStyle={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)', fontStyle: 'italic' }}>&ldquo;Happy Birthday, my love&rdquo;</ShimmerText>
           <AnimatedText delay={1.1} revealed={revealed.s6} variant="blurIn" extraStyle={{ fontSize: '.78rem', opacity: '.4', letterSpacing: '.2em', marginTop: '.8rem' }}>tap gently</AnimatedText>
         </AnimatedSection>
+
+        {mainVisible && (
+          <div className="letter-section">
+            <LetterEnvelope onOpen={() => setLetterOpened(true)} />
+          </div>
+        )}
 
         <footer className="site-footer">
           <div className="roses">🌹 🌸 🌹</div>

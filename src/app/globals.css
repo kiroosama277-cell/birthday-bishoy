@@ -69,8 +69,8 @@ body {
   transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease !important;
 }
 
-/* Roses fade out gently — no blur/scale that would break the split animation */
-#stRoses.stage.gone {
+/* Cake stage fades out gently — no blur/scale that would break the split animation */
+#stCake.stage.gone {
   transform: none !important;
   filter: none !important;
   transition: opacity 0.8s ease !important;
@@ -265,8 +265,8 @@ body {
   100% { width: 900px; height: 900px; opacity: 0; }
 }
 
-/* ── STAGE 1: ROSES BLOOM ── */
-#stRoses { background: #0e0404; overflow: hidden; }
+/* ── STAGE 1: CAKE ANIMATION ── */
+#stCake { background: #0e0404; overflow: hidden; }
 
 /* ── STAGE 2: TEXT ── */
 #stText {
@@ -1089,4 +1089,46 @@ body {
   .sealed-aura { width: 120px; height: 120px; }
   .sealed-aura-2 { width: 150px; height: 150px; }
   .sealed-mini-particles { width: 220px; height: 220px; }
+}
+
+/* ════════════════════════════
+   LETTER / ENVELOPE
+════════════════════════════ */
+.letter-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px 100px;
+}
+
+.letter-envelope {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.letter-envelope:hover {
+  transform: scale(1.08);
+}
+
+.letter-content {
+  text-align: center;
+  padding: 40px 30px;
+  max-width: 400px;
+  margin-top: 30px;
+  background: rgba(242, 196, 184, 0.06);
+  border: 1px solid rgba(232, 137, 122, 0.15);
+  border-radius: 12px;
+}
+
+.letter-content p {
+  font-family: var(--font-cormorant), 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  line-height: 1.8;
+  color: var(--petal-pink);
+}
+
+.letter-content .missed-you {
+  font-size: 1.6rem;
+  color: var(--white);
+  margin-top: 16px;
 }
