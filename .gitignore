@@ -52,3 +52,8 @@ prompt
 server.log
 # Skills directory
 /skills/
+# Large files
+download/bishoy-birthday-full.zip
+download/bishoy-birthday-source.zip
+download/birthday-website.zip
+download/bishoy-birthday.zip
