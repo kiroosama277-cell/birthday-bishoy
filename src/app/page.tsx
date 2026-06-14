@@ -303,7 +303,9 @@ function SealedReveal({ type, revealed, onReveal }: { type: string; revealed: bo
               <circle cx="160" cy="160" r="140" fill="none" stroke={config.ringColor2} strokeWidth="0.5" strokeDasharray="3 10" />
               {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => {
                 const rad = (angle * Math.PI) / 180
-                return <circle key={i} cx={160 + Math.cos(rad) * 150} cy={160 + Math.sin(rad) * 150} r="2" fill={config.ringColor1} />
+                const cx = Math.round((160 + Math.cos(rad) * 150) * 100) / 100
+                const cy = Math.round((160 + Math.sin(rad) * 150) * 100) / 100
+                return <circle key={i} cx={cx} cy={cy} r="2" fill={config.ringColor1} />
               })}
             </svg>
           </motion.div>
@@ -313,7 +315,9 @@ function SealedReveal({ type, revealed, onReveal }: { type: string; revealed: bo
               <circle cx="160" cy="160" r="100" fill="none" stroke={config.ringColor1} strokeWidth="0.4" strokeDasharray="2 8" />
               {[0, 60, 120, 180, 240, 300].map((angle, i) => {
                 const rad = (angle * Math.PI) / 180
-                return <circle key={i} cx={160 + Math.cos(rad) * 110} cy={160 + Math.sin(rad) * 110} r="1.5" fill={config.ringColor2} />
+                const cx = Math.round((160 + Math.cos(rad) * 110) * 100) / 100
+                const cy = Math.round((160 + Math.sin(rad) * 110) * 100) / 100
+                return <circle key={i} cx={cx} cy={cy} r="1.5" fill={config.ringColor2} />
               })}
             </svg>
           </motion.div>
@@ -788,6 +792,7 @@ function CakeCanvas({ active, onComplete }: { active: boolean; onComplete: () =>
       }
 
       // ── Phase 3: "Blow!" text + countdown timer ──
+      // Position: BELOW the cake so it doesn't overlap the candle/flame
       if (elapsed >= P3_START && elapsed < P4_START) {
         const textProgress = Math.min(1, (elapsed - P3_START) / 500)
         const textAlpha = easeOutCubic(textProgress)
@@ -796,23 +801,28 @@ function CakeCanvas({ active, onComplete }: { active: boolean; onComplete: () =>
         const countdownProgress = Math.min(1, countdownElapsed / countdownDuration)
 
         ctx.save()
-        ctx.globalAlpha = globalAlpha * textAlpha
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
 
-        const blowY = cakeCy + layers[2].yOffset - layers[2].h / 2 - 160 * scale
+        // Position below the cake
+        const bottomLayerBottom = cakeCy + layers[0].h / 2
+        const sectionY = bottomLayerBottom + 80 * scale
+
+        // ── "Blow!" text ──
+        const blowY = sectionY - 20 * scale
         const shimmer = 0.85 + 0.15 * Math.sin(elapsed * 0.005)
 
-        // Glow behind "Blow!" text
-        const textGlow = ctx.createRadialGradient(cakeCx, blowY, 0, cakeCx, blowY, 80 * scale)
-        textGlow.addColorStop(0, `rgba(201, 153, 90, ${0.15 * textAlpha * shimmer})`)
+        // Soft glow behind "Blow!"
+        const textGlow = ctx.createRadialGradient(cakeCx, blowY, 0, cakeCx, blowY, 60 * scale)
+        textGlow.addColorStop(0, `rgba(201, 153, 90, ${0.12 * textAlpha * shimmer})`)
         textGlow.addColorStop(1, 'rgba(201, 153, 90, 0)')
         ctx.fillStyle = textGlow
-        ctx.fillRect(cakeCx - 80 * scale, blowY - 80 * scale, 160 * scale, 160 * scale)
+        ctx.globalAlpha = globalAlpha * textAlpha
+        ctx.fillRect(cakeCx - 60 * scale, blowY - 60 * scale, 120 * scale, 120 * scale)
 
-        // "Blow!" text
-        ctx.font = `300 ${Math.round(40 * scale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
-        const grad = ctx.createLinearGradient(cakeCx - 60 * scale, blowY, cakeCx + 60 * scale, blowY)
+        // "Blow!" text with gradient
+        ctx.font = `300 ${Math.round(32 * scale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
+        const grad = ctx.createLinearGradient(cakeCx - 50 * scale, blowY, cakeCx + 50 * scale, blowY)
         grad.addColorStop(0, '#c9995a')
         grad.addColorStop(0.5, '#fff9f6')
         grad.addColorStop(1, '#c9995a')
@@ -820,38 +830,47 @@ function CakeCanvas({ active, onComplete }: { active: boolean; onComplete: () =>
         ctx.globalAlpha = globalAlpha * textAlpha * shimmer
         ctx.fillText('Blow!', cakeCx, blowY)
 
-        // ── Big circular countdown timer ──
+        // ── Circular countdown timer ──
         const timerCx = cakeCx
-        const timerCy = blowY + 90 * scale
-        const timerRadius = 40 * scale
+        const timerCy = sectionY + 65 * scale
+        const timerRadius = 44 * scale
 
-        // Background circle
+        // Outer soft glow
+        const outerGlow = ctx.createRadialGradient(timerCx, timerCy, timerRadius * 0.8, timerCx, timerCy, timerRadius * 1.8)
+        outerGlow.addColorStop(0, `rgba(201, 153, 90, ${0.06 * textAlpha})`)
+        outerGlow.addColorStop(1, 'rgba(201, 153, 90, 0)')
+        ctx.fillStyle = outerGlow
+        ctx.globalAlpha = globalAlpha * textAlpha
+        ctx.fillRect(timerCx - timerRadius * 2, timerCy - timerRadius * 2, timerRadius * 4, timerRadius * 4)
+
+        // Background circle (dark glass)
         ctx.save()
-        ctx.globalAlpha = globalAlpha * textAlpha * 0.15
-        ctx.fillStyle = '#c9995a'
+        ctx.globalAlpha = globalAlpha * textAlpha * 0.12
+        ctx.fillStyle = '#1a0808'
         ctx.beginPath()
-        ctx.arc(timerCx, timerCy, timerRadius + 6 * scale, 0, Math.PI * 2)
+        ctx.arc(timerCx, timerCy, timerRadius + 8 * scale, 0, Math.PI * 2)
         ctx.fill()
         ctx.restore()
 
-        // Progress ring background (dark)
+        // Progress ring background (dark track)
         ctx.save()
-        ctx.globalAlpha = globalAlpha * textAlpha * 0.3
+        ctx.globalAlpha = globalAlpha * textAlpha * 0.2
         ctx.strokeStyle = '#3d1010'
-        ctx.lineWidth = 4 * scale
+        ctx.lineWidth = 5 * scale
         ctx.beginPath()
         ctx.arc(timerCx, timerCy, timerRadius, 0, Math.PI * 2)
         ctx.stroke()
         ctx.restore()
 
         // Progress ring (animated) - goes from full to empty over 3 seconds
-        ctx.save()
-        ctx.globalAlpha = globalAlpha * textAlpha * 0.9
         const ringProgress = 1 - countdownProgress // goes from 1 → 0
         const startAngle = -Math.PI / 2
         const endAngle = startAngle + ringProgress * Math.PI * 2
+
+        ctx.save()
+        ctx.globalAlpha = globalAlpha * textAlpha * 0.85
         ctx.strokeStyle = '#c9995a'
-        ctx.lineWidth = 4 * scale
+        ctx.lineWidth = 5 * scale
         ctx.lineCap = 'round'
         ctx.beginPath()
         ctx.arc(timerCx, timerCy, timerRadius, startAngle, endAngle)
@@ -863,12 +882,12 @@ function CakeCanvas({ active, onComplete }: { active: boolean; onComplete: () =>
           const tipX = timerCx + Math.cos(endAngle) * timerRadius
           const tipY = timerCy + Math.sin(endAngle) * timerRadius
           ctx.save()
-          ctx.globalAlpha = globalAlpha * textAlpha * 0.6
-          const tipGlow = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, 10 * scale)
-          tipGlow.addColorStop(0, 'rgba(201, 153, 90, 0.5)')
+          ctx.globalAlpha = globalAlpha * textAlpha * 0.7
+          const tipGlow = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, 12 * scale)
+          tipGlow.addColorStop(0, 'rgba(201, 153, 90, 0.6)')
           tipGlow.addColorStop(1, 'rgba(201, 153, 90, 0)')
           ctx.fillStyle = tipGlow
-          ctx.fillRect(tipX - 10 * scale, tipY - 10 * scale, 20 * scale, 20 * scale)
+          ctx.fillRect(tipX - 12 * scale, tipY - 12 * scale, 24 * scale, 24 * scale)
           ctx.restore()
         }
 
@@ -879,9 +898,9 @@ function CakeCanvas({ active, onComplete }: { active: boolean; onComplete: () =>
 
         // Pulse effect when number changes
         const countAge = countdownElapsed % 1000
-        const pulseScale = 1 + 0.2 * Math.sin((countAge / 1000) * Math.PI)
+        const pulseScale = 1 + 0.25 * Math.sin((countAge / 1000) * Math.PI)
 
-        ctx.font = `300 ${Math.round(42 * scale * pulseScale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
+        ctx.font = `300 ${Math.round(48 * scale * pulseScale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
         const numGrad = ctx.createRadialGradient(timerCx, timerCy, 0, timerCx, timerCy, timerRadius * 0.6)
         numGrad.addColorStop(0, '#fff9f6')
         numGrad.addColorStop(1, '#c9995a')
@@ -890,10 +909,10 @@ function CakeCanvas({ active, onComplete }: { active: boolean; onComplete: () =>
         ctx.fillText(countNum.toString(), timerCx, timerCy + 2 * scale)
 
         // "seconds" label below
-        ctx.font = `300 ${Math.round(14 * scale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
+        ctx.font = `300 ${Math.round(13 * scale)}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-cormorant') || 'Cormorant Garamond, serif'}`
         ctx.fillStyle = '#f2c4b8'
-        ctx.globalAlpha = globalAlpha * textAlpha * 0.5
-        ctx.fillText('seconds', timerCx, timerCy + timerRadius + 20 * scale)
+        ctx.globalAlpha = globalAlpha * textAlpha * 0.4
+        ctx.fillText('seconds', timerCx, timerCy + timerRadius + 22 * scale)
 
         ctx.restore()
       }
