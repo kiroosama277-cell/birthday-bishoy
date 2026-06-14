@@ -57,3 +57,12 @@ download/bishoy-birthday-full.zip
 download/bishoy-birthday-source.zip
 download/birthday-website.zip
 download/bishoy-birthday.zip
+
+# Vercel
+.vercel/
+
+# Build cache
+_next/
+
+# Skills (not needed for deployment)
+skills/

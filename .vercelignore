@@ -1,0 +1,12 @@
+skills/
+_next/
+download/
+out/
+agent-ctx/
+db/
+mini-services/
+examples/
+prisma/
+upload/
+*.zip
+*.mp3
