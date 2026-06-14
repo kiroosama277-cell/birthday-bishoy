@@ -1158,10 +1158,11 @@ function StarfieldBG() {
 }
 
 export default function Home() {
-  const [stage, setStage] = useState<'music' | 'gift' | 'cake' | 'text' | 'date' | 'main'>('music')
+  const [stage, setStage] = useState<'music' | 'gift' | 'cake' | 'text' | 'facecake' | 'date' | 'main'>('music')
   const [giftShaking, setGiftShaking] = useState(false)
   const [giftOpened, setGiftOpened] = useState(false)
   const [wordVisible, setWordVisible] = useState({ w1: false, w2: false, myb: false })
+  const [faceCakeVisible, setFaceCakeVisible] = useState(false)
   const [dateVisible, setDateVisible] = useState(false)
   const [dateSubVisible, setDateSubVisible] = useState(false)
   const [mainVisible, setMainVisible] = useState(false)
@@ -1267,8 +1268,16 @@ export default function Home() {
     const t1 = setTimeout(() => setWordVisible(v => ({ ...v, w1: true })), 150)
     const t2 = setTimeout(() => setWordVisible(v => ({ ...v, w2: true })), 850)
     const t3 = setTimeout(() => { setWordVisible(v => ({ ...v, myb: true })) }, 1650)
-    const t4 = setTimeout(() => setStage('date'), 5800)
+    const t4 = setTimeout(() => setStage('facecake'), 3800)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
+  }, [stage])
+
+  // ═══ FACE IN CAKE ═══
+  useEffect(() => {
+    if (stage !== 'facecake') return
+    const t1 = setTimeout(() => setFaceCakeVisible(true), 200)
+    const t2 = setTimeout(() => setStage('date'), 4500)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [stage])
 
   // ═══ DATE ═══
@@ -1363,8 +1372,137 @@ export default function Home() {
         </div>
       </div>
 
+      {/* ══ STAGE 3.5: FACE IN CAKE ══ */}
+      <div className={`stage ${['music', 'gift', 'cake', 'text'].includes(stage) ? 'hidden' : stage === 'facecake' ? 'entering' : 'gone'}`} id="stFaceCake" style={{ zIndex: 500 }}>
+        <motion.div
+          className="facecake-scene"
+          initial={{ opacity: 0 }}
+          animate={faceCakeVisible ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <svg className="facecake-svg" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Cake */}
+            <rect x="80" y="260" width="240" height="100" rx="12" fill="#7a1f1f" />
+            <rect x="80" y="260" width="240" height="100" rx="12" fill="url(#fcGrad1)" />
+            <rect x="100" y="230" width="200" height="40" rx="8" fill="#c0463c" />
+            <rect x="100" y="230" width="200" height="40" rx="8" fill="url(#fcGrad2)" />
+            {/* Frosting drips */}
+            <ellipse cx="130" cy="270" rx="6" ry="14" fill="#f2c4b8" opacity="0.85" />
+            <ellipse cx="170" cy="275" rx="5" ry="18" fill="#f7e0d0" opacity="0.8" />
+            <ellipse cx="210" cy="268" rx="6" ry="12" fill="#f2c4b8" opacity="0.85" />
+            <ellipse cx="250" cy="273" rx="5" ry="16" fill="#f7e0d0" opacity="0.8" />
+            <ellipse cx="280" cy="267" rx="4" ry="10" fill="#f2c4b8" opacity="0.8" />
+            {/* Frosting strip top */}
+            <rect x="100" y="228" width="200" height="8" rx="4" fill="#f2c4b8" opacity="0.8" />
+            {/* Sprinkles */}
+            <rect x="120" y="290" width="6" height="3" rx="1.5" fill="#e8897a" opacity="0.7" transform="rotate(30 123 291.5)" />
+            <rect x="160" y="310" width="6" height="3" rx="1.5" fill="#c9995a" opacity="0.7" transform="rotate(-20 163 311.5)" />
+            <rect x="200" y="295" width="6" height="3" rx="1.5" fill="#f2c4b8" opacity="0.7" transform="rotate(45 203 296.5)" />
+            <rect x="240" y="320" width="6" height="3" rx="1.5" fill="#e8c98a" opacity="0.7" transform="rotate(-35 243 321.5)" />
+            <rect x="280" y="300" width="6" height="3" rx="1.5" fill="#e8897a" opacity="0.7" transform="rotate(15 283 301.5)" />
+            {/* Cat face sticking out of cake top */}
+            <motion.g
+              initial={{ y: 60, opacity: 0 }}
+              animate={faceCakeVisible ? { y: 0, opacity: 1 } : { y: 60, opacity: 0 }}
+              transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {/* Cat head - cute white cat */}
+              <ellipse cx="200" cy="170" rx="65" ry="58" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="2" />
+              {/* Inner ears */}
+              <ellipse cx="155" cy="125" rx="20" ry="28" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="2" />
+              <ellipse cx="155" cy="128" rx="12" ry="18" fill="#f2c4b8" opacity="0.5" />
+              <ellipse cx="245" cy="125" rx="20" ry="28" fill="#fff9f6" stroke="#e8d0c5" strokeWidth="2" />
+              <ellipse cx="245" cy="128" rx="12" ry="18" fill="#f2c4b8" opacity="0.5" />
+              {/* Eyes - happy closed */}
+              <motion.path
+                d="M172,162 Q180,150 188,162"
+                stroke="#3d1010" strokeWidth="3" strokeLinecap="round" fill="none"
+                animate={faceCakeVisible ? { pathLength: [0, 1] } : {}}
+                transition={{ duration: 0.5, delay: 1.2 }}
+              />
+              <motion.path
+                d="M212,162 Q220,150 228,162"
+                stroke="#3d1010" strokeWidth="3" strokeLinecap="round" fill="none"
+                animate={faceCakeVisible ? { pathLength: [0, 1] } : {}}
+                transition={{ duration: 0.5, delay: 1.3 }}
+              />
+              {/* Blush */}
+              <circle cx="168" cy="175" r="10" fill="#f2c4b8" opacity="0.4" />
+              <circle cx="232" cy="175" r="10" fill="#f2c4b8" opacity="0.4" />
+              {/* Nose */}
+              <ellipse cx="200" cy="178" rx="5" ry="3.5" fill="#e8897a" />
+              {/* Mouth - big happy smile */}
+              <motion.path
+                d="M188,186 Q200,200 212,186"
+                stroke="#3d1010" strokeWidth="2" strokeLinecap="round" fill="none"
+                initial={{ pathLength: 0 }}
+                animate={faceCakeVisible ? { pathLength: 1 } : { pathLength: 0 }}
+                transition={{ duration: 0.4, delay: 1.5 }}
+              />
+              {/* Whiskers */}
+              <line x1="150" y1="175" x2="172" y2="178" stroke="#d4b8b0" strokeWidth="1" />
+              <line x1="148" y1="182" x2="172" y2="183" stroke="#d4b8b0" strokeWidth="1" />
+              <line x1="228" y1="178" x2="250" y2="175" stroke="#d4b8b0" strokeWidth="1" />
+              <line x1="228" y1="183" x2="252" y2="182" stroke="#d4b8b0" strokeWidth="1" />
+              {/* Party hat */}
+              <motion.g
+                initial={{ rotate: -15, scale: 0 }}
+                animate={faceCakeVisible ? { rotate: -8, scale: 1 } : { rotate: -15, scale: 0 }}
+                transition={{ duration: 0.6, delay: 1.6, type: 'spring', stiffness: 200 }}
+              >
+                <polygon points="200,60 175,120 225,120" fill="#c0463c" />
+                <polygon points="200,60 175,120 225,120" fill="url(#hatGrad)" />
+                {/* Hat stripes */}
+                <line x1="183" y1="108" x2="217" y2="108" stroke="#f2c4b8" strokeWidth="3" opacity="0.6" />
+                <line x1="188" y1="96" x2="212" y2="96" stroke="#e8c98a" strokeWidth="2.5" opacity="0.5" />
+                {/* Pom pom */}
+                <circle cx="200" cy="58" r="8" fill="#e8c98a" />
+                <circle cx="200" cy="56" r="5" fill="#f2c4b8" />
+              </motion.g>
+            </motion.g>
+            {/* Confetti pieces around */}
+            <motion.g
+              initial={{ opacity: 0, scale: 0 }}
+              animate={faceCakeVisible ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.5, delay: 2 }}
+            >
+              <rect x="90" y="100" width="5" height="12" rx="2" fill="#c9995a" opacity="0.7" transform="rotate(25 92.5 106)" />
+              <rect x="300" y="90" width="5" height="12" rx="2" fill="#e8897a" opacity="0.7" transform="rotate(-15 302.5 96)" />
+              <rect x="70" y="180" width="4" height="10" rx="2" fill="#f2c4b8" opacity="0.6" transform="rotate(40 72 185)" />
+              <rect x="320" y="170" width="4" height="10" rx="2" fill="#c0463c" opacity="0.6" transform="rotate(-30 322 175)" />
+              <circle cx="110" cy="70" r="4" fill="#e8c98a" opacity="0.6" />
+              <circle cx="290" cy="60" r="3" fill="#f2c4b8" opacity="0.6" />
+              <rect x="140" y="50" width="4" height="8" rx="2" fill="#c0463c" opacity="0.5" transform="rotate(60 142 54)" />
+              <rect x="260" y="45" width="4" height="8" rx="2" fill="#c9995a" opacity="0.5" transform="rotate(-50 262 49)" />
+            </motion.g>
+            <defs>
+              <linearGradient id="fcGrad1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#fff" stopOpacity="0.08" />
+                <stop offset="100%" stopColor="#000" stopOpacity="0.2" />
+              </linearGradient>
+              <linearGradient id="fcGrad2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#fff" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#000" stopOpacity="0.1" />
+              </linearGradient>
+              <linearGradient id="hatGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#fff" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#000" stopOpacity="0.1" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <motion.p
+            className="facecake-text"
+            initial={{ opacity: 0, y: 20 }}
+            animate={faceCakeVisible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 2.2 }}
+          >
+            Happy Birthday, Bishoy! 🎂
+          </motion.p>
+        </motion.div>
+      </div>
+
       {/* ══ STAGE 4: DATE ══ */}
-      <div className={`stage ${['music', 'gift', 'cake', 'text'].includes(stage) ? 'hidden' : stage === 'date' ? 'entering' : 'gone'}`} id="stDate" style={{ zIndex: 500 }}>
+      <div className={`stage ${['music', 'gift', 'cake', 'text', 'facecake'].includes(stage) ? 'hidden' : stage === 'date' ? 'entering' : 'gone'}`} id="stDate" style={{ zIndex: 500 }}>
         <div className={`date-num ${dateVisible ? 'in' : ''}`}>June 19</div>
         <div className={`date-sub ${dateSubVisible ? 'in' : ''}`}>his special day</div>
       </div>

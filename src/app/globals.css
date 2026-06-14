@@ -379,12 +379,12 @@ body {
 }
 
 /* backgrounds — each section has its own atmosphere */
-.sec-1 { background: radial-gradient(ellipse 120% 100% at 25% 60%, rgba(61, 16, 16, 0.88) 0%, rgba(14, 4, 4, 0.92) 70%); }
-.sec-2 { background: linear-gradient(160deg, #f5ebe4 0%, #e8d0c5 50%, #d4b8b0 100%); }
-.sec-3 { background: radial-gradient(ellipse 100% 120% at 75% 40%, rgba(74, 18, 18, 0.88) 0%, rgba(14, 4, 4, 0.92) 65%); }
-.sec-4 { background: radial-gradient(ellipse 110% 100% at 30% 70%, rgba(42, 21, 8, 0.88) 0%, rgba(14, 4, 4, 0.92) 70%); }
-.sec-5 { background: radial-gradient(ellipse 100% 110% at 60% 45%, rgba(13, 13, 34, 0.88) 0%, rgba(26, 7, 7, 0.92) 70%); }
-.sec-6 { background: radial-gradient(ellipse 130% 100% at 50% 55%, rgba(74, 16, 16, 0.88) 0%, rgba(14, 4, 4, 0.92) 65%); }
+.sec-1 { background: radial-gradient(ellipse 120% 100% at 30% 70%, rgba(122, 31, 31, 0.22) 0%, rgba(14, 4, 4, 0.95) 70%); }
+.sec-2 { background: linear-gradient(170deg, rgba(242, 196, 184, 0.12) 0%, rgba(20, 8, 8, 0.95) 40%, rgba(14, 4, 4, 0.97) 100%); }
+.sec-3 { background: radial-gradient(ellipse 100% 120% at 70% 50%, rgba(201, 153, 90, 0.12) 0%, rgba(14, 4, 4, 0.95) 65%); }
+.sec-4 { background: radial-gradient(ellipse 110% 100% at 40% 60%, rgba(232, 201, 138, 0.1) 0%, rgba(14, 4, 4, 0.95) 70%); }
+.sec-5 { background: radial-gradient(ellipse 100% 110% at 55% 45%, rgba(160, 144, 184, 0.15) 0%, rgba(10, 5, 15, 0.95) 60%, rgba(14, 4, 4, 0.97) 100%); }
+.sec-6 { background: radial-gradient(ellipse 130% 100% at 50% 55%, rgba(192, 70, 60, 0.18) 0%, rgba(14, 4, 4, 0.95) 65%); }
 
 /* ════════════════════════════
    ANIMATED STARFIELD BACKGROUND
@@ -642,8 +642,8 @@ body {
 }
 
 /* dark section text overrides */
-.sec-2 .ln { color: #3a1010; }
-.sec-2 .ln.hero { color: var(--rose-deep); }
+.sec-2 .ln { color: var(--petal-pink); }
+.sec-2 .ln.hero { color: var(--cream); }
 
 /* ════════════════════════════
    SHIMMER TEXT (gold animation)
@@ -1141,4 +1141,32 @@ body {
   font-size: 1.6rem;
   color: var(--white);
   margin-top: 16px;
+}
+
+/* ════════════════════════════
+   FACE IN CAKE ANIMATION
+════════════════════════════ */
+.facecake-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.facecake-svg {
+  width: min(70vw, 320px);
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(232, 137, 122, 0.15));
+}
+
+.facecake-text {
+  font-family: var(--font-cormorant), 'Cormorant Garamond', serif;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  font-style: italic;
+  color: var(--petal-pink);
+  text-align: center;
+  text-shadow: 0 0 20px rgba(232, 137, 122, 0.3);
+  margin: 0;
+  padding: 0;
 }
