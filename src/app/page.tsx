@@ -913,7 +913,7 @@ function LetterEnvelope({ onOpen }: { onOpen: () => void }) {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             <p>I didn&apos;t mean the things I said when I was angry. I&apos;m sorry.</p>
-            <p className="missed-you">I missed you. <span style={{ color: '#e8897a' }}>♥</span></p>
+            <p className="missed-you">I missed you. 🤍</p>
           </motion.div>
         )}
       </AnimatePresence>
