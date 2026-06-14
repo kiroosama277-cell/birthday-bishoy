@@ -433,6 +433,327 @@ function NavDots() {
 }
 
 /* ════════════════════════════
+   PARTICLE HEART CANVAS
+   Sparkling beads converge to form a big heart
+════════════════════════════ */
+function ParticleHeartCanvas({ active, onComplete }: { active: boolean; onComplete: () => void }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const completedRef = useRef(false)
+  const onCompleteRef = useRef(onComplete)
+  onCompleteRef.current = onComplete
+
+  useEffect(() => {
+    if (!active) return
+    completedRef.current = false
+
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const W = window.innerWidth
+    const H = window.innerHeight
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = W * dpr
+    canvas.height = H * dpr
+    canvas.style.width = W + 'px'
+    canvas.style.height = H + 'px'
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.scale(dpr, dpr)
+
+    // ── Heart parametric curve ──
+    const heartCx = W / 2, heartCy = H / 2 + 10
+    const hScale = Math.min(W, H) / 36
+
+    function heartX(t: number) { return 16 * Math.pow(Math.sin(t), 3) }
+    function heartY(t: number) { return -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) }
+
+    // ── Bead colors — gold, rose-gold, warm white, ruby ──
+    const beadColors = [
+      '#e8c98a', '#c9995a', '#f2c4b8', '#e8897a',
+      '#f7e0d0', '#d4a574', '#ffffff', '#c0463c',
+      '#f0d0a0', '#dbb870',
+    ]
+
+    type Bead = {
+      sx: number; sy: number
+      tx: number; ty: number
+      size: number; color: string
+      baseAlpha: number
+      trail: { x: number; y: number; a: number }[]
+      delay: number
+      driftAngle: number; driftDist: number
+    }
+
+    const beads: Bead[] = []
+
+    // Outline beads (dense, on the heart curve) — use full circle
+    const outlineCount = 90
+    for (let i = 0; i < outlineCount; i++) {
+      const t = (i / outlineCount) * Math.PI * 2
+      const hx = heartX(t) * hScale + heartCx
+      const hy = heartY(t) * hScale + heartCy
+      const jitter = 4
+      const color = beadColors[Math.floor(Math.random() * beadColors.length)]
+      beads.push({
+        sx: Math.random() * W, sy: Math.random() * H,
+        tx: hx + (Math.random() - .5) * jitter, ty: hy + (Math.random() - .5) * jitter,
+        size: 3 + Math.random() * 4, color,
+        baseAlpha: 0.85 + Math.random() * 0.15,
+        trail: [],
+        delay: i * 12 + Math.random() * 60,
+        driftAngle: Math.random() * Math.PI * 2,
+        driftDist: 80 + Math.random() * 200,
+      })
+    }
+
+    // Fill beads (inside heart, denser)
+    const fillCount = 150
+    for (let i = 0; i < fillCount; i++) {
+      const t = Math.random() * Math.PI * 2
+      const r = Math.random() * 0.85
+      const hx = heartX(t) * r * hScale + heartCx
+      const hy = heartY(t) * r * hScale + heartCy
+      const jitter = 6
+      const color = beadColors[Math.floor(Math.random() * beadColors.length)]
+      beads.push({
+        sx: Math.random() * W, sy: Math.random() * H,
+        tx: hx + (Math.random() - .5) * jitter, ty: hy + (Math.random() - .5) * jitter,
+        size: 2 + Math.random() * 3.5, color,
+        baseAlpha: 0.6 + Math.random() * 0.35,
+        trail: [],
+        delay: outlineCount * 12 + i * 8 + Math.random() * 40,
+        driftAngle: Math.random() * Math.PI * 2,
+        driftDist: 50 + Math.random() * 180,
+      })
+    }
+
+    // Sparkle beads (scattered just outside heart)
+    const sparkleCount = 40
+    for (let i = 0; i < sparkleCount; i++) {
+      const t = Math.random() * Math.PI * 2
+      const r = 1.02 + Math.random() * 0.25
+      const hx = heartX(t) * r * hScale + heartCx
+      const hy = heartY(t) * r * hScale + heartCy
+      const color = beadColors[Math.floor(Math.random() * 4)]
+      beads.push({
+        sx: Math.random() * W, sy: Math.random() * H,
+        tx: hx + (Math.random() - .5) * 15, ty: hy + (Math.random() - .5) * 15,
+        size: 1.5 + Math.random() * 2.5, color,
+        baseAlpha: 0.3 + Math.random() * 0.3,
+        trail: [],
+        delay: outlineCount * 12 + fillCount * 8 + i * 15 + Math.random() * 30,
+        driftAngle: Math.random() * Math.PI * 2,
+        driftDist: 100 + Math.random() * 250,
+      })
+    }
+
+    // ── Animation timing ──
+    const gatherDuration = 2200
+    const maxDelay = Math.max(...beads.map(b => b.delay))
+    const convergeEnd = maxDelay + gatherDuration + 300
+    const pulseStart = convergeEnd
+    const pulseDuration = 2400
+    const dissolveStart = pulseStart + pulseDuration
+    const dissolveDuration = 3000
+    const totalDuration = dissolveStart + dissolveDuration
+
+    // ── Easing ──
+    function easeOutQuart(t: number) { return 1 - Math.pow(1 - t, 4) }
+    function easeInQuad(t: number) { return t * t }
+
+    // ── Pulse: 3 heartbeats ──
+    function getHeartScale(elapsed: number): number {
+      if (elapsed < 0) return 1
+      if (elapsed < 300) return 1 + 0.10 * Math.sin((elapsed / 300) * Math.PI)
+      if (elapsed < 650) return 1
+      if (elapsed < 950) return 1 + 0.16 * Math.sin(((elapsed - 650) / 300) * Math.PI)
+      if (elapsed < 1300) return 1
+      if (elapsed < 1550) return 1 + 0.06 * Math.sin(((elapsed - 1300) / 250) * Math.PI)
+      return 1
+    }
+
+    // ── Animation loop ──
+    let animId = 0
+    let startTime = 0
+
+    function animate(now: number) {
+      if (!startTime) startTime = now
+      const elapsed = now - startTime
+
+      ctx.clearRect(0, 0, W, H)
+
+      // ── Background: dark vignette ──
+      const bgAlpha = Math.min(1, elapsed / 1200) * Math.max(0, 1 - Math.max(0, (elapsed - dissolveStart) / 1500))
+      if (bgAlpha > 0.001) {
+        const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7)
+        bgGrad.addColorStop(0, `rgba(20, 8, 8, ${bgAlpha * 0.8})`)
+        bgGrad.addColorStop(1, `rgba(8, 2, 2, ${bgAlpha})`)
+        ctx.fillStyle = bgGrad
+        ctx.fillRect(0, 0, W, H)
+      }
+
+      // ── Glow behind heart ──
+      const pulseElapsed = elapsed - pulseStart
+      const convergence = Math.min(1, Math.max(0, (elapsed - 500) / convergeEnd))
+      let glowIntensity = convergence * 0.35
+      if (pulseElapsed >= 0 && pulseElapsed < 300) glowIntensity += 0.25
+      else if (pulseElapsed >= 650 && pulseElapsed < 950) glowIntensity += 0.35
+      else if (pulseElapsed >= 1300 && pulseElapsed < 1550) glowIntensity += 0.15
+      const dissolveElapsed = elapsed - dissolveStart
+      if (dissolveElapsed > 0) glowIntensity *= Math.max(0, 1 - dissolveElapsed / 1500)
+
+      if (glowIntensity > 0.005) {
+        const glowSize = Math.min(W, H) * 0.45 * convergence
+        if (glowSize > 1) {
+          const glowGrad = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, glowSize)
+          glowGrad.addColorStop(0, `rgba(232, 137, 122, ${glowIntensity})`)
+          glowGrad.addColorStop(0.3, `rgba(201, 153, 90, ${glowIntensity * 0.5})`)
+          glowGrad.addColorStop(0.6, `rgba(192, 70, 60, ${glowIntensity * 0.15})`)
+          glowGrad.addColorStop(1, 'rgba(139, 42, 42, 0)')
+          ctx.fillStyle = glowGrad
+          ctx.fillRect(0, 0, W, H)
+        }
+      }
+
+      // ── Heart scale (pulse) ──
+      const heartScale = pulseElapsed >= 0 ? getHeartScale(pulseElapsed) : 1
+
+      // ── Draw beads ──
+      for (let i = 0; i < beads.length; i++) {
+        const b = beads[i]
+        const beadElapsed = elapsed - b.delay
+
+        if (beadElapsed < 0) {
+          const fadeIn = Math.min(1, elapsed / 800)
+          const alpha = fadeIn * b.baseAlpha * 0.4
+          if (alpha < 0.01) continue
+          ctx.save()
+          ctx.globalAlpha = alpha
+          ctx.fillStyle = b.color
+          ctx.beginPath()
+          ctx.arc(b.sx, b.sy, b.size * 0.6, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.restore()
+          continue
+        }
+
+        const gatherProgress = Math.min(1, beadElapsed / gatherDuration)
+        const easedGather = easeOutQuart(gatherProgress)
+
+        let bx = b.sx + (b.tx - b.sx) * easedGather
+        let by = b.sy + (b.ty - b.sy) * easedGather
+
+        // Pulse after converged
+        if (gatherProgress > 0.9) {
+          const pulseInfluence = Math.min(1, (gatherProgress - 0.9) / 0.1)
+          const px = heartCx + (b.tx - heartCx) * heartScale
+          const py = heartCy + (b.ty - heartCy) * heartScale
+          bx = bx + (px - bx) * pulseInfluence
+          by = by + (py - by) * pulseInfluence
+        }
+
+        // Dissolve
+        let dissolveAlpha = 1
+        if (dissolveElapsed > 0) {
+          const stagger = i * 8
+          const actualDissolve = dissolveElapsed - stagger
+          if (actualDissolve > 0) {
+            const dp = Math.min(1, actualDissolve / dissolveDuration)
+            dissolveAlpha = 1 - easeInQuad(dp)
+            const drift = easeOutQuart(Math.min(1, dp * 1.3))
+            bx += Math.cos(b.driftAngle) * b.driftDist * drift
+            by += Math.sin(b.driftAngle) * b.driftDist * drift - 20 * drift
+          }
+        }
+
+        if (dissolveAlpha < 0.01) continue
+        const alpha = b.baseAlpha * dissolveAlpha
+        if (alpha < 0.01) continue
+
+        // Trail during convergence
+        if (gatherProgress < 1 && gatherProgress > 0.05) {
+          b.trail.push({ x: bx, y: by, a: alpha * 0.3 })
+          if (b.trail.length > 3) b.trail.shift()
+          b.trail.forEach((pt, ti) => {
+            const trailAlpha = pt.a * (ti / b.trail.length) * 0.4
+            if (trailAlpha > 0.01) {
+              ctx.save()
+              ctx.globalAlpha = trailAlpha
+              ctx.fillStyle = b.color
+              ctx.beginPath()
+              ctx.arc(pt.x, pt.y, b.size * 0.4, 0, Math.PI * 2)
+              ctx.fill()
+              ctx.restore()
+            }
+          })
+        } else {
+          b.trail = []
+        }
+
+        // Sparkle twinkle after converged
+        let twinkle = 1
+        if (gatherProgress >= 1 && dissolveElapsed < 0) {
+          twinkle = 0.7 + 0.3 * Math.sin(elapsed * 0.005 + i * 1.7)
+        }
+
+        // Draw bead: glow → body → highlight
+        ctx.save()
+        // Soft glow
+        ctx.globalAlpha = alpha * twinkle * 0.2
+        ctx.fillStyle = b.color
+        ctx.beginPath()
+        ctx.arc(bx, by, b.size * 2.5, 0, Math.PI * 2)
+        ctx.fill()
+        // Main bead
+        ctx.globalAlpha = alpha * twinkle
+        ctx.fillStyle = b.color
+        ctx.beginPath()
+        ctx.arc(bx, by, b.size, 0, Math.PI * 2)
+        ctx.fill()
+        // Center highlight
+        ctx.fillStyle = '#ffffff'
+        ctx.globalAlpha = alpha * twinkle * 0.6
+        ctx.beginPath()
+        ctx.arc(bx, by, b.size * 0.35, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      }
+
+      // Transition to next stage
+      if (elapsed >= totalDuration - 600 && !completedRef.current) {
+        completedRef.current = true
+        onCompleteRef.current()
+      }
+
+      if (elapsed < totalDuration) {
+        animId = requestAnimationFrame(animate)
+      }
+    }
+
+    // Start animation on next frame to ensure canvas is painted
+    animId = requestAnimationFrame(animate)
+
+    return () => {
+      cancelAnimationFrame(animId)
+    }
+  }, [active])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+      }}
+    />
+  )
+}
+
+/* ════════════════════════════
    MAIN PAGE COMPONENT
 ════════════════════════════ */
 export default function Home() {
@@ -454,8 +775,13 @@ export default function Home() {
   const [musicPlaying, setMusicPlaying] = useState(false)
   const lenisRef = useRef<Lenis | null>(null)
 
+
   const handleReveal = useCallback((sectionKey: string, e: React.MouseEvent) => {
     setRevealed(prev => ({ ...prev, [sectionKey]: true }))
+  }, [])
+
+  const handleHeartComplete = useCallback(() => {
+    setStage('text')
   }, [])
 
   // ═══ MUSIC CONSENT ═══
@@ -532,143 +858,7 @@ export default function Home() {
     doShake()
   }, [stage])
 
-  // ═══ ROSE HEART — Roses build a heart shape, pulse, then dissolve ═══
-  useEffect(() => {
-    if (stage !== 'roses') return
-    const container = document.getElementById('roseCanvasContainer')
-    if (!container) return
-    const W = window.innerWidth, H = window.innerHeight
-
-    const colors = [
-      ['#c0463c', '#6b1a1a'], ['#e8897a', '#b03030'], ['#f2c4b8', '#c0463c'],
-      ['#d4706a', '#8b2a2a'], ['#e8a090', '#a03030'], ['#f7d6cf', '#d4706a'],
-    ]
-
-    // Soft dark background with warm vignette
-    const bgDiv = document.createElement('div')
-    bgDiv.style.cssText = 'position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%, #1a0808, #0e0404);opacity:0;transition:opacity 1.5s ease;'
-    container.appendChild(bgDiv)
-    requestAnimationFrame(() => requestAnimationFrame(() => { bgDiv.style.opacity = '1' }))
-
-    // Generate heart-shaped positions using parametric heart curve
-    // x = 16sin³(t), y = 13cos(t) - 5cos(2t) - 2cos(3t) - cos(4t)
-    const cx = W / 2, cy = H / 2 + 10
-    const scale = Math.min(W, H) / 42 // fit heart to screen
-    const numRoses = 70
-    const heartRoses: { x: number; y: number; sz: number; pc: string; cc: string; op: number; angle: number }[] = []
-
-    for (let i = 0; i < numRoses; i++) {
-      const t = (i / numRoses) * Math.PI * 2
-      const hx = 16 * Math.pow(Math.sin(t), 3)
-      const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))
-      const [pc, cc] = colors[Math.floor(Math.random() * colors.length)]
-      const sz = 80 + Math.random() * 120
-      // Add slight randomness so it doesn't look too perfect
-      const jitterX = (Math.random() - .5) * sz * 0.3
-      const jitterY = (Math.random() - .5) * sz * 0.3
-      heartRoses.push({
-        x: cx + hx * scale + jitterX,
-        y: cy + hy * scale + jitterY,
-        sz, pc, cc,
-        op: 0.6 + Math.random() * .35,
-        angle: Math.random() * 30 - 15
-      })
-    }
-
-    // Add fill roses inside the heart (for density)
-    const numFill = 40
-    for (let i = 0; i < numFill; i++) {
-      const t = Math.random() * Math.PI * 2
-      const r = Math.random() * 0.75 // inside the heart
-      const hx = 16 * Math.pow(Math.sin(t), 3) * r
-      const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * r
-      const [pc, cc] = colors[Math.floor(Math.random() * colors.length)]
-      const sz = 60 + Math.random() * 100
-      heartRoses.push({
-        x: cx + hx * scale + (Math.random() - .5) * sz * 0.2,
-        y: cy + hy * scale + (Math.random() - .5) * sz * 0.2,
-        sz, pc, cc,
-        op: 0.5 + Math.random() * .4,
-        angle: Math.random() * 30 - 15
-      })
-    }
-
-    // Sort by distance from center (build from center outward)
-    heartRoses.sort((a, b) => {
-      const da = Math.sqrt((a.x - cx) ** 2 + (a.y - cy) ** 2)
-      const db = Math.sqrt((b.x - cx) ** 2 + (b.y - cy) ** 2)
-      return da - db
-    })
-
-    // Create wrapper div for the whole heart (for pulse animation)
-    const heartWrapper = document.createElement('div')
-    heartWrapper.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transition:transform 0.6s cubic-bezier(.16,1,.3,1),opacity 1.5s ease;'
-    container.appendChild(heartWrapper)
-
-    // Create each rose element
-    const roseEls: HTMLDivElement[] = []
-    heartRoses.forEach((r) => {
-      const el = document.createElement('div')
-      el.style.cssText = `
-        position:absolute;
-        left:${r.x - r.sz / 2}px; top:${r.y - r.sz / 2}px;
-        width:${r.sz}px; height:${r.sz}px;
-        opacity:0; transform:scale(0) rotate(${r.angle}deg);
-        transition: opacity 0.9s ease, transform 1.2s cubic-bezier(.16,1,.3,1);
-        pointer-events:none;
-      `
-      el.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">${roseSVG(100, 100, 180, r.pc, r.cc, r.op)}</svg>`
-      heartWrapper.appendChild(el)
-      roseEls.push(el)
-    })
-
-    // ── Phase 1: Roses bloom one by one, building the heart shape ──
-    roseEls.forEach((el, i) => {
-      const delay = 300 + i * 80 + Math.random() * 40
-      setTimeout(() => {
-        el.style.opacity = '1'
-        el.style.transform = `scale(1) rotate(${Math.random() * 8 - 4}deg)`
-      }, delay)
-    })
-
-    // ── Phase 2: Heart pulses (beats) ──
-    const buildDone = 300 + heartRoses.length * 80 + 800
-
-    setTimeout(() => {
-      // Pulse 1
-      heartWrapper.style.transform = 'scale(1.08)'
-      setTimeout(() => { heartWrapper.style.transform = 'scale(1)' }, 350)
-      // Pulse 2
-      setTimeout(() => { heartWrapper.style.transform = 'scale(1.12)' }, 700)
-      setTimeout(() => { heartWrapper.style.transform = 'scale(1)' }, 1050)
-      // Pulse 3 (gentler)
-      setTimeout(() => { heartWrapper.style.transform = 'scale(1.05)' }, 1400)
-      setTimeout(() => { heartWrapper.style.transform = 'scale(1)' }, 1700)
-    }, buildDone)
-
-    // ── Phase 3: Heart dissolves — roses fly away like petals ──
-    const pulseDone = buildDone + 2200
-
-    setTimeout(() => {
-      roseEls.forEach((el, i) => {
-        const drift = (Math.random() - .5) * 120
-        const flyUp = -(40 + Math.random() * 80)
-        const delay = i * 35 + Math.random() * 150
-        setTimeout(() => {
-          el.style.transition = 'opacity 1.5s ease, transform 2s ease'
-          el.style.opacity = '0'
-          el.style.transform = `scale(0.4) translateY(${flyUp}px) translateX(${drift}px) rotate(${Math.random() * 60 - 30}deg)`
-        }, delay)
-      })
-
-      // Fade background
-      bgDiv.style.transition = 'opacity 1.2s ease .6s'
-      bgDiv.style.opacity = '0'
-
-      // Move to text stage
-      setTimeout(() => setStage('text'), 1600)
-    }, pulseDone)
-  }, [stage])
+  // ═══ PARTICLE HEART — handled by ParticleHeartCanvas component ═══
 
   // ═══ STAGGER TEXT ═══
   useEffect(() => {
@@ -754,9 +944,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ══ STAGE 2: ROSES ══ — gradual fill + split curtain reveal */}
+      {/* ══ STAGE 2: BEAD HEART ══ — sparkling beads converge to form a heart */}
       <div className={`stage ${stage === 'music' || stage === 'gift' ? 'hidden' : stage === 'roses' ? 'entering' : 'gone'}`} id="stRoses" style={{ zIndex: 500 }}>
-        <div id="roseCanvasContainer" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'hidden' }} />
+        <ParticleHeartCanvas active={stage === 'roses'} onComplete={handleHeartComplete} />
       </div>
 
       {/* ══ STAGE 3: TEXT ══ */}
